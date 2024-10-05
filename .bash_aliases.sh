@@ -199,3 +199,14 @@ alias drives="mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | 
 alias ports='nmap localhost'
 alias getip='curl ipinfo.io/ip && echo ""'
 alias netstat='netstat -tuln'
+
+##############################################################
+# Git
+##############################################################
+
+alias gl='git log'
+alias glo='git log --oneline'
+alias gs='git status'
+alias ga='git add .'
+alias gc='git commit -m'
+alias gp='git push'
