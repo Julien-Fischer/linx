@@ -154,6 +154,11 @@ alias remove='sudo apt remove'
 alias search='apt search'
 alias pls='sudo'
 
+# Execute the last command with sudo
+please() {
+    sudo $(history -p !!)
+}
+
 ##############################################################
 # Bash
 ##############################################################
