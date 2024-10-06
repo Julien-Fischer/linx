@@ -176,8 +176,9 @@ alias byebye='systemctl poweroff'
 alias reboot='systemctl reboot'
 alias mem='free -m -l -t'
 alias du='du -h --max-depth=1'
+
 drives() {
-    "mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
+    mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | grep -E ^/dev/ | sort
 }
 
 ##############################################################
