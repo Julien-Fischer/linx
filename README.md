@@ -42,6 +42,12 @@ This function will:
 - remove the cloned directory
 - reload `.bashrc`.
 
+## Requirements
+
+This setup was primarily tested on Kubuntu 24 and Debian 12.
+
+Most of the functions/aliases defined in this project should be compatible with Debian-based distributions.
+
 ## License
 
 This project is released under the [MIT License](https://opensource.org/licenses/MIT).
