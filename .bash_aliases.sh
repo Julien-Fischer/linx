@@ -88,11 +88,17 @@ mkcs() {
     cs "${1}"
 }
 
+desk() {
+    cs "$(xdg-user-dir DESKTOP)"
+}
+
+prog() {
+    cs ~/programming
+}
+
 alias mkp='mkdir -p'
 alias ls='ls --color=auto'
 alias lt='ls -lhtAF -1' # sort by modification time
-alias desk='cs ~/Desktop'
-alias prog='cs ~/programming'
 alias ~="cs ~"
 alias u1="cs .."
 alias u2="cs ../.."
