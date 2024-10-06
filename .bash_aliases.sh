@@ -1,31 +1,5 @@
-# Copyright © 2024 Julien Fischer <julien.fischer@agiledeveloper.net>
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-#
-# The Software is provided “as is”, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders Julien Fischer be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the Software.
-# Except as contained in this notice, the name of the <copyright holders> shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Software without prior written authorization from Julien Fischer.
-
-
-# This is a straightforward Bash configuration file designed to streamline repetitive tasks and simplify lengthy command lines.
-# I’m sharing my personal setup in the hope that it may be beneficial to others. It contains functions and aliases that I have personally used on Kubuntu 24 and Debian 12.
-#
-# Installation instructions:
-# 1. Download this file or clone this repository
-#    git clone https://github.com/Julien-Fischer/bash_aliases
-# 2. Copy this file to your home directory
-#    cp bash_aliases/bash_aliases.sh ~
-# 3. Source the file in ~/.bashrc by adding the following lines:
-#    if [ -f ~/.bash_aliases.sh ]; then
-#        . ~/.bash_aliases.sh
-#    fi
-# 4. Reload your bash configuration
-#    source ~/.bashrc
-#
-# Notes:
-# For further reloads, simply open your CLI and type:
-# reload
+# This file is licensed under the MIT License.
+# See the LICENSE file in the project root for more information.
 
 ##############################################################
 # Misc
