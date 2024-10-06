@@ -131,7 +131,7 @@ alias oba='open ~/.bash_aliases.sh & disown'
 
 # Automate aliases / functions upgrades
 # This function installs the latest version of .bash_aliases.sh from the remote repository
-update_aliases() {
+upgrade_aliases() {
     git clone https://github.com/Julien-Fischer/bash_aliases
     mv ~/.bash_aliases.sh ~/.bash_aliases.bak
     cp bash_aliases/.bash_aliases.sh ~
