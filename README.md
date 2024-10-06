@@ -1,4 +1,4 @@
-# About this file
+# About this project
 
 I’m sharing my personal setup in the hope that it may be beneficial to others. This Bash configuration file
 is designed to automate repetitive tasks (such as constantly executing `ls` after `cd`) and shorten lengthy commands. 
@@ -34,7 +34,11 @@ source ~/.bashrc
 
 ## Upgrades
 
-If you already installed this project, you can upgrade it to the latest version by typing `upgrade_aliases`. 
+If you already installed this project, you can upgrade it to the latest version by typing: 
+```
+upgrade_aliases 
+```
+
 This function will: 
 - clone this repository in the current working directory
 - create a backup of the current `~/.bash_aliases.sh` file
