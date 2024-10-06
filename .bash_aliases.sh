@@ -77,6 +77,13 @@ la() {
     ls "${dir}" -AF --group-directories-first
 }
 
+# display the content of the specified directory using short format,
+# sort by modification time
+lt() {
+    local dir="${1:-.}"
+    ls -lhtAF -1 "${dir}"
+}
+
 # navigate to the specified directory and print its content
 cs() {
     cd "${1}" && ls -A --color -F --group-directories-first
@@ -98,7 +105,6 @@ prog() {
 
 alias mkp='mkdir -p'
 alias ls='ls --color=auto'
-alias lt='ls -lhtAF -1' # sort by modification time
 alias ~="cs ~"
 alias u1="cs .."
 alias u2="cs ../.."
