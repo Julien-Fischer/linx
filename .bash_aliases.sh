@@ -123,6 +123,7 @@ update_aliases() {
     git clone https://github.com/Julien-Fischer/bash_aliases
     mv ~/.bash_aliases.sh ~/.bash_aliases.bak
     cp bash_aliases/.bash_aliases.sh ~
+    rm -rf bash_aliases
     reload
     echo "Upgrade successful."
 }

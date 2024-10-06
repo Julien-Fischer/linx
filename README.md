@@ -39,6 +39,7 @@ This function will:
 - clone this repository in the current working directory
 - create a backup of the current `~/.bash_aliases.sh` file
 - copy the new `.bash_aliases.sh` file in `home`
+- remove the cloned directory
 - reload `.bashrc`.
 
 ## License
