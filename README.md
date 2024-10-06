@@ -13,12 +13,12 @@ Contributions and feedbacks are welcome.
 git clone https://github.com/Julien-Fischer/bash_aliases
 ```
 
-#### 2. Copy this file to your home directory
+#### 2. Copy `.bash_aliases.sh` to your home directory
 ```
 cp bash_aliases/bash_aliases.sh ~
 ```
 
-#### 3. Add the following lines in ~/.bashrc:
+#### 3. Add the following lines in `~/.bashrc`:
 ```
 if [ -f ~/.bash_aliases.sh ]; then
     . ~/.bash_aliases.sh
@@ -30,8 +30,17 @@ fi
 source ~/.bashrc
 ```
 
-**Notes:** For further reloads, simply open your CLI and type: `reload`
+**Notes:** For further reloads, just open your CLI and type: `reload`
+
+## Upgrades
+
+If you already installed this project, you can upgrade it to the latest version by typing `upgrade_aliases`. 
+This function will: 
+- clone this repository in the current working directory
+- create a backup of the current `~/.bash_aliases.sh` file
+- copy the new `.bash_aliases.sh` file in `home`
+- reload `.bashrc`.
 
 ## License
 
-This file is released under the [MIT License](https://opensource.org/licenses/MIT).
+This project is released under the [MIT License](https://opensource.org/licenses/MIT).

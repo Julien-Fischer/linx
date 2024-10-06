@@ -70,6 +70,7 @@ ld() {
     ls "${dir}" -lhAF --group-directories-first
 }
 
+# display the content of the specified directory using short format,
 # sort by alphabetical order, grouping directories first
 la() {
     local dir="${1:-.}"
@@ -90,9 +91,9 @@ mkcs() {
 alias mkp='mkdir -p'
 alias ls='ls --color=auto'
 alias lt='ls -lhtAF -1' # sort by modification time
-alias ~="cs ~"
 alias desk='cs ~/Desktop'
 alias prog='cs ~/programming'
+alias ~="cs ~"
 alias u1="cs .."
 alias u2="cs ../.."
 alias u3="cs ../../.."
@@ -115,6 +116,16 @@ alias br='vim ~/.bashrc'
 alias ba='vim ~/.bash_aliases.sh'
 alias obr='open ~/.bashrc & disown'
 alias oba='open ~/.bash_aliases.sh & disown'
+
+# Automate aliases / functions upgrades
+# This function installs the latest version of .bash_aliases.sh from the remote repository
+update_aliases() {
+    git clone https://github.com/Julien-Fischer/bash_aliases
+    mv ~/.bash_aliases.sh ~/.bash_aliases.bak
+    cp bash_aliases/.bash_aliases.sh ~
+    reload
+    echo "Upgrade successful."
+}
 
 ##############################################################
 # APT (change as needed when using a different package manager)
@@ -165,7 +176,9 @@ alias byebye='systemctl poweroff'
 alias reboot='systemctl reboot'
 alias mem='free -m -l -t'
 alias du='du -h --max-depth=1'
-alias drives="mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
+drives() {
+    "mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
+}
 
 ##############################################################
 # Network
