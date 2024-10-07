@@ -53,7 +53,7 @@ ask() {
 }
 
 ##############################################################
-# Navigation
+# Visualization
 ##############################################################
 
 # display the content of the specified directory using long format,
@@ -83,16 +83,27 @@ lt() {
     local dir="${1:-.}"
     ls -lhtAF -1 "${dir}"
 }
+alias ls='ls --color=auto'
+
+##############################################################
+# Navigation
+##############################################################
 
 # navigate to the specified directory and print its content
 cs() {
+    echo "${1}"
     cd "${1}" && ls -A --color -F --group-directories-first
 }
 
-# create the specified directory and its ancestors, navigate to it, and print its content
+# Create the specified directory and its ancestors if they do not exist yet, then change
+# to that directory and print its content
 mkcs() {
     mkdir -p "${1}"
     cs "${1}"
+}
+
+mkp() {
+    mkdir -p
 }
 
 desk() {
@@ -103,8 +114,6 @@ prog() {
     cs ~/programming
 }
 
-alias mkp='mkdir -p'
-alias ls='ls --color=auto'
 alias ~="cs ~"
 alias u1="cs .."
 alias u2="cs ../.."
