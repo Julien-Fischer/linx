@@ -150,24 +150,6 @@ upgrade_aliases() {
 }
 
 ##############################################################
-# APT (change as needed when using a different package manager)
-##############################################################
-
-alias autorem='sudo apt autoremove'
-alias update='sudo apt update'
-alias upgrade='sudo apt update && sudo apt upgrade'
-alias sup='sudo apt update && sudo apt upgrade -y && autorem'
-alias install='sudo apt install'
-alias remove='sudo apt remove'
-alias search='apt search'
-alias pls='sudo'
-
-# Execute the last command with sudo
-please() {
-    sudo $(history -p !!)
-}
-
-##############################################################
 # Bash
 ##############################################################
 
@@ -211,6 +193,24 @@ drives() {
 alias ports='nmap localhost'
 alias getip='curl ipinfo.io/ip && echo ""'
 alias netstat='netstat -tuln'
+
+##############################################################
+# APT (change as needed when using a different package manager)
+##############################################################
+
+alias autorem='sudo apt autoremove'
+alias update='sudo apt update'
+alias upgrade='sudo apt update && sudo apt upgrade'
+alias sup='sudo apt update && sudo apt upgrade -y && autorem'
+alias install='sudo apt install'
+alias remove='sudo apt remove'
+alias search='apt search'
+alias pls='sudo'
+
+# Execute the last command with sudo
+please() {
+    sudo $(history -p !!)
+}
 
 ##############################################################
 # Git
