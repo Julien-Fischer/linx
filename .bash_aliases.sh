@@ -217,6 +217,7 @@ alias netstat='netstat -tuln'
 
 alias gl='git log'
 alias glo='git log --oneline'
+alias glot='git log --pretty=format:"%h %ad %an %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit'
 alias gs='git status'
 alias ga='git add .'
 alias gc='git commit -m' # <message>
