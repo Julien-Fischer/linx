@@ -219,7 +219,11 @@ alias gl='git log'
 alias glo='git log --oneline'
 alias gs='git status'
 alias ga='git add .'
-alias gc='git commit -m'
+alias gc='git commit -m' # <message>
 alias gp='git push'
 alias gr='git reset --soft HEAD~1' # Reset local branch to the state before the last commit
 alias gpf='git push --force origin' # <branch_name>  Replace the latest pushed commit with this one
+alias gac='git add . && git commit -m' # <message>
+gap() {
+  gac "${1}" && gp
+}
