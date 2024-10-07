@@ -232,3 +232,9 @@ alias gac='git add . && git commit -m' # <message>
 gap() {
   gac "${1}" && gp
 }
+alias gtree='git log --oneline --graph --decorate'
+alias gtree_all='gtree --all'
+alias gstash='git add . && git stash'
+# Permanently remove old, unreferenced commits
+# /!\ Be cautious when using this command, as it permanently removes commits from your repository.
+alias gclear='git reflog expire --expire=now --all && git gc --prune=now'
