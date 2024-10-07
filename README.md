@@ -52,6 +52,8 @@ This setup was primarily tested on Kubuntu 24 and Debian 12.
 
 Most of the functions/aliases defined in this project should be compatible with Debian-based distributions.
 
+If you wish to improve this project or if you notice any bug, feel free to contact me or open a pull request.
+
 ## License
 
 This project is released under the [MIT License](https://opensource.org/licenses/MIT).
