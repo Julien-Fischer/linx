@@ -176,6 +176,9 @@ cpv() {
 # System
 ##############################################################
 
+# Debian
+# dbus-send --type=method_call --print-reply --dest=org.gnome.ScreenSaver /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock
+# Kubuntu
 alias bye='dbus-send --print-reply --dest=org.freedesktop.ScreenSaver /org/freedesktop/ScreenSaver org.freedesktop.ScreenSaver.Lock'
 alias byebye='systemctl poweroff'
 alias reboot='systemctl reboot'
@@ -218,7 +221,7 @@ please() {
 
 alias gl='git log'
 alias glo='git log --oneline'
-alias glot='git log --pretty=format:"%h %ad %an %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit'
+alias glot='git log --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit'
 alias gs='git status'
 alias ga='git add .'
 alias gc='git commit -m' # <message>
