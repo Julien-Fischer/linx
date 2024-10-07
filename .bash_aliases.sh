@@ -43,7 +43,7 @@ typeof() {
 }
 
 # @description Ask a question to perplexity.ai
-# @param $1 the question to get an answer to
+# @param $1 the question to be answered
 # @example
 #   ask "What time is it in London right now?"
 ask() {
