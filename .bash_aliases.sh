@@ -2,6 +2,12 @@
 # See the LICENSE file in the project root for more information.
 
 ##############################################################
+# Config
+##############################################################
+
+export PROMPT_TO_BOTTOM=0
+
+##############################################################
 # Misc
 ##############################################################
 
@@ -243,3 +249,14 @@ alias gstash='git add . && git stash'
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
 alias gclear='git reflog expire --expire=now --all && git gc --prune=now'
+
+##############################################################
+# Custom ENV variables
+##############################################################
+
+if [[ $PROMPT_TO_BOTTOM -eq 0 ]]; then
+    prompt_to_bottom() {
+        tput cup $LINES
+    }
+    PROMPT_COMMAND=prompt_to_bottom
+fi
