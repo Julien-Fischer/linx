@@ -52,10 +52,10 @@ This function will:
 
 This setup was primarily tested on Kubuntu 24 and Debian 12.
 
-Most of the functions/aliases defined in this project should be compatible with Debian-based distributions.
-Some feature however might need a little more work to be full Debian-compatible.
+Most of the functions and aliases defined in this project are designed to be compatible with Debian-based distributions.
+However, some features may require additional work to achieve full compatibility with Debian.
 
-If you wish to improve this project or if you notice any bug, feel free to contact me or open a pull request.
+Feel free to contact me or open a pull request if you need further adjustments.
 
 ## License
 
