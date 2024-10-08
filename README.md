@@ -1,10 +1,12 @@
 # About this project
 
-I’m sharing my personal setup in the hope that it may be beneficial to others. This Bash configuration file
-is designed to automate repetitive tasks (such as constantly executing `ls` after `cd`) and shorten lengthy commands. 
+I’m sharing my personal setup in the hope that it may be beneficial to others. This project is designed to automate 
+repetitive tasks (such as constantly executing `ls` after `cd`) and shorten lengthy commands. 
 It contains functions and aliases that I regularly update based on my needs on Kubuntu 24 and Debian 12.
 
 Contributions and feedbacks are welcome.
+
+![Live Demo](./demo.gif)
 
 ## Installation instructions
 
@@ -51,6 +53,7 @@ This function will:
 This setup was primarily tested on Kubuntu 24 and Debian 12.
 
 Most of the functions/aliases defined in this project should be compatible with Debian-based distributions.
+Some feature however might need a little more work to be full Debian-compatible.
 
 If you wish to improve this project or if you notice any bug, feel free to contact me or open a pull request.
 
