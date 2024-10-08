@@ -97,8 +97,7 @@ alias ls='ls --color=auto'
 
 # navigate to the specified directory and print its content
 cs() {
-    echo "${1}"
-    cd "${1}" && ls -A --color -F --group-directories-first
+    cd "${1}" && pwd && ls -A --color -F --group-directories-first
 }
 
 # Create the specified directory and its ancestors if they do not exist yet, then change
