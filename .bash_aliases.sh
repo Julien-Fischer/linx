@@ -109,7 +109,7 @@ mkcs() {
 }
 
 mkp() {
-    mkdir -p
+    mkdir -p "${1}"
 }
 
 desk() {
