@@ -1,5 +1,6 @@
 # This file is licensed under the MIT License.
-# See the LICENSE file in the project root for more information.
+# See the LICENSE file in the project root for more information:
+# https://github.com/Julien-Fischer/bash_aliases/blob/master/LICENSE
 
 ##############################################################
 # Config
