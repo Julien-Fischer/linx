@@ -233,6 +233,40 @@ please() {
     sudo $(history -p !!)
 }
 
+# @description Determines whether a software is installed on this system
+# @param $1 the software name
+# @return 0 if the software is installed; 1 otherwise
+# @example
+#   is_installed firefox
+is_installed() {
+    local software="${1}"
+    local quiet="${2:-1}"
+    if dpkg -l | grep -qw "${software}"; then
+        local location=$(which "${software}")
+        echo "${software} is installed at ${location}"
+        return 0
+    else
+        [[ ! $quiet ]] && echo "${software} is not installed."
+        return 1
+    fi
+}
+
+# @description Upgrades the specified software to the latest version
+# @param $1 the software to upgrade
+# @return 0 if the software was installed; 1 otherwise
+# @example
+#   upgrade_only firefox
+upgrade_only() {
+    local software="${1}"
+    if ! is_installed "${software}" -q; then
+        echo -e "\033[31mE: ${software} needs to be installed first.\033[0m"
+        echo "Looking for ${software} on APT:"
+        apt search "${software}"
+        return 1
+    fi
+    sudo apt update && sudo apt install --only-upgrade "${software}"
+}
+
 ##############################################################
 # Git
 ##############################################################
