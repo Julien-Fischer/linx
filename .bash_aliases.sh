@@ -168,9 +168,31 @@ alias clr='clear'
 alias cls='clear'
 alias c='clear'
 alias grep="grep --color=auto"
-alias findf='find . -type f -name'
-alias findd='find . -type d -name'
 alias gh='history | grep'
+
+# @description Finds a file recursively in the specified directory, or the current directory by default
+# @param $1 the name of the file to look for
+# @param $2 (optional) the current directory
+# @example
+#   findf ".bash"
+#   findf ".bash" "/"
+findf() {
+    local name="${1}"
+    local directory="${2:-.}"
+    sudo find "${directory}" -type f -name "*${name}*" 2>/dev/null | grep "${name}"
+}
+
+# @description Finds a directory recursively starting from the current directory (by default), or the specified directory if one is provided
+# @param $1 the name of the file to look for
+# @param $2 (optional) the current directory
+# @example
+#   findf ".bash"
+#   findf ".bash" "/"
+findd() {
+    local name="${1}"
+    local directory="${2:-.}"
+    sudo find "${directory}" -type d -name "*${name}*" 2>/dev/null
+}
 
 # @description Copy files with a progress bar
 # @param $1 the file or directory to copy
