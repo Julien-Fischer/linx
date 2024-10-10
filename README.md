@@ -6,6 +6,41 @@ It contains functions and aliases that I regularly update based on my needs on K
 
 Contributions and feedbacks are welcome.
 
+## Features
+
+- Navigate to the home directory and pretty print its content
+
+Without this project
+```
+cd ~
+pwd
+ls -AF --color --group-directories-first
+```
+
+With this project
+```
+~
+```
+
+- Push all changes from stating to the remote
+
+Without this project
+```
+git add .
+git commit -m "feat: msg..."
+git push
+```
+
+With this project
+```
+gap "feat: msg..."
+```
+
+There are many other features. But more importantly, you can now be polite when shutting down your PC:
+```
+byebye
+```
+
 ![Live Demo](./demo.gif)
 
 ## Installation instructions
