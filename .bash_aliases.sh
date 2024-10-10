@@ -191,7 +191,7 @@ findf() {
 findd() {
     local name="${1}"
     local directory="${2:-.}"
-    sudo find "${directory}" -type d -name "*${name}*" 2>/dev/null
+    sudo find "${directory}" -type d -name "*${name}*" 2>/dev/null | grep "${name}"
 }
 
 # @description Copy files with a progress bar
