@@ -164,6 +164,37 @@ upgrade_aliases() {
     echo "Upgrade successful."
 }
 
+# @description manages Terminator terminal profiles. This function assumes that a $TPROFILES env variable is defined (typically in ~\.bashrc)
+# @param $1  (optional) the profile to switch to
+# @example
+#   # List available profiles
+#   tprofile
+#   # Switch to the speci²fied profile
+#   tprofile profile_name
+tprofile() {
+    local CONFIG_DIR=~/.config/terminator/config
+    local extension=".profile"
+    local project_root="${TPROFILES}"
+    local path="${project_root}/profiles"
+    local name="${1}"
+    local file="${path}/${name}${extension}"
+    if [[ -z "${name}" ]]; then
+        echo "Available profiles:"
+        names=$(la "${path}")
+        result="${names//$extension}"
+        echo "${result}"
+        return 1
+    fi
+    if [[ ! -f "${file}" ]]; then
+        echo "${file} profile not found."
+        return 1
+    fi
+    cp "${file}" "${CONFIG_DIR}"
+    echo "${name}" > "${project_root}/CURRENT_PROFILE"
+    reload
+    echo "Switched to ${name} profile."
+}
+
 ##############################################################
 # Bash
 ##############################################################
