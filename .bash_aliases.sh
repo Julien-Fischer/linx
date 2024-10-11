@@ -152,14 +152,29 @@ alias oba='open ~/.bash_aliases.sh & disown'
 # Automate aliases / functions upgrades
 # This function installs the latest version of .bash_aliases.sh from the remote repository
 upgrade_aliases() {
-    if [[ -d "bash_aliases" ]]; then
-        echo "bash_aliases already exists in this directory."
+    local dirname="bash_aliases"
+    if [[ -d "${dirname}" ]]; then
+        echo "${dirname} already exists in this directory."
         return 1
     fi
-    git clone https://github.com/Julien-Fischer/bash_aliases
+    git clone "https://github.com/Julien-Fischer/${dirname}"
     mv ~/.bash_aliases.sh ~/.bash_aliases.bak
-    cp bash_aliases/.bash_aliases.sh ~
-    rm -rf bash_aliases
+    cp "${dirname}/.bash_aliases.sh" ~
+    rm -rf "${dirname}"
+    reload
+    echo "Upgrade successful."
+}
+
+# Automate profile updgrades
+# This function installs the latest version of terminator_config from the remote repository
+upgrade_profiles() {
+    local dirname="terminator_config"
+    if [[ -d "${dirname}" ]]; then
+        echo "${dirname} already exists in this directory."
+        return 1
+    fi
+    git clone "https://github.com/julien-fischer-config/${dirname}"
+    rm -rf "${dirname}"
     reload
     echo "Upgrade successful."
 }
