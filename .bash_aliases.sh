@@ -149,7 +149,13 @@ alias ba='vim ~/.bash_aliases.sh'
 alias obr='open ~/.bashrc & disown'
 alias oba='open ~/.bash_aliases.sh & disown'
 
-
+# @description resync profiles and functions/aliases from the remote
+# @param $1 (optional) the settings to synchronize
+# @return 0 if the settings synchronized successfully; 1 otherwise
+# @example
+#   resync
+#   resync aliases
+#   resync profiles
 resync() {
     local param="${1}"
     if [[ "$#" -eq 0 || "${param}" == "aliases" ]]; then
