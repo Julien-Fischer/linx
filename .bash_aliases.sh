@@ -236,6 +236,26 @@ tprofile() {
     echo "Switched to ${name} profile."
 }
 
+list_profiles() {
+    local CONFIG_FILE="$HOME/.config/terminator/config"
+    if [[ ! -f "${CONFIG_FILE}" ]]; then
+        echo "Configuration file not found at ${CONFIG_FILE}"
+    fi
+    local reading_profiles=1
+    while IFS= read -r line; do
+        if [[ "${line}" == "[profiles]" ]]; then
+            reading_profiles=0
+            continue
+        fi
+        if [[ "${line}" =~ ^\[[^\]]+\]$ && "${line}" != "[profiles]" ]]; then
+            reading_profiles=1
+        fi
+        if [[ $reading_profiles -eq 0 && "${line}" =~ \[\[([^\]]+)\]\] ]]; then
+            echo "${BASH_REMATCH[1]}"
+        fi
+    done < "${CONFIG_FILE}"
+}
+
 ##############################################################
 # Bash
 ##############################################################
