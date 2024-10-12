@@ -270,6 +270,8 @@ alias cls='clear'
 alias c='clear'
 alias grep="grep --color=auto"
 alias gh='history | grep'
+alias greph='history | grep'
+alias grepa='alias | grep'
 
 # @description Finds a file recursively in the specified directory, or the current directory by default
 # @param $1 the name of the file to look for
