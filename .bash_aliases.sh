@@ -169,34 +169,40 @@ resync() {
     return 0
 }
 
-# Automate aliases / functions upgrades
-# This function installs the latest version of .bash_aliases.sh from the remote repository
+# @description Install the latest version of .bash_aliases.sh from the remote repository
 upgrade_aliases() {
-    local dirname="bash_aliases"
-    if [[ -d "${dirname}" ]]; then
-        echo "${dirname} already exists in this directory."
+    local DIRNAME="bash_aliases"
+    local REPOSITORY="https://github.com/Julien-Fischer/${DIRNAME}"
+    if [[ -d "${DIRNAME}" ]]; then
+        echo "${DIRNAME} already exists in this directory."
         return 1
     fi
-    git clone "https://github.com/Julien-Fischer/${dirname}"
-    mv ~/.bash_aliases.sh ~/.bash_aliases.bak
-    cp "${dirname}/.bash_aliases.sh" ~
-    rm -rf "${dirname}"
-    reload
-    echo "Upgrade successful."
+    if git clone "${REPOSITORY}"; then
+        cp ~/.bash_aliases.sh ~/.bash_aliases.bak
+        cp "${DIRNAME}/.bash_aliases.sh" ~
+        rm -rf "${DIRNAME}"
+        reload
+        echo "Upgrade successful."
+    else
+        echo "Upgrade failed"
+    fi
 }
 
-# Automate profile updgrades
-# This function installs the latest version of terminator_config from the remote repository
+# @description Install the latest version of terminator_config from the remote repository
 upgrade_profiles() {
-    local dirname="terminator_config"
-    if [[ -d "${dirname}" ]]; then
-        echo "${dirname} already exists in this directory."
+    local DIRNAME="terminator_config"
+    local REPOSITORY="https://github.com/julien-fischer-config/${DIRNAME}"
+    if [[ -d "${DIRNAME}" ]]; then
+        echo "${DIRNAME} already exists in this directory."
         return 1
     fi
-    git clone "https://github.com/julien-fischer-config/${dirname}"
-    rm -rf "${dirname}"
-    reload
-    echo "Upgrade successful."
+    if git clone "${REPOSITORY}"; then
+        rm -rf "${DIRNAME}"
+        reload
+        echo "Upgrade successful."
+    else
+        echo "Upgrade failed"
+    fi
 }
 
 # @description manages Terminator terminal profiles. This function assumes that a $TPROFILES env variable is defined (typically in ~\.bashrc)
