@@ -242,6 +242,7 @@ list_profiles() {
         echo "Configuration file not found at ${CONFIG_FILE}"
     fi
     local reading_profiles=1
+    local profiles=()
     while IFS= read -r line; do
         if [[ "${line}" == "[profiles]" ]]; then
             reading_profiles=0
@@ -251,9 +252,13 @@ list_profiles() {
             reading_profiles=1
         fi
         if [[ $reading_profiles -eq 0 && "${line}" =~ \[\[([^\]]+)\]\] ]]; then
-            echo "${BASH_REMATCH[1]}"
+            profiles+=("${BASH_REMATCH[1]}")
         fi
     done < "${CONFIG_FILE}"
+    echo "${#profiles[@]} profiles:"
+    for profile in "${profiles[@]}"; do
+        echo "- ${profile}"
+    done
 }
 
 ##############################################################
