@@ -149,6 +149,20 @@ alias ba='vim ~/.bash_aliases.sh'
 alias obr='open ~/.bashrc & disown'
 alias oba='open ~/.bash_aliases.sh & disown'
 
+
+resync() {
+    local param="${1}"
+    if [[ "$#" -eq 0 || "${param}" == "aliases" ]]; then
+        upgrade_aliases
+        return $?
+    fi
+    if [[ "$#" -eq 0 || "${param}" == "profiles" ]]; then
+        upgrade_profiles
+        return $?
+    fi
+    return 0
+}
+
 # Automate aliases / functions upgrades
 # This function installs the latest version of .bash_aliases.sh from the remote repository
 upgrade_aliases() {
