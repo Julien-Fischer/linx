@@ -261,6 +261,41 @@ list_profiles() {
     done
 }
 
+print_profile() {
+    local profile_name="${1}"
+    local CONFIG_FILE="$HOME/.config/terminator/config"
+    if [[ ! -f "${CONFIG_FILE}" ]]; then
+        echo "Configuration file not found at ${CONFIG_FILE}"
+    fi
+    local reading_profiles=1
+    local reading_target_profile=1
+    local styles=()
+    while IFS= read -r line; do
+        if [[ "${line}" == "[profiles]" ]]; then
+            reading_profiles=0
+            continue
+        fi
+        if [[ $reading_profiles -eq 0 && "${line}" =~ \[\[[^\]]+\]\] ]]; then
+            if [[ "${line}" =~ [[:space:]]*\[${profile_name}\][[:space:]]* ]]; then
+                reading_target_profile=0
+            elif [[ $reading_target_profile -eq 0 ]]; then
+                reading_target_profile=1
+            fi
+            continue
+        fi
+        if [[ $reading_target_profile -eq 0  ]]; then
+            styles+=("${line}")
+        fi
+    done < "${CONFIG_FILE}"
+    if [[ "${#styles[@]}" -gt 0 ]]; then
+        for style in "${styles[@]}"; do
+            echo "${style}"
+        done
+    else
+        echo -e "\033[31mE:\033[0m Could not find profile ${profile_name} in ${CONFIG_FILE}."
+    fi
+}
+
 ##############################################################
 # Bash
 ##############################################################
@@ -387,7 +422,7 @@ is_installed() {
 upgrade_only() {
     local software="${1}"
     if ! is_installed "${software}" -q; then
-        echo -e "\033[31mE: ${software} needs to be installed first.\033[0m"
+        echo -e "\033[31mE:\033[0m ${software} needs to be installed first."
         echo "Looking for ${software} on APT:"
         apt search "${software}"
         return 1
