@@ -11,7 +11,7 @@ To sync your configuration, simply type `linx sync`, and Linx will handle the re
 
 ## Features
 
-Version `1.0.0-beta` of Linx offers the following features:
+Version `1.0.0-alpha` of Linx offers the following features:
 
 - A comprehensive set of functions and aliases that minimize the time and effort required for directory navigation, file management, and common task execution
 - Shortcuts for frequently accessed directories such as home, desktop, and dev, allowing users to quickly jump to desired locations
