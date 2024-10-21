@@ -519,6 +519,13 @@ glast() {
     glot | head -$n
 }
 
+alias gshow='git show'
+
+gstat() {
+    local hash="${1}"
+    git show "${hash}" --stat
+}
+
 # Changes visualization
 
 alias gs='git status'
