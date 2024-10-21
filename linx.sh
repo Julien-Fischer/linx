@@ -157,6 +157,7 @@ foss() {
     request_dir "${FOSS}" "FOSS"
 }
 
+alias ,="cs /"
 alias ~="cs ~"
 alias u1="cs .."
 alias u2="cs ../.."
