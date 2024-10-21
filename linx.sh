@@ -563,6 +563,19 @@ gsl() {
     git stash list
 }
 
+# @description drops a stash entry
+# @param $1 (optional) the zero-based index of the stash entry to drop, or the last one if no index is specified
+# @example
+#   gsd
+#   gsd 1
+#   gsd 5
+gsd() {
+    local index="${1:-0}"
+    if [[ -n $index ]]; then
+        git stash drop stash@\{"${index}"\}
+    fi
+}
+
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
 alias gclear='git reflog expire --expire=now --all && git gc --prune=now'
