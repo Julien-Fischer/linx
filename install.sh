@@ -87,9 +87,9 @@ installed() {
 }
 
 timestamp() {
-    local ds="${1:-'-'}"
-    local dts="${2:- }"
-    local ts="${3:-':'}"
+    local ds="${1-'-'}"
+    local dts="${2-' '}"
+    local ts="${3-':'}"
     date "+%Y${ds}%m${ds}%d${dts}%H${ts}%M${ts}%S"
 }
 
