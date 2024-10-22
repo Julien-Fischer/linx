@@ -123,6 +123,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 #### Optional (but recommended)
 - Terminator
 - Tree
+- curl (for browsing the web from the terminal)
 - Neofetch
 - mkf (Make File)
 

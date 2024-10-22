@@ -76,6 +76,21 @@ search() {
     firefox -search "${1}"
 }
 
+# @description Translate the following word
+# @param $1 the word to translate
+# @param $2 (optional) the source language (French by default)
+# @param $3 (optional) the target language (English by default)
+# @example
+#   command                output
+#   translate salut        hi
+#   translate schön de en  nice
+translate() {
+    local query="${1}"
+    local src="${2:-fr}"
+    local dest="${3:-en}"
+    curl -s "https://api.mymemory.translated.net/get?q=${query}&langpair=${src}|${dest}" | jq '.responseData.translatedText'
+}
+
 ##############################################################
 # Visualization
 ##############################################################
