@@ -451,7 +451,7 @@ gl() {
 }
 
 # @description Git log (one-line)
-# @param $1 (optional) asc to sort the log by ascending order
+# @param $1 (optional) asc to sort the log by ascending order, or the name of the branch
 glo() {
     gl "$@" --oneline
 }
@@ -516,7 +516,33 @@ alias gac='git add . && git commit -m' # <message>
 gap() {
   gac "${1}" && gp
 }
-alias gr='git reset --soft HEAD~1' # Reset local branch to the state before the last commit
+
+# @description Reset the local branch to the state before the last commit, or reset n commits starting from the HEAD if an integer is specified
+# @param $1 (optional) the number of commits to reset
+# examples
+#   gr    # reset the last commit
+#   gr 3  # reset first 3 commits
+gr() {
+  local n=${1:-1}
+  local current_branch=$(git branch --show-current)
+  if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
+      echo "Error: Please provide a positive integer for the number of commits to reset."
+      return 1
+  fi
+  local total_commits=$(git rev-list --count HEAD)
+  if [[ "$total_commits" -eq 1 ]]; then
+      echo "Error: Cannot reset to the previous commit since there is only one commit in ${current_branch}"
+      return 1
+  fi
+  if [[ "$n" -ge "$total_commits" ]]; then
+      echo "Error: Cannot reset $n commits since there are only $total_commits commits in ${current_branch}"
+      return 1
+  fi
+  git reset --soft HEAD~$n
+  echo "Successfully reset $n commits in ${current_branch}"
+}
+
+#alias gr='git reset --soft HEAD~1' # Reset local branch to the state before the last commit
 alias gpf='git push --force origin' # <branch_name>  Replace the latest pushed commit with this one
 
 # @description Stage all changes, commit them with the specified message, and force push the commit
