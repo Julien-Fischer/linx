@@ -585,6 +585,9 @@ gsd() {
     fi
 }
 
+alias gck="git checkout" # <branch_name>
+alias gcb="git checkout -b" # <branch_name>
+
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
 alias gclear='git reflog expire --expire=now --all && git gc --prune=now'
