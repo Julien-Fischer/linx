@@ -124,6 +124,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 - Terminator
 - Tree
 - curl (for browsing the web from the terminal)
+- jq (for JSON parsing)
 - Neofetch
 - mkf (Make File)
 
