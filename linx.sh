@@ -402,6 +402,8 @@ bat() {
 alias ports='nmap localhost'
 alias getip='curl ipinfo.io/ip && echo ""'
 alias netstat='netstat -tuln'
+# List active ports
+alias port='lsof -i -n | grep LISTEN'
 
 ##############################################################
 # APT (change as needed when using a different package manager)
