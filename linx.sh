@@ -319,17 +319,6 @@ findd() {
     sudo find "${directory}" -type d -name "*${name}*" 2>/dev/null | grep "${name}"
 }
 
-# @description Copy files with a progress bar
-# @param $1 the file or directory to copy
-# @param $2 the destination
-# @return 0 if the operation completed successfully; 1+ otherwise
-# @example
-#   cpv projects dirA  # copies projects into dirA
-#   cpv projects/ dirA  # copies all files and directories from projects into dirA
-cpv() {
-    rsync -ah --info=progress2
-}
-
 ##############################################################
 # Accounts
 ##############################################################

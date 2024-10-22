@@ -100,6 +100,20 @@ is_sourced() {
     return 0
 }
 
+
+# @description Copy files with a progress bar
+# @param $1 the file or directory to copy
+# @param $2 the destination
+# @return 0 if the operation completed successfully; 1+ otherwise
+# @example
+#   cpv projects dirA  # copies projects into dirA
+#   cpv projects/ dirA  # copies all files and directories from projects into dirA
+cpv() {
+    local src="${1}"
+    local dest="${2:-.}"
+    rsync "${src}" "${dest}" -ah --info=progress2 --partial
+}
+
 # @description Backup the element identified by the specified path. If the element to backup is a directory, copy it recursively
 # @param $1 the file or directory to backup
 # @param $2 (optional) an arbitrary string to use as a prefix for the backup name
