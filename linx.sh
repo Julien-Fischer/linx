@@ -187,22 +187,6 @@ alias ba='vim ~/linx.sh'
 alias obr='open ~/.bashrc & disown'
 alias oba='open ~/linx.sh & disown'
 
-# @description Synchronize the local linx installation with the latest version from the remote
-# @return 0 if the configuration was synchronized successfully; 1 otherwise
-linx() {
-    local action="${1}"
-    if [[ "${action}" != "sync" ]]; then
-        echo "Usage: linx sync"
-        return 1
-    fi
-    if install_core; then
-        echo "${PROJECT} successfully synced"
-    else
-        echo "${PROJECT}: failed to sync"
-        return 1
-    fi
-}
-
 # @description Prompts the user for approval
 # @param $1 The action to be confirmed
 # @param $2 The prompt message for the user

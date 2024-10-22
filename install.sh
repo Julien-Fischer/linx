@@ -11,7 +11,8 @@
 PROJECT="linx"
 FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
-BACKUP_COMMAND="commands/backup.sh"
+BACKUP_COMMAND="backup"
+LINX_COMMAND="linx"
 TERMINATOR_DIR=~/.config/terminator
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
@@ -167,6 +168,13 @@ install_dependency() {
             sudo apt install "${software}"
         fi
     fi
+}
+
+install_command() {
+    local command_name="${1}"
+    local filepath="commands/${command_name}.sh"
+    chmod +x "${filepath}"
+    sudo cp "${filepath}" /usr/local/bin/"${command_name}"
 }
 
 get_goal() {
@@ -357,9 +365,9 @@ install_core() {
     if git clone "${REPOSITORY}"; then
         INSTALL_DIR="$(current_dir "$@")/${PROJECT}"
         cd "${INSTALL_DIR}" || return 1
-        # Install backup command
-        chmod +x "${BACKUP_COMMAND}"
-        sudo cp "${BACKUP_COMMAND}" /usr/local/bin/backup
+        # Install linx-native commands
+        install_command "${LINX_COMMAND}"
+        install_command "${BACKUP_COMMAND}"
         # Update terminator settings
         mkdir -p "${TERMINATOR_DIR}"
         backup "${TERMINATOR_CONFIG_FILE}" -q
