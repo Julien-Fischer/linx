@@ -508,7 +508,10 @@ glast() {
     glot | head -$n
 }
 
-alias gshow='git show'
+gshow() {
+    local hash="${1}"
+    git show "${hash}"
+}
 
 gstat() {
     local hash="${1}"
