@@ -11,6 +11,7 @@
 PROJECT="linx"
 FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
+BACKUP_COMMAND="commands/backup.sh"
 TERMINATOR_DIR=~/.config/terminator
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
@@ -100,7 +101,6 @@ is_sourced() {
     return 0
 }
 
-
 # @description Copy files with a progress bar
 # @param $1 the file or directory to copy
 # @param $2 the destination
@@ -112,125 +112,6 @@ cpv() {
     local src="${1}"
     local dest="${2:-.}"
     rsync "${src}" "${dest}" -ah --info=progress2 --partial
-}
-
-# @description Backup the element identified by the specified path. If the element to backup is a directory, copy it recursively
-# @param $1 the file or directory to backup
-# @param $2 (optional) an arbitrary string to use as a prefix for the backup name
-# @flag -n if the filename must be dropped (requires that at least -t or $2 are specified)
-# @flag -q if this operation should mute outputs
-# @flag -r if the prefix should be used as a suffix, and the timestamp as a prefix
-# @flag -t if the backup name should be timestamped
-# @flag -z if the date prefix should have not separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires that -t is specified)
-# @return 0 if the operation completed successfully; 1 otherwise
-# @example
-#   backup mydir          # create a copy of mydir, named mydir.bak
-#   backup mydir -q dirA  # backup mydir, quietly
-#   backup myfile -t      # create a copy of myfile with a timestamp as suffix (e.g. myfile_2024-09-03_09-53-42.bak
-#   backup myfile -t -r   # create a copy of myfile with a timestamp as prefix (e.g. 2024-09-03_09-53-42_myfile.bak
-#   backup mydir backup   # create a copy of myfile with backup as a prefix: backup_mydir
-backup() {
-    local SEPARATOR="_"
-    local source=$(trim_slash "${1}")
-    local prefix="${2}"
-    local quiet=1
-    local use_time=1
-    local time=""
-    local reverse=1
-    local drop_name=1
-    local compact=1
-    local name=$(basename "${source}")
-    local path=$(dirname "${source}")
-    local complete_name=
-    local target=
-
-    if [[ -z "${source}" ]]; then
-        echo "Usage: backup <filepath|dirpath> [prefix] [-nqrtz]"
-        return 1
-    fi
-
-    if [[ "${prefix}" == "-"* ]]; then
-        prefix=''
-    fi
-
-    shift
-    if [[ -n "${prefix}" ]]; then
-        shift
-    fi
-
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -t|--time)
-                use_time=0
-                shift
-                ;;
-            -r|--reverse)
-                reverse=0
-                shift
-                ;;
-            -q|--quiet)
-                quiet=0
-                shift
-                ;;
-            -n)
-                drop_name=0
-                shift
-                ;;
-            -z)
-                compact=0
-                shift
-                ;;
-            *)
-                shift
-                ;;
-        esac
-    done
-
-    if [[ $use_time -eq 0 ]]; then
-        if [[ $compact -eq 0 ]]; then
-            time=$(timestamp '' '' '')
-        else
-            time=$(timestamp - _ -)
-        fi
-    fi
-
-    local sep_a=${time:+$SEPARATOR}
-    local sep_b=${prefix:+$SEPARATOR}
-
-    if [[ $drop_name -eq 0 ]]; then
-        if [[ $use_time -ne 0 && "${prefix}" -ne 0 ]]; then
-            echo -e "\033[31mE:\033[0m -n requires that at least -t or \$2 are specified"
-            return 1
-        else
-            name=""
-            sep_a=""
-            if [[ $use_time -eq 1 ]]; then
-                sep_b=""
-            fi
-        fi
-    fi
-
-    if [[ $reverse -eq 0 ]]; then
-        complete_name="${time}${sep_a}${name}${sep_b}${prefix}"
-    else
-        complete_name="${prefix}${sep_b}${name}${sep_a}${time}"
-    fi
-
-    complete_name+=".bak"
-    target="${path}/${complete_name}"
-
-    if [[ -f "${source}" ]]; then
-        sudo cp "${source}" "${target}"
-        [[ $quiet -eq 0 ]] && echo "Backed up [file] ${source} at ${target}"
-        return 0
-    fi
-    if [[ -d "${source}" ]]; then
-        sudo cp -r "${source}" "${target}"
-        [[ $quiet -eq 0 ]] && echo "Backed up [dir] ${source} at ${target}"
-        return 0
-    fi
-    [[ $quiet -eq 0 ]] && echo "Could not find any file or directory at ${source}"
-    return 1
 }
 
 # @description Delete the element identified by the specified path. Supports regular files and directories.
@@ -476,6 +357,9 @@ install_core() {
     if git clone "${REPOSITORY}"; then
         INSTALL_DIR="$(current_dir "$@")/${PROJECT}"
         cd "${INSTALL_DIR}" || return 1
+        # Install backup command
+        chmod +x "${BACKUP_COMMAND}"
+        sudo cp "${BACKUP_COMMAND}" /usr/local/bin/backup
         # Update terminator settings
         mkdir -p "${TERMINATOR_DIR}"
         backup "${TERMINATOR_CONFIG_FILE}" -q
@@ -531,6 +415,8 @@ install_dependencies() {
 install_linx() {
     echo "this will install ${PROJECT} on your system."
     confirm "Installation" "Proceed?" --abort
+    sudo cp commands/backup.sh /usr/local/bin/backup
+    sudo chmod +x /usr/local/bin/backup
     update_bashrc
     if ! install_core "$@"; then
         return 1
