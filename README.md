@@ -63,6 +63,15 @@ profiles
 profiles contrast
 ```
 
+- **(Linx) Securely backup your files and directories**
+```
+backup <filepath|dirpath> [prefix] [-nqrtz]
+# example:
+backup mydir -t -r
+# result:
+2022-10-22_19-35-54_mydir.bak
+```
+
 - **(Linx) Synchronize your setup on this device**
 ```
 linx sync
