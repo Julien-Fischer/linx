@@ -402,8 +402,21 @@ bat() {
 alias ports='nmap localhost'
 alias getip='curl ipinfo.io/ip && echo ""'
 alias netstat='netstat -tuln'
-# List active ports
-alias port='lsof -i -n | grep LISTEN'
+
+# @description list listening ports
+# @flag -a|--all List all ports
+# @example
+#   port
+#   port -a
+#   port --all
+port() {
+    local param="${1}"
+    if [[ "${param}" == "-a" || "${param}" == "--all" ]]; then
+        lsof -i -n
+    else
+        lsof -i -n | grep LISTEN
+    fi
+}
 
 ##############################################################
 # APT (change as needed when using a different package manager)
