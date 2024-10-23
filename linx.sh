@@ -404,19 +404,43 @@ alias getip='curl ipinfo.io/ip && echo ""'
 alias netstat='netstat -tuln'
 
 # @description list listening ports
+# @param $1 (optional) to filter by process name
 # @flag -a|--all List all ports
 # @example
 #   port
 #   port -a
 #   port --all
 port() {
-    local param="${1}"
-    if [[ "${param}" == "-a" || "${param}" == "--all" ]]; then
-        lsof -i -n
+    local show_all="${1:-1}"
+    local filter=
+    local output=
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -a|--all)
+                show_all=0
+                shift
+                ;;
+            *)
+                filter="${1}"
+                shift
+                ;;
+        esac
+    done
+
+    if [[ "${show_all}" -eq 0 || "${show_all}" -eq 0 ]]; then
+        output=$(lsof -i -n)
     else
-        lsof -i -n | grep LISTEN
+        output=$(lsof -i -n | grep -E "LISTEN|ESTABLISHED")
+    fi
+
+    if [[ -n "${filter}" ]]; then
+        echo "${output}" | grep -i "${filter}"
+    else
+        echo "${output}"
     fi
 }
+
 
 ##############################################################
 # APT (change as needed when using a different package manager)
