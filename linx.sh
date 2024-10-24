@@ -557,7 +557,6 @@ gr() {
   echo "Successfully reset $n commits in ${current_branch}"
 }
 
-#alias gr='git reset --soft HEAD~1' # Reset local branch to the state before the last commit
 alias gpf='git push --force origin' # <branch_name>  Replace the latest pushed commit with this one
 
 # @description Stage all changes, commit them with the specified message, and force push the commit
