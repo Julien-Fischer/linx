@@ -26,6 +26,7 @@ THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 
 export COMMANDS=("linx" "backup" "port")
 
+# Basic ANSI colors with no styles (bold, italic, etc)
 export RED='\033[0;31m'
 export GREEN='\033[0;32m'
 export YELLOW='\033[0;33m'

@@ -49,11 +49,7 @@ port() {
         esac
     done
 
-    yellow="\033[1;33m"
-    red="\033[1;31m"
-    none="\033[0m"
-
-    lsof -i -n | awk -v yellow="$yellow" -v red="$red" -v none="$none" \
+    lsof -i -n | awk -v yellow="${YELLOW}" -v red="${RED}" -v none="${NC}" \
                       -v filter_type="$filter_type" -v filter_value="$filter_value" '
     BEGIN {
         OFS = " "
