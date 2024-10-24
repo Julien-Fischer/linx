@@ -26,6 +26,15 @@ THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 
 export COMMANDS=("linx" "backup" "port")
 
+export RED='\033[0;31m'
+export GREEN='\033[0;32m'
+export YELLOW='\033[0;33m'
+export BLUE='\033[0;34m'
+export MAGENTA='\033[0;35m'
+export CYAN='\033[0;36m'
+export NC='\033[0m'
+
+
 ##############################################################
 # Utils
 ##############################################################
@@ -148,6 +157,12 @@ current_dir() {
     fi
 }
 
+color() {
+    local subject="${1}"
+    local clr="${2:-"${RED}"}"
+    echo "${subject}${clr}${NC}"
+}
+
 request_dir() {
     local var="${1}"
     local var_name="${2}"
@@ -221,7 +236,7 @@ install_terminator_config() {
             default_theme="${TERMINATOR_DEFAULT_THEME_THIRD_PARTY}"
             third_party_themes_enabled=0
         else
-            echo -e "\033[31mE:\033[0m Could not clone repository ${TERMINATOR_THEMES_REPOSITORY}"
+            echo -e "$(color "E:") Could not clone repository ${TERMINATOR_THEMES_REPOSITORY}"
             return 1
         fi
     else
@@ -359,7 +374,7 @@ trim_slash() {
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
     if [[ -d "${PROJECT}" ]]; then
-        echo -e "\033[31mE:\033[0m ${PROJECT} already exists in this directory."
+        echo -e "$(color "E:") ${PROJECT} already exists in this directory."
         return 1
     fi
     if git clone "${REPOSITORY}"; then
@@ -384,12 +399,12 @@ install_core() {
         cd ..
         echo "${PROJECT}: Removing temporary files..."
         if ! rm -rf "${PROJECT}"; then
-            echo -e "\033[31mE:\033[0m Could not remove ${INSTALL_DIR} directory"
+            echo -e "$(color "E:") Could not remove ${INSTALL_DIR} directory"
         fi
         source "${HOME}/.bashrc"
         return 0
     else
-        echo -e "\033[31mE:\033[0m Could not clone repository ${REPOSITORY}"
+        echo -e "$(color "E:") Could not clone repository ${REPOSITORY}"
         return 1
     fi
 }

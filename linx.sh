@@ -237,7 +237,7 @@ profiles() {
         echo "Switched to ${profile_name} profile. Restart Terminator to apply the theme."
         return 0
     fi
-    echo -e "\033[31mE:\033[0m Could not switch to ${profile_name} profile."
+    echo -e "$(color "E:") Could not switch to ${profile_name} profile."
     return 1
 }
 
@@ -370,7 +370,7 @@ bye() {
     if command -v loginctl &> /dev/null; then
         loginctl lock-session
     else
-        echo -e "\033[31mE:\033[0m loginctl not found. Ensure you're using a system with systemd."
+        echo -e "$(color "E:") loginctl not found. Ensure you're using a system with systemd."
     fi
 }
 alias byebye='systemctl poweroff'
@@ -439,7 +439,7 @@ is_installed() {
 upgrade_only() {
     local software="${1}"
     if ! is_installed "${software}" -q; then
-        echo -e "\033[31mE:\033[0m ${software} needs to be installed first."
+        echo -e "$(color "E:") ${software} needs to be installed first."
         echo "Looking for ${software} on APT:"
         apt search "${software}"
         return 1

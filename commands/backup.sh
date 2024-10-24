@@ -94,7 +94,7 @@ backup() {
 
     if [[ $drop_name -eq 0 ]]; then
         if [[ $use_time -ne 0 && "${prefix}" -ne 0 ]]; then
-            echo -e "\033[31mE:\033[0m -n requires that at least -t or \$2 are specified"
+            echo -e "$(color "E:") -n requires that at least -t or \$2 are specified"
             return 1
         else
             name=""
