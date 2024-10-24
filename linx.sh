@@ -536,7 +536,7 @@ gap() {
 # @param $1 (optional) the number of commits to reset
 # examples
 #   gr    # reset the last commit
-#   gr 3  # reset first 3 commits
+#   gr 3  # reset the latest 3 commits
 gr() {
   local n=${1:-1}
   local current_branch=$(git branch --show-current)
