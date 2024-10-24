@@ -424,8 +424,6 @@ install_dependencies() {
 install_linx() {
     echo "this will install ${PROJECT} on your system."
     confirm "Installation" "Proceed?" --abort
-    sudo cp commands/backup.sh /usr/local/bin/backup
-    sudo chmod +x /usr/local/bin/backup
     update_bashrc
     if ! install_core "$@"; then
         return 1
