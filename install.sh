@@ -13,6 +13,7 @@ FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
 BACKUP_COMMAND="backup"
 LINX_COMMAND="linx"
+PORT_COMMAND="port"
 TERMINATOR_DIR=~/.config/terminator
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
@@ -368,6 +369,7 @@ install_core() {
         # Install linx-native commands
         install_command "${LINX_COMMAND}"
         install_command "${BACKUP_COMMAND}"
+        install_command "${PORT_COMMAND}"
         # Update terminator settings
         mkdir -p "${TERMINATOR_DIR}"
         backup "${TERMINATOR_CONFIG_FILE}" -q
