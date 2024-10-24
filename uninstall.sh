@@ -25,23 +25,27 @@ try_removing() {
 
 uninstall_command() {
     local command="${1}"
-    del /usr/local/bin/"${command}"
+    if installed "${command}" -q; then
+        del /usr/local/bin/"${command}"
+    fi
 }
-
-
-del "${CURRENT_THEME_FILE}"
-del ~/linx.sh
-del ~/.linx_lib.sh
-
-# Uninstall linx-native commands
-for command in "${COMMANDS[@]}"; do
-    uninstall_command "${command}"
-done
 
 if confirm "Removal" "Remove Terminator configuration files?"; then
     sudo rm ~/.config/terminator/*
 else
     echo "Configuration files preserved"
 fi
+
+# Uninstall linx-native commands
+for command in "${COMMANDS[@]}"; do
+    uninstall_command "${command}"
+done
+
+del "${CURRENT_THEME_FILE}"
+
+# Remove linx core
+del ~/linx.sh
+del ~/.linx_lib.sh
+
 
 echo "${project_name} was successfully uninstalled."

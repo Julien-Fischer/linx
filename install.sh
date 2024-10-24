@@ -84,7 +84,7 @@ function confirm() {
 installed() {
     local software="${1}"
     local quiet="${2:-1}"
-    if dpkg -l | grep -qw "${software}"; then
+    if dpkg -s "${software}" &> /dev/null || ls /usr/local/bin | grep -q "${software}"; then
         local location=$(which "${software}")
         if [[ $quiet -ne 0 ]]; then
             echo "${software} is installed at ${location}"
