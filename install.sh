@@ -410,17 +410,19 @@ install_core() {
     fi
 }
 
-update_bashrc() {
+update_rc_file() {
+    local rc_file="${1}"
+    local target=~/"${rc_file}"
     local WATERMARK="Created by \`linx\`"
-    readonly DATETIME="$(timestamp)"
+    DATETIME="$(timestamp)"
     # Check if the wizard should source linx in .bashrc
-    if ! grep -qF "${WATERMARK}" ~/.bashrc; then
+    if [[ -f "${target}" ]] && ! grep -qF "${WATERMARK}" "${target}"; then
         lines="\n##############################################################\n"
         lines+="# ${WATERMARK} on ${DATETIME}"
         lines+="\n##############################################################\n\n"
         lines+=$(cat config/bashrc_config)
         lines+="\n"
-        echo -e "${lines}" >> ~/.bashrc
+        echo -e "${lines}" >> "${target}"
     fi
 }
 
@@ -440,7 +442,8 @@ install_dependencies() {
 install_linx() {
     echo "this will install ${PROJECT} on your system."
     confirm "Installation" "Proceed?" --abort
-    update_bashrc
+    update_rc_file ".bashrc"
+    update_rc_file ".zshrc"
     if ! install_core "$@"; then
         return 1
     fi
