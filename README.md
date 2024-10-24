@@ -117,7 +117,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 ## Dependencies
 
 #### Required
-- Bash
+- Bash (or zsh)
 - Git (for executing upgrade and synchronization commands)
 
 #### Optional (but recommended)
