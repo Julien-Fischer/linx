@@ -11,9 +11,6 @@
 PROJECT="linx"
 FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
-BACKUP_COMMAND="backup"
-LINX_COMMAND="linx"
-PORT_COMMAND="port"
 TERMINATOR_DIR=~/.config/terminator
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
@@ -26,6 +23,8 @@ TERMINATOR_THEMES_REPOSITORY="${GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="synthwave_2"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
+
+export COMMANDS=("linx" "backup" "port")
 
 ##############################################################
 # Utils
@@ -367,9 +366,9 @@ install_core() {
         INSTALL_DIR="$(current_dir "$@")/${PROJECT}"
         cd "${INSTALL_DIR}" || return 1
         # Install linx-native commands
-        install_command "${LINX_COMMAND}"
-        install_command "${BACKUP_COMMAND}"
-        install_command "${PORT_COMMAND}"
+        for command in "${COMMANDS[@]}"; do
+            install_command "${command}"
+        done
         # Update terminator settings
         mkdir -p "${TERMINATOR_DIR}"
         backup "${TERMINATOR_CONFIG_FILE}" -q
