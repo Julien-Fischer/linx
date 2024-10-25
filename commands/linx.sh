@@ -24,12 +24,16 @@ linx() {
                 shift
                 return 0
                 ;;
+            -v|--version)
+                echo "1.0.0-alpha2"
+                return 0
+                ;;
             *)
                 shift
                 ;;
         esac
     done
-    echo "Usage: linx sync"
+    echo "Usage: linx [sync|--version]"
     return 1
 }
 
