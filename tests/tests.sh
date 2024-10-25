@@ -53,7 +53,7 @@ execute_tests() {
     local suite_color=$GREEN
     local pass_count=0
     local fail_count=0
-    echo "--------------------------------------------------"
+    print_separator
     for ((i=0; i < ${n}; i++)); do
         local func="${TESTS_TO_RUN[i]}"
         status='Failed'
@@ -76,9 +76,13 @@ execute_tests() {
         fi
 #        after_each
     done
-    echo "--------------------------------------------------"
+    print_separator
     echo -e "${GREEN}${pass_count}${NC} passed. ${RED}${fail_count}${NC} failed."
     echo -e "[$(date '+%H:%M:%S')] ${suite_color}Tests passed${NC}."
+}
+
+print_separator() {
+    echo -e "${YELLOW}_______________________________________________________________${NC}"
 }
 
 ###############################################################
