@@ -19,8 +19,8 @@ declare -a TESTS_TO_RUN=(
 readonly APP_DIR=/app/test_env
 readonly CURRENT_DATE=$(date +%Y-%m-%d)
 # output colors
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
+readonly RED='\033[1;31m'
+readonly GREEN='\033[1;32m'
 readonly BLUE='\033[1;34m'
 readonly YELLOW='\033[0;33m'
 readonly NC='\033[0m'
@@ -49,15 +49,17 @@ before_each() {
 #}
 
 execute_tests() {
+    local n=${#TESTS_TO_RUN[@]}
     local suite_color=$GREEN
     local pass_count=0
     local fail_count=0
     echo "--------------------------------------------------"
-    for func in "${TESTS_TO_RUN[@]}"; do
+    for ((i=0; i < ${n}; i++)); do
+        local func="${TESTS_TO_RUN[i]}"
         status='Failed'
         color=$RED
         before_each
-        echo -e "${YELLOW}Running${NC} ${BLUE}${func}${NC}"
+        echo -e "${i} - ${YELLOW}Running${NC} ${BLUE}${func}${NC}"
         test $func
         local passed=$?
         if [ $passed -eq 0 ]; then
@@ -69,13 +71,14 @@ execute_tests() {
             fail_count=$((fail_count + 1))
         fi
         echo -e "${color}Status: ${status}${NC}"
-        echo ""
+        if [[ $i -lt $((n - 1)) ]]; then
+            echo ""
+        fi
 #        after_each
     done
     echo "--------------------------------------------------"
     echo -e "${GREEN}${pass_count}${NC} passed. ${RED}${fail_count}${NC} failed."
     echo -e "[$(date '+%H:%M:%S')] ${suite_color}Tests passed${NC}."
-    echo ""
 }
 
 ###############################################################
