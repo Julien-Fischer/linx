@@ -643,6 +643,24 @@ alias dpsa="docker ps -a"
 alias dim="docker images"
 alias dima="docker images -a"
 
+# @description Docker Build Image from a Dockerfile
+# @param $1 an arbitrary string to use as the image name
+# @param $2 (optional) the directory where the Dockerfile is located (pwd by default)
+dbi() {
+    local image_name="${1}"
+    local directory=${2:-.}
+    docker build -t "${image_name}" "${directory}"
+}
+
+# @description Docker Build Image from a Dockerfile and run a container
+# @param $1 an arbitrary string to use as the image name
+# @param $2 (optional) the directory where the Dockerfile is located (pwd by default)
+dbis() {
+    local image_name="${1}"
+    dbi "$@"
+    docker run "${image_name}"
+}
+
 ##############################################################
 # Custom ENV variables
 ##############################################################
