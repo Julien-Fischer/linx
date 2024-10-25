@@ -453,10 +453,17 @@ upgrade_only() {
 
 # Project initialization
 
+# @description Generates a new git project with a .gitignore file
+# @param $1 the name of the project to generate
+# @param $2 (optional) --no-commit if this function should not automatically create a initial commit
 gproject() {
     local name="${1}"
+    local no_commit="${2}"
     mkcs "${name}" && git init
     echo ".idea" > .gitignore
+    if [[ "${no_commit}" != "--no-commit" ]]; then
+        git add . && git commit -m "chore: Initial commit"
+    fi
 }
 alias gin="git init"
 alias gcl="git clone"
