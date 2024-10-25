@@ -468,6 +468,11 @@ gproject() {
 alias gin="git init"
 alias gcl="git clone"
 
+# Project updates
+
+alias gft="git fetch"
+alias gpl="git pull"
+
 # Log visualization
 
 # @description Traditional git log
