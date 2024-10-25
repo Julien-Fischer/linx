@@ -451,6 +451,9 @@ upgrade_only() {
 # Git
 ##############################################################
 
+alias gin="git init"
+alias gcl="git clone"
+
 # Log visualization
 
 # @description Traditional git log
