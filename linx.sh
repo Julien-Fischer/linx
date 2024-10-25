@@ -534,7 +534,15 @@ alias gd='git diff' # <filename>
 
 # History modifications
 
-alias ga='git add .'
+# @param $1 (optional) the name of the file to stage, or nothing if all files must be staged
+ga() {
+    local filename="${1}"
+    if [[ -n "${filename}" ]]; then
+        git add "${filename}"
+    else
+        git add .
+    fi
+}
 alias gc='git commit -m' # <message>
 alias gp='git push'
 alias gac='git add . && git commit -m' # <message>
