@@ -9,6 +9,7 @@
 ##############################################################
 
 PROJECT="linx"
+INSTALL_DIR="tmp-linx-install"
 FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
 TERMINATOR_DIR=~/.config/terminator
@@ -35,6 +36,12 @@ export MAGENTA='\033[0;35m'
 export CYAN='\033[0;36m'
 export NC='\033[0m'
 
+
+##############################################################
+# Parameters
+##############################################################
+
+auto_approve=1
 
 ##############################################################
 # Utils
@@ -185,7 +192,7 @@ install_dependency() {
     local reason="${2}"
     local quiet=0
     if ! installed "${software}" $quiet; then
-        if confirm "${PROJECT}: ${software} installation" "${PROJECT}: Do you wish to install ${software} ${reason}?"; then
+        if [[ $auto_approve -ne 0 ]] && confirm "${PROJECT}: ${software} installation" "${PROJECT}: Do you wish to install ${software} ${reason}?"; then
             sudo apt install "${software}"
         fi
     fi
@@ -226,7 +233,7 @@ third_party_themes_installed() {
 
 should_install_third_party_themes() {
     local msg="${PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
-    if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || ([[ $linx_already_installed -ne 0 ]] && confirm "Third-party themes installation" "${msg}"); then
+    if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || ([[ $linx_already_installed -ne 0 ]] && ([[ $auto_approve -eq 0 ]] || confirm "Third-party themes installation" "${msg}")); then
         return 0
     else
         return 1
@@ -379,13 +386,10 @@ trim_slash() {
 # @description Sync with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
-    if [[ -d "${PROJECT}" ]]; then
-        echo -e "$(color "E:") ${PROJECT} already exists in this directory."
-        return 1
-    fi
+    mkdir -p "${INSTALL_DIR}" && cd "${INSTALL_DIR}" || return 1
     if git clone "${REPOSITORY}"; then
-        INSTALL_DIR="$(current_dir "$@")/${PROJECT}"
-        cd "${INSTALL_DIR}" || return 1
+        INSTALL_PATH="${INSTALL_DIR}/${PROJECT}"
+        cd "${PROJECT}" || return 1
         # Install linx-native commands
         for command in "${COMMANDS[@]}"; do
             install_command "${command}"
@@ -402,9 +406,9 @@ install_core() {
         cp "${FUNC_FILE_NAME}" ~
         cp "install.sh" ~/"${LIB_FILE_NAME}"
         # Clean up temp files & refresh shell session
-        cd ..
+        cd ../..
         echo "${PROJECT}: Removing temporary files..."
-        if ! rm -rf "${PROJECT}"; then
+        if ! rm -rf "${INSTALL_DIR}"; then
             echo -e "$(color "E:") Could not remove ${INSTALL_DIR} directory"
         fi
         source "${HOME}/.bashrc"
@@ -445,8 +449,11 @@ install_dependencies() {
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 #
 install_linx() {
+    if [[ "${1}" == "-y" ]]; then
+        auto_approve=0
+    fi
     echo "this will install ${PROJECT} on your system."
-    confirm "Installation" "Proceed?" --abort
+    [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
     update_rc_file ".bashrc"
     update_rc_file ".zshrc"
     if ! install_core "$@"; then
