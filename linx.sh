@@ -451,6 +451,8 @@ upgrade_only() {
 # Git
 ##############################################################
 
+# Project initialization
+
 gproject() {
     local name="${1}"
     mkcs "${name}" && git init
