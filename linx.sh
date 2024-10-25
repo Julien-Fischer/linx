@@ -370,7 +370,7 @@ bye() {
     if command -v loginctl &> /dev/null; then
         loginctl lock-session
     else
-        echo -e "$(color "E:") loginctl not found. Ensure you're using a system with systemd."
+        echo -e "$(color 'E:') loginctl not found. Ensure you're using a system with systemd."
     fi
 }
 alias byebye='systemctl poweroff'

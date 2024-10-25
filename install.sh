@@ -161,7 +161,7 @@ current_dir() {
 color() {
     local subject="${1}"
     local clr="${2:-"${RED}"}"
-    echo "${subject}${clr}${NC}"
+    echo "${clr}${subject}${NC}"
 }
 
 err() {
