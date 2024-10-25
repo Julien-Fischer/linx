@@ -9,10 +9,14 @@ if [[ -f "${HOME}"/.linx_lib.sh ]]; then
 fi
 source "${HOME}"/.bashrc
 
-USAGE="Usage: port [--pid <process_id>] [--pname <process_name>] [--port <port_number>]"
+USAGE="Usage: port [kill] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]"
 
 
 list_ports() {
+    if [[ ("${1}" == "-"* && -z "${2}") ]]; then
+        echo "${USAGE}"
+        return 1
+    fi
     local filter_type=""
     local filter_value=""
 
@@ -79,17 +83,79 @@ list_ports() {
     }'
 }
 
-kill_process() {
-    local port="${1}"
-    for pid in $(sudo lsof -i :"${port}" -n -t); do
-        sudo kill "${pid}"
-        echo "Killed process ${pid}"
+
+kill_all() {
+    local subject="${1}"
+    local pids=($(lsof -i | grep -i "${subject}" | awk '{print $2}' | sort -u))
+
+    if [[ ${#pids[@]} -eq 0 ]]; then
+        err "No processes found for ${subject}"
+        return 1
+    fi
+
+    for pid in "${pids[@]}"; do
+        echo "Attempting to kill process ${pid} for ${subject}"
+        kill "${pid}"
+        if [ $? -eq 0 ]; then
+            echo "Killed all ${subject} processes"
+        else
+            err "Failed to kill all ${subject} processes"
+        fi
     done
+}
+
+kill_process_by_pid() {
+    local pid="${1}"
+    kill_all "${pid}"
+}
+
+kill_process_by_pname() {
+    local process_name="${1}"
+    if [[ -z "${process_name}" ]]; then
+        echo "${USAGE}"
+        return 1
+    fi
+    kill_all "${process_name}"
+}
+
+kill_process_by_port() {
+    local port="${1}"
+    echo "Attempting to kill processes at port ${port}"
+    kill_all "${port}"
+}
+
+kill_process() {
+    if [[ $# -eq 0 || ("${1}" == "-"* && -z "${2}") ]]; then
+        echo "${USAGE}"
+        return 1
+    elif [[ $# -eq 1 ]]; then
+        kill_process_by_port "${1}"
+        return 0
+    fi
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --pid)
+                kill_process_by_pid "${2}"
+                return 0
+                ;;
+            --pname)
+                kill_process_by_pname "${2}"
+                return 0
+                ;;
+            *)
+                echo "${USAGE}"
+                return 1
+                ;;
+        esac
+    done
+
     return 0
 }
 
 
 # @description
+# @param $1 (optional) "kill": sends a SIGTERM signal to a process
 # @flag --pid  filters the output by process id
 # @flag --pname  filters the output by process name
 # @flag --port  filters the output by port
@@ -103,7 +169,6 @@ main() {
         list_ports
         return 0
     fi
-
     case "${1}" in
         kill)
             shift

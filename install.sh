@@ -164,6 +164,11 @@ color() {
     echo "${subject}${clr}${NC}"
 }
 
+err() {
+    local message="${1}"
+    echo -e "$(color "E:") ${message}"
+}
+
 request_dir() {
     local var="${1}"
     local var_name="${2}"
