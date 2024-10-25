@@ -275,7 +275,7 @@ list_profiles() {
     fi
     for profile in "${profiles[@]}"; do
         if [[ -n "${current_theme}" && "${profile}" == "${current_theme}" ]]; then
-            echo -e "$(color profile)"
+            echo -e "> $(color "${profile}")"
         else
             echo "- ${profile}"
         fi
