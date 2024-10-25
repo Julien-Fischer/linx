@@ -451,6 +451,11 @@ upgrade_only() {
 # Git
 ##############################################################
 
+gproject() {
+    local name="${1}"
+    mkcs "${name}" && git init
+    echo ".idea" > .gitignore
+}
 alias gin="git init"
 alias gcl="git clone"
 
