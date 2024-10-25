@@ -11,20 +11,11 @@ source "${HOME}"/.bashrc
 
 USAGE="Usage: port [--pid <process_id>] [--pname <process_name>] [--port <port_number>]"
 
-# @description
-# @flag --pid  filters the output by process id
-# @flag --pname  filters the output by process name
-# @flag --port  filters the output by port
-# @example
-#   port # list all ports
-#   port --pid 2152 (optional)          # print the process with id 2152, or nothing if no process with this id is using a port
-#   port --pname (optional) processName # list the ports used by the process named processName, or nothing if it does not use any port
-#   port --port 8081 (optional)         # print the process using port 8081, or nothing if this port is not in us e
-port() {
+
+list_ports() {
     local filter_type=""
     local filter_value=""
 
-    # Parse arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
             --pid)
@@ -86,6 +77,37 @@ port() {
             printf "%-20s %-20s %-10s %-10s %-10s %-65s %-15s\n", $1, color_pid, $3, $4, $5, color_port, color_status
         }
     }'
+}
+
+
+# @description
+# @flag --pid  filters the output by process id
+# @flag --pname  filters the output by process name
+# @flag --port  filters the output by port
+# @example
+#   port # list all ports
+#   port --pid 2152 (optional)          # print the process with id 2152, or nothing if no process with this id is using a port
+#   port --pname (optional) processName # list the ports used by the process named processName, or nothing if it does not use any port
+#   port --port 8081 (optional)         # print the process using port 8081, or nothing if this port is not in us e
+port() {
+    local action=""
+
+    case "${action}" in
+        kill)
+            local port="${2}"
+            for pid in $(sudo lsof -i :"${port}" -n -t); do
+                sudo kill "${pid}"
+                echo "Killed process ${pid}"
+            done
+            return 0
+            ;;
+        *)
+            list_ports "$@"
+            ;;
+    esac
+
+
+
 }
 
 port "$@"
