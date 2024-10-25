@@ -79,6 +79,15 @@ list_ports() {
     }'
 }
 
+kill_process() {
+    local port="${1}"
+    for pid in $(sudo lsof -i :"${port}" -n -t); do
+        sudo kill "${pid}"
+        echo "Killed process ${pid}"
+    done
+    return 0
+}
+
 
 # @description
 # @flag --pid  filters the output by process id
@@ -89,25 +98,26 @@ list_ports() {
 #   port --pid 2152 (optional)          # print the process with id 2152, or nothing if no process with this id is using a port
 #   port --pname (optional) processName # list the ports used by the process named processName, or nothing if it does not use any port
 #   port --port 8081 (optional)         # print the process using port 8081, or nothing if this port is not in us e
-port() {
-    local action=""
+main() {
+    if [[ $# -eq 0 ]]; then
+        list_ports
+        return 0
+    fi
 
-    case "${action}" in
+    case "${1}" in
         kill)
-            local port="${2}"
-            for pid in $(sudo lsof -i :"${port}" -n -t); do
-                sudo kill "${pid}"
-                echo "Killed process ${pid}"
-            done
-            return 0
+            shift
+            kill_process "$@"
+            ;;
+        -*)
+            list_ports "$@"
+            shift
             ;;
         *)
-            list_ports "$@"
+            echo "${USAGE}"
+            shift
             ;;
     esac
-
-
-
 }
 
-port "$@"
+main "$@"
