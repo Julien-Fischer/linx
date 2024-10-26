@@ -13,10 +13,12 @@ export CORE_TESTS=(
 linx_core_is_installed() {
     if [[ ! -f "${HOME}/linx.sh" ]]; then
         echo "E: linx.sh is not installed"
-        exit 1
+        return 1
     fi
 }
 
 lt_lists_dir_content() {
-    lt
+    if ! lt > /dev/null; then
+        return 1
+    fi
 }
