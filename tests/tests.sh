@@ -11,7 +11,7 @@ source ./tests/suites/backup-tests.sh
 source ./tests/suites/port-tests.sh
 
 ###############################################################
-## Tests to run
+## Test suites to run
 ###############################################################
 
 declare -A TESTS_TO_RUN=(
@@ -20,7 +20,6 @@ declare -A TESTS_TO_RUN=(
     ["backup"]="${BACKUP_TESTS[@]}"
     ["port"]="${PORT_TESTS[@]}"
 )
-
 
 ###############################################################
 ## Tests constants
@@ -40,9 +39,9 @@ readonly NC='\033[0m'
 
 exec_test() {
     # Before all
-    func_name="$1"
+    test_name="$1"
     # Execute test
-    $func_name
+    $test_name
     if [[ $? -ne 0 ]]; then
         return 1
     fi
@@ -102,13 +101,6 @@ execute_tests() {
 print_separator() {
     echo -e "${YELLOW}_______________________________________________________________${NC}"
 }
-
-###############################################################
-## Tests
-###############################################################
-
-
-
 
 ###############################################################
 ## Execute tests
