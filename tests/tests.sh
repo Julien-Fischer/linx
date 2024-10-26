@@ -30,6 +30,7 @@ readonly CURRENT_DATE=$(date +%Y-%m-%d)
 readonly RED='\033[1;31m'
 readonly GREEN='\033[1;32m'
 readonly BLUE='\033[1;34m'
+readonly MAGENTA='\033[1;35m'
 readonly YELLOW='\033[0;33m'
 readonly NC='\033[0m'
 
@@ -65,7 +66,7 @@ execute_tests() {
     print_separator
     for suite_name in "${!TESTS_TO_RUN[@]}"; do
         local test_count=0
-        echo "${suite_name} test suite"
+        echo -e "${MAGENTA}${suite_name}${NC} test suite"
         echo ""
         IFS=' ' read -r -a suite <<< "${TESTS_TO_RUN[$suite_name]}"
         local n=${#suite[@]}
@@ -108,6 +109,5 @@ print_separator() {
 
 echo -e "[$(date '+%H:%M:%S')] Running tests as ${GREEN}$(whoami)${NC} in ${BLUE}$(pwd)${NC} with shell ${YELLOW}$(readlink /proc/$$/exe)${NC}"
 echo -e "linx version: ${GREEN}$(linx -v)${NC}"
-echo "User permissions / groups:"
-id
+echo -e "User permissions / groups: ${YELLOW}$(id)${NC}"
 execute_tests
