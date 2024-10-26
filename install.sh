@@ -8,6 +8,7 @@
 # Constants
 ##############################################################
 
+export VERSION="1.0.0-alpha2"
 PROJECT="linx"
 INSTALL_DIR="tmp-linx-install"
 FUNC_FILE_NAME="${PROJECT}.sh"

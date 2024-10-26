@@ -25,7 +25,7 @@ linx() {
                 return 0
                 ;;
             -v|--version)
-                echo "1.0.0-alpha2"
+                echo "${VERSION}"
                 return 0
                 ;;
             *)
