@@ -4,6 +4,8 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
+#source "${HOME}/.bashrc"
+
 ###############################################################
 ## Tests to run
 ###############################################################
@@ -107,6 +109,8 @@ lt_lists_dir_content() {
 ## Execute tests
 ###############################################################
 
-echo -e "[$(date '+%H:%M:%S')] Running tests as ${GREEN}$(whoami)${NC} in ${BLUE}$(pwd)${NC}"
+echo -e "[$(date '+%H:%M:%S')] Running tests as ${GREEN}$(whoami)${NC} in ${BLUE}$(pwd)${NC} with shell ${YELLOW}$(readlink /proc/$$/exe)${NC}"
 echo -e "linx version: ${GREEN}$(linx -v)${NC}"
+echo "User permissions / groups:"
+id
 execute_tests

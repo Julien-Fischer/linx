@@ -8,10 +8,12 @@ LABEL authors="Julien Fischer"
 ARG UID=1001
 ARG GID=1001
 ARG USERNAME="john"
+ARG GROUP="john"
 ARG DIRECTORY="linx"
 ARG WORK_DIR="/home/${USERNAME}/Desktop/${DIRECTORY}"
 
 ENV PATH="/usr/local/bin:${PATH}"
+ENV HOME="/home/${USERNAME}"
 
 #########################################################
 # Dependencies
@@ -25,8 +27,8 @@ RUN apt-get update && apt-get install -y \
     git \
     sudo && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    groupadd -g "${GID}" testgroup && \
-    useradd -m -u "${UID}" -s /bin/bash -g testgroup ${USERNAME} && \
+    groupadd -g "${GID}" ${GROUP} && \
+    useradd -m -u "${UID}" -s /bin/bash -g ${GROUP} ${USERNAME} && \
     echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 #########################################################
@@ -55,18 +57,18 @@ RUN chmod +x \
 #########################################################
 # Build
 #########################################################
-WORKDIR ${WORK_DIR}
 
 # Install Linx
 RUN "${WORK_DIR}/install.sh" -y
 
+WORKDIR ${WORK_DIR}
+
 # Step down from root user permissions
-#USER ${USERNAME}
+USER ${USERNAME}
 
 
 # Run the tests
-ENTRYPOINT ["/home/john/Desktop/linx/tests/tests.sh"]
-
+ENTRYPOINT ["/bin/bash", "/home/john/Desktop/linx/tests/tests.sh"]
 
 # keep the container running in the background for debugging and live interaction
 #CMD ["tail", "-f", "/dev/null"]
