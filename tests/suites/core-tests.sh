@@ -5,13 +5,13 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 export CORE_TESTS=(
-    "linx_core_is_installed"
+    "is_installed"
     "lt_lists_dir_content"
 )
 
 # A smoke test asserting that the Test environment is set up
-linx_core_is_installed() {
-    if [[ ! -f "${HOME}/linx.sh" ]]; then
+is_installed() {
+    if [[ ! -f "${HOME}/linx.sh" || ! -f "${HOME}/.linx_lib.sh" ]]; then
         echo "E: linx.sh is not installed"
         return 1
     fi
