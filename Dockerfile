@@ -19,8 +19,9 @@ ENV PATH="/usr/local/bin:${PATH}"
 
 # Install coreutils which includes cat, ls, etc
 RUN apt-get update && apt-get install -y \
-    coreutils && \
-    rm -rf /var/lib/apt/lists/*
+    coreutils \
+    lsof && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 # Install git & sudo
 RUN apt update &&  \
     apt install -y bash git && \
