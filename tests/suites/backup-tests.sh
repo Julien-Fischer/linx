@@ -14,7 +14,7 @@ backup_not_throws() {
 
     backup a
 
-    if cat a != $expected && [[ ! -f a.bak ]]; then
+    if [[ ! -f a.bak ]] || ! grep -q ${expected} a.bak; then
         return 1
     fi
 }
