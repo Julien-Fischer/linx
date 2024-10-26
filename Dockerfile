@@ -17,15 +17,14 @@ ENV PATH="/usr/local/bin:${PATH}"
 # Dependencies
 #########################################################
 
-# Install coreutils which includes cat, ls, etc
+# Install coreutils (which includes cat, ls, etc) and other required dependencies
+# Create user john and grant it sudo permissions
 RUN apt-get update && apt-get install -y \
     coreutils \
-    lsof && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-# Install git & sudo
-RUN apt update &&  \
-    apt install -y bash git && \
-    apt install -y sudo && \
+    lsof \
+    git \
+    sudo && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     groupadd -g "${GID}" testgroup && \
     useradd -m -u "${UID}" -s /bin/bash -g testgroup ${USERNAME} && \
     echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
