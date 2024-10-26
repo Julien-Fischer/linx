@@ -34,21 +34,23 @@ RUN apt-get update && apt-get install -y \
 #########################################################
 
 # Generate the directory tree
-RUN mkdir -p "${WORK_DIR}/help"
-RUN mkdir -p "${WORK_DIR}/tests"
-RUN mkdir -p "${WORK_DIR}/commands"
+RUN mkdir -p \
+    "${WORK_DIR}/help" \
+    "${WORK_DIR}/tests" \
+    "${WORK_DIR}/commands"
 
 # Copy the source code to the container
 COPY tests/tests.sh "${WORK_DIR}/tests"
 COPY commands/* "${WORK_DIR}/commands"
 COPY . ${WORK_DIR}
 
-# make it executable
-RUN chmod +x "${WORK_DIR}/commands/"*
-RUN chmod +x "${WORK_DIR}/tests/tests.sh"
-RUN chmod +x "${WORK_DIR}/linx.sh"
-RUN chmod +x "${WORK_DIR}/install.sh"
-RUN chmod +x "${WORK_DIR}/uninstall.sh"
+# make scripts executable
+RUN chmod +x \
+    "${WORK_DIR}/commands/"* \
+    "${WORK_DIR}/linx.sh" \
+    "${WORK_DIR}/install.sh" \
+    "${WORK_DIR}/uninstall.sh" \
+    "${WORK_DIR}/tests/tests.sh"
 
 #########################################################
 # Build
