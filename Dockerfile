@@ -42,7 +42,7 @@ RUN mkdir -p \
     "${WORK_DIR}/commands"
 
 # Add Linx source
-COPY tests/tests.sh "${WORK_DIR}/tests"
+COPY tests/test-runner.sh "${WORK_DIR}/tests"
 COPY tests/suites/* "${WORK_DIR}/tests/suites"
 COPY commands/* "${WORK_DIR}/commands"
 COPY . ${WORK_DIR}
@@ -53,7 +53,7 @@ RUN chmod +x \
     "${WORK_DIR}/linx.sh" \
     "${WORK_DIR}/install.sh" \
     "${WORK_DIR}/uninstall.sh" \
-    "${WORK_DIR}/tests/tests.sh"
+    "${WORK_DIR}/tests/test-runner.sh"
 
 # Transfer ownership to user john
 RUN chown -R john:john \
@@ -78,7 +78,7 @@ USER ${USERNAME}
 
 
 # Run the tests
-ENTRYPOINT ["/bin/bash", "/home/john/Desktop/linx/tests/tests.sh"]
+ENTRYPOINT ["/bin/bash", "/home/john/Desktop/linx/tests/test-runner.sh"]
 
 # keep the container running in the background for debugging and live interaction
 #CMD ["tail", "-f", "/dev/null"]
