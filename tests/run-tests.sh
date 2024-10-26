@@ -8,8 +8,8 @@
 # Constants
 ################################################################
 
-build_name=linx-tests
-dockerfile_directory=..
+BUILD_NAME=linx-tests
+DOCKER_FILE_DIR=..
 
 ################################################################
 # Cleanup
@@ -17,24 +17,24 @@ dockerfile_directory=..
 
 clear
 
-if [[ $(docker ps -q -f name=$build_name) ]]; then
-    docker stop $build_name
+if [[ $(docker ps -q -f name=$BUILD_NAME) ]]; then
+    docker stop $BUILD_NAME
 fi
 
-if [[ $(docker ps -qa -f name=$build_name) ]]; then
-    docker rm $build_name
+if [[ $(docker ps -qa -f name=$BUILD_NAME) ]]; then
+    docker rm $BUILD_NAME
 fi
 
-if [[ $(docker images -q name=$build_name) ]]; then
-    docker rmi $build_name
+if [[ $(docker images -q name=$BUILD_NAME) ]]; then
+    docker rmi $BUILD_NAME
 fi
 
 ################################################################
 # Build image and run tests
 ################################################################
 
-docker build -t $build_name $dockerfile_directory
-docker run --name $build_name $build_name
+docker build -t $BUILD_NAME $DOCKER_FILE_DIR
+docker run --name $BUILD_NAME $BUILD_NAME
 
 
 # Inspect the container via the CLI:
