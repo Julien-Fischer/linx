@@ -5,14 +5,20 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 source "${HOME}/linx.sh"
+source ./tests/suites/core-tests.sh
+source ./tests/suites/linx-tests.sh
+source ./tests/suites/backup-tests.sh
+source ./tests/suites/port-tests.sh
 
 ###############################################################
 ## Tests to run
 ###############################################################
 
-declare -a TESTS_TO_RUN=(
-    "linx_core_is_installed"
-    "lt_lists_dir_content"
+declare -A TESTS_TO_RUN=(
+    ["core"]="${CORE_TESTS[@]}"
+    ["linx"]="${LINX_TESTS[@]}"
+    ["backup"]="${BACKUP_TESTS[@]}"
+    ["port"]="${PORT_TESTS[@]}"
 )
 
 
@@ -52,34 +58,43 @@ before_each() {
 #}
 
 execute_tests() {
-    local n=${#TESTS_TO_RUN[@]}
     local suite_color=$GREEN
     local pass_count=0
     local fail_count=0
+    local suite_count=0
+
     print_separator
-    for ((i=0; i < ${n}; i++)); do
-        local func="${TESTS_TO_RUN[i]}"
-        status='Failed'
-        color=$RED
-        before_each
-        echo -e "${i} - ${YELLOW}Running${NC} ${BLUE}${func}${NC}"
-        exec_test $func
-        local passed=$?
-        if [ $passed -eq 0 ]; then
-            status='Passed'
-            color=$GREEN
-            pass_count=$((pass_count + 1))
-        else
-            suite_color=$RED
-            fail_count=$((fail_count + 1))
-        fi
-        echo -e "${color}Status: ${status}${NC}"
-        if [[ $i -lt $((n - 1)) ]]; then
-            echo ""
-        fi
-#        after_each
+    for suite_name in "${!TESTS_TO_RUN[@]}"; do
+        local test_count=0
+        echo "${suite_name} test suite"
+        echo ""
+        IFS=' ' read -r -a suite <<< "${TESTS_TO_RUN[$suite_name]}"
+        local n=${#suite[@]}
+        for current_test in "${suite[@]}"; do
+            status='Failed'
+            color=$RED
+            before_each
+            echo -e "$((test_count+1)) - ${YELLOW}Running${NC} ${BLUE}${current_test}${NC}"
+            exec_test "${current_test}"
+            local passed=$?
+            if [ $passed -eq 0 ]; then
+                status='Passed'
+                color=$GREEN
+                pass_count=$((pass_count + 1))
+            else
+                suite_color=$RED
+                fail_count=$((fail_count + 1))
+            fi
+            echo -e "${color}Status: ${status}${NC}"
+            if [[ $test_count -lt $((n - 1)) ]]; then
+                echo ""
+            fi
+            test_count=$((test_count + 1))
+    #        after_each
+        done
+        print_separator
+        suite_count=$((suite_count + 1))
     done
-    print_separator
     echo -e "${GREEN}${pass_count}${NC} passed. ${RED}${fail_count}${NC} failed."
     echo -e "[$(date '+%H:%M:%S')] ${suite_color}Tests passed${NC}."
 }
@@ -92,17 +107,7 @@ print_separator() {
 ## Tests
 ###############################################################
 
-# A smoke test asserting that the Test environment is set up
-linx_core_is_installed() {
-    if [[ ! -f "${HOME}/linx.sh" ]]; then
-        echo "E: linx.sh is not installed"
-        exit 1
-    fi
-}
 
-lt_lists_dir_content() {
-    lt
-}
 
 
 ###############################################################

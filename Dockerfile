@@ -38,21 +38,31 @@ RUN apt-get update && apt-get install -y \
 # Generate the directory tree
 RUN mkdir -p \
     "${WORK_DIR}/help" \
-    "${WORK_DIR}/tests" \
+    "${WORK_DIR}/tests/suites" \
     "${WORK_DIR}/commands"
 
-# Copy the source code to the container
+# Add Linx source
 COPY tests/tests.sh "${WORK_DIR}/tests"
+COPY tests/suites/* "${WORK_DIR}/tests/suites"
 COPY commands/* "${WORK_DIR}/commands"
 COPY . ${WORK_DIR}
 
-# make scripts executable
+# Grant execute permission
 RUN chmod +x \
     "${WORK_DIR}/commands/"* \
     "${WORK_DIR}/linx.sh" \
     "${WORK_DIR}/install.sh" \
     "${WORK_DIR}/uninstall.sh" \
     "${WORK_DIR}/tests/tests.sh"
+
+# Transfer ownership to user john
+RUN chown -R john:john \
+    /home \
+    /home/john \
+    /home/john/Desktop \
+    /home/john/Desktop/linx \
+    /home/john/Desktop/linx/tests
+
 
 #########################################################
 # Build
