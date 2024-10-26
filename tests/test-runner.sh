@@ -5,10 +5,12 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 source "${HOME}/linx.sh"
-source ./tests/suites/core-tests.sh
-source ./tests/suites/linx-tests.sh
-source ./tests/suites/backup-tests.sh
-source ./tests/suites/port-tests.sh
+
+# Source test suites
+for suite in core linx backup port; do
+    # shellcheck source=/dev/null
+    source "./tests/suites/${suite}-tests.sh"
+done
 
 ###############################################################
 ## Test suites to run
