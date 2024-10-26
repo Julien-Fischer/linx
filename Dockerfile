@@ -5,6 +5,10 @@
 FROM debian:12
 LABEL authors="Julien Fischer"
 
+# Input parameters
+ARG KEEP_ALIVE=""
+ARG INTERACTIVE=""
+# Constants
 ARG UID=1001
 ARG GID=1001
 ARG USERNAME="john"
@@ -76,9 +80,5 @@ WORKDIR ${WORK_DIR}
 # Step down from root user permissions
 USER ${USERNAME}
 
-
 # Run the tests
 ENTRYPOINT ["/bin/bash", "/home/john/Desktop/linx/tests/test-runner.sh"]
-
-# keep the container running in the background for debugging and live interaction
-#CMD ["tail", "-f", "/dev/null"]

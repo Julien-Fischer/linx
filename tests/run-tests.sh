@@ -5,11 +5,44 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 ################################################################
-# Constants
+# Project constants
 ################################################################
 
 readonly BUILD_NAME=linx-tests
 readonly DOCKER_FILE_DIR=..
+
+################################################################
+# Build variables
+################################################################
+# @value 1 for production; 0 if the container should run in interactive mode
+interactive=0
+# @value 1 for production; 0 to keep the container running in the background for debugging and live interaction
+# If keep_alive=0, you can interact with the container by using:
+#     docker exec -ti "$BUILD_NAME" /bin/bash
+keep_alive=1
+
+parse_parameters() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -k|--keep-alive)
+                keep_alive=0
+                shift
+                ;;
+            -i|--interactive)
+                interactive=0
+                shift
+                ;;
+            *)
+                echo "Unsupported parameter ${1}"
+                echo "Usage: ./test-runner.sh [-yki] [--keep-alive | --interactive]"
+                shift
+                exit 1
+                ;;
+        esac
+    done
+}
+
+parse_parameters "$@"
 
 ################################################################
 # Cleanup
@@ -34,8 +67,14 @@ fi
 ################################################################
 
 docker build -t $BUILD_NAME $DOCKER_FILE_DIR
-docker run --name $BUILD_NAME $BUILD_NAME
 
-
-# Inspect the container via the CLI:
-#docker exec -ti "$BUILD_NAME" /bin/bash
+if [[ $interactive -eq 0 ]]; then
+    docker build --build-arg INTERACTIVE='--interactive' -t $BUILD_NAME $DOCKER_FILE_DIR
+    docker run -it --name $BUILD_NAME $BUILD_NAME --interactive
+elif [[ $keep_alive -eq 0 ]]; then
+    docker build --build-arg KEEP_ALIVE='--keep-alive' -t $BUILD_NAME $DOCKER_FILE_DIR
+    docker run -it --name $BUILD_NAME $BUILD_NAME --keep-alive
+else
+    echo "Running Docker container normally..."
+    docker run --name $BUILD_NAME $BUILD_NAME
+fi

@@ -24,8 +24,18 @@ declare -A TESTS_TO_RUN=(
 )
 
 ###############################################################
+## Input parameters
+###############################################################
+
+# Keeps the process running in the background. Useful for debugging when run in a container
+keep_alive=1
+# Enables interactive mode. Useful for debugging when run in a container
+interactive=1
+
+###############################################################
 ## Tests constants
 ###############################################################
+
 readonly APP_DIR=/home/john/Desktop/linx
 readonly CURRENT_DATE=$(date +%Y-%m-%d)
 # output colors
@@ -105,6 +115,35 @@ print_separator() {
     echo -e "${YELLOW}_______________________________________________________________${NC}"
 }
 
+parse_parameters() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -k|--keep-alive)
+                keep_alive=0
+                shift
+                ;;
+            -i|--interactive)
+                interactive=0
+                shift
+                ;;
+            *)
+                echo "Unsupported parameter ${1}"
+                echo "Usage: ./test-runner.sh [-yki] [--keep-alive | --interactive]"
+                shift
+                exit 1
+                ;;
+        esac
+    done
+}
+
+containerized_actions() {
+    if [[ $interactive -eq 0 ]]; then
+        exec /bin/bash
+    elif [[ $keep_alive -eq 0 ]]; then
+        tail -f /dev/null
+    fi
+}
+
 ###############################################################
 ## Execute tests
 ###############################################################
@@ -112,4 +151,8 @@ print_separator() {
 echo -e "[$(date '+%H:%M:%S')] Running tests as ${GREEN}$(whoami)${NC} in ${BLUE}$(pwd)${NC} with shell ${YELLOW}$(readlink /proc/$$/exe)${NC}"
 echo -e "linx version: ${GREEN}$(linx -v)${NC}"
 echo -e "User permissions / groups: ${YELLOW}$(id)${NC}"
+
 execute_tests
+parse_parameters "$@"
+containerized_actions
+

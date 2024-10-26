@@ -43,6 +43,7 @@ export NC='\033[0m'
 ##############################################################
 
 auto_approve=1
+keep_alive=1
 
 ##############################################################
 # Utils
@@ -450,6 +451,19 @@ install_dependencies() {
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 #
 install_linx() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -y|--yes)
+                auto_approve=0
+                shift
+                ;;
+            *)
+                echo "Usage: ./install.sh [-y]"
+                return 1
+                ;;
+        esac
+    done
+
     if [[ "${1}" == "-y" ]]; then
         auto_approve=0
     fi
