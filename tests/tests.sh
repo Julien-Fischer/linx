@@ -10,6 +10,7 @@
 
 declare -a TESTS_TO_RUN=(
     "linx_core_is_installed"
+    "lt_lists_dir_content"
 )
 
 
@@ -60,7 +61,7 @@ execute_tests() {
         color=$RED
         before_each
         echo -e "${i} - ${YELLOW}Running${NC} ${BLUE}${func}${NC}"
-        test $func
+        exec_test $func
         local passed=$?
         if [ $passed -eq 0 ]; then
             status='Passed'
@@ -97,12 +98,15 @@ linx_core_is_installed() {
     fi
 }
 
+lt_lists_dir_content() {
+    lt
+}
 
 
 ###############################################################
 ## Execute tests
 ###############################################################
 
-echo "[$(date '+%H:%M:%S')] Executing tests..."
-echo -e "Testing linx ${GREEN}$(linx -v)${NC}"
+echo -e "[$(date '+%H:%M:%S')] Running tests as ${GREEN}$(whoami)${NC} in ${BLUE}$(pwd)${NC}"
+echo -e "linx version: ${GREEN}$(linx -v)${NC}"
 execute_tests
