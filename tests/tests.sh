@@ -4,7 +4,7 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
-#source "${HOME}/.bashrc"
+source "${HOME}/linx.sh"
 
 ###############################################################
 ## Tests to run
