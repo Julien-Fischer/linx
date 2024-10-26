@@ -8,8 +8,8 @@
 # Constants
 ################################################################
 
-BUILD_NAME=linx-tests
-DOCKER_FILE_DIR=..
+readonly BUILD_NAME=linx-tests
+readonly DOCKER_FILE_DIR=..
 
 ################################################################
 # Cleanup
