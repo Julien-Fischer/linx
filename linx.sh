@@ -585,6 +585,7 @@ gr() {
   fi
   git reset --soft HEAD~$n
   echo "Successfully reset $n commits in ${current_branch}"
+  git diff --cached --stat
 }
 
 alias gpf='git push --force origin' # <branch_name>  Replace the latest pushed commit with this one
