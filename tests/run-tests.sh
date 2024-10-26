@@ -38,4 +38,4 @@ docker run --name $BUILD_NAME $BUILD_NAME
 
 
 # Inspect the container via the CLI:
-# docker exec -ti "mkf-tests" /bin/bash
+#docker exec -ti "$BUILD_NAME" /bin/bash
