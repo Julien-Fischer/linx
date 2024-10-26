@@ -16,7 +16,7 @@ declare -a TESTS_TO_RUN=(
 ###############################################################
 ## Tests constants
 ###############################################################
-readonly APP_DIR=/app/test_env
+readonly APP_DIR=/app/Desktop
 readonly CURRENT_DATE=$(date +%Y-%m-%d)
 # output colors
 readonly RED='\033[1;31m'

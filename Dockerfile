@@ -5,7 +5,7 @@
 FROM debian:12
 LABEL authors="Julien Fischer"
 
-ARG DIRECTORY="test_env"
+ARG DIRECTORY="Desktop"
 WORKDIR /app
 
 ENV PATH="/usr/local/bin:${PATH}"
@@ -48,7 +48,7 @@ RUN chmod +x "/app/${DIRECTORY}/uninstall.sh"
 RUN "/app/${DIRECTORY}/install.sh" -y
 
 # Run the automated tests
-ENTRYPOINT ["/app/test_env/tests/tests.sh"]
+ENTRYPOINT ["/app/Desktop/tests/tests.sh"]
 
 
 # keep the container running indefinitely for debugging / interacting with it
