@@ -667,9 +667,9 @@ dbir() {
     docker run "${image_name}"
 }
 
-# @description Stop and remove all docker containers.
+# @description Stop and remove all docker containers except those specified with the --keep option (if provided)
 # @flag -f, --force  Send a SIGKILL signal instead of a SIGTERM signal if present
-# @flag -k, --keep  Stop but do not remove these containers
+# @flag -k, --keep  Stop, but do not remove these containers
 # @example
 #   dps_clr
 #   dps_clr -p '6523983f0198 6c9a8765f2a4'
@@ -678,46 +678,34 @@ dbir() {
 dps_clr() {
     local keep=""
     local force=false
+    local USAGE=$(cat <<EOF
+Usage: dps_clr [OPTIONS]
+
+Options:
+  -p, --keep 'id_1 id_2 ...'  Specify container IDs to keep (space-separated).
+  -f, --force                 Forcefully stop and remove containers.
+
+Description:
+  Stops and removes all Docker containers except those specified with the --keep option.
+EOF
+)
     while [[ "$#" -gt 0 ]]; do
         case $1 in
-            -p|--keep)
-                keep="${2}"
-                shift
-                ;;
-            -f|--force)
-                force=true
-                ;;
-            *)
-                echo "Unknown parameter: $1";
-                echo "Usage: dps_clr [-p 'id_1 id_2...'] [-f]"
-                return 1
-                ;;
+            -p|--keep) keep="$2"; shift ;;
+            -f|--force) force=true ;;
+            *) echo "Unknown parameter: $1"; echo "${USAGE}"; return 1 ;;
         esac
         shift
     done
-    IFS=' ' read -r -a exclude <<< "$keep"
-    # Stop or kill running containers
-    local containers_to_stop=$(docker ps -q)
-    if [[ ${#containers_to_stop} -ne 0 ]]; then
-        if $force; then
-            docker kill "${containers_to_stop}"
-        else
-            docker stop "${containers_to_stop}"
-        fi
+    readarray -t containers_to_stop < <(docker ps -q)
+    if [[ ${#containers_to_stop[@]} -gt 0 ]]; then
+        docker ${force:+kill}${force:-stop} "${containers_to_stop[@]}"
     fi
-    # Get all containers and filter out those to keep
-    local all_containers=$(docker ps -qa)
-    local containers_to_remove=()
-    for container in $all_containers; do
-        if [[ ! "${exclude[*]}" == *"${container}"* ]]; then
-            containers_to_remove+=("$container")
-        fi
-    done
-    # Remove containers
-    local n=${#containers_to_remove[@]}
-    if [ $n -ne 0 ]; then
+    read -ra exclude <<< "$keep"
+    readarray -t containers_to_remove < <(comm -23 <(docker ps -aq | sort) <(printf '%s\n' "${exclude[@]}" | sort))
+    if [[ ${#containers_to_remove[@]} -gt 0 ]]; then
         docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
-        echo "Removed ${n} containers"
+        echo "Removed ${#containers_to_remove[@]} containers"
     else
         echo "No containers to remove"
     fi
