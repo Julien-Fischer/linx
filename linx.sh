@@ -667,6 +667,62 @@ dbir() {
     docker run "${image_name}"
 }
 
+# @description Stop and remove all docker containers.
+# @flag -f, --force  Send a SIGKILL signal instead of a SIGTERM signal if present
+# @flag -k, --keep  Stop but do not remove these containers
+# @example
+#   dps_clr
+#   dps_clr -p '6523983f0198 6c9a8765f2a4'
+#   dps_clr -f
+#   dps_clr -p '6523983f0198 6c9a8765f2a4' -f
+dps_clr() {
+    local keep=""
+    local force=false
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -p|--keep)
+                keep="${2}"
+                shift
+                ;;
+            -f|--force)
+                force=true
+                ;;
+            *)
+                echo "Unknown parameter: $1";
+                echo "Usage: dps_clr [-p 'id_1 id_2...'] [-f]"
+                return 1
+                ;;
+        esac
+        shift
+    done
+    IFS=' ' read -r -a exclude <<< "$keep"
+    # Stop or kill running containers
+    local containers_to_stop=$(docker ps -q)
+    if [[ ${#containers_to_stop} -ne 0 ]]; then
+        if $force; then
+            docker kill "${containers_to_stop}"
+        else
+            docker stop "${containers_to_stop}"
+        fi
+    fi
+    # Get all containers and filter out those to keep
+    local all_containers=$(docker ps -qa)
+    local containers_to_remove=()
+    for container in $all_containers; do
+        if [[ ! "${exclude[*]}" == *"${container}"* ]]; then
+            containers_to_remove+=("$container")
+        fi
+    done
+    # Remove containers
+    local n=${#containers_to_remove[@]}
+    if [ $n -ne 0 ]; then
+        docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
+        echo "Removed ${n} containers"
+    else
+        echo "No containers to remove"
+    fi
+}
+
 ##############################################################
 # Custom ENV variables
 ##############################################################
