@@ -4,6 +4,8 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
+# Execute this script to run the tests in normal, background, or interactive mode
+
 ################################################################
 # Project constants
 ################################################################
@@ -34,7 +36,7 @@ parse_parameters() {
                 ;;
             *)
                 echo "Unsupported parameter ${1}"
-                echo "Usage: ./test-runner.sh [-yki] [--keep-alive | --interactive]"
+                echo "Usage: ./run-tests.sh [-ki] [--keep-alive | --interactive]"
                 shift
                 exit 1
                 ;;
@@ -78,3 +80,4 @@ else
     echo "Running Docker container normally..."
     docker run --name $BUILD_NAME $BUILD_NAME
 fi
+
