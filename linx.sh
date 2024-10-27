@@ -672,9 +672,9 @@ dbir() {
 # @flag -k, --keep  Stop, but do not remove these containers
 # @example
 #   dps_clr
-#   dps_clr -p '6523983f0198 6c9a8765f2a4'
+#   dps_clr -k '6523983f0198 6c9a8765f2a4'
 #   dps_clr -f
-#   dps_clr -p '6523983f0198 6c9a8765f2a4' -f
+#   dps_clr -k '6523983f0198 6c9a8765f2a4' -f
 dps_clr() {
     local keep=""
     local force=false
@@ -682,7 +682,7 @@ dps_clr() {
 Usage: dps_clr [OPTIONS]
 
 Options:
-  -p, --keep 'id_1 id_2 ...'  Specify container IDs to keep (space-separated).
+  -k, --keep 'id_1 id_2 ...'  Specify container IDs to keep (space-separated).
   -f, --force                 Forcefully stop and remove containers.
 
 Description:
@@ -691,7 +691,7 @@ EOF
 )
     while [[ "$#" -gt 0 ]]; do
         case $1 in
-            -p|--keep) keep="$2"; shift ;;
+            -k|--keep) keep="$2"; shift ;;
             -f|--force) force=true ;;
             *) echo "Unknown parameter: $1"; echo "${USAGE}"; return 1 ;;
         esac
