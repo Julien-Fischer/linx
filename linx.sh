@@ -710,16 +710,14 @@ EOF
     if [[ $stop_count -gt 0 ]]; then
         docker ${force:+kill}${force:-stop} "${containers_to_stop[@]}"
     fi
-    echo "Stopped ${stop_count} containers"
     read -ra exclude <<< "$all_keep"
     readarray -t containers_to_remove < <(comm -23 <(docker ps -aq | sort) <(printf '%s\n' "${exclude[@]}" | sort))
     local remove_count=${#containers_to_remove[@]}
     if [[ $remove_count -gt 0 ]]; then
         docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
-        echo "Removed ${remove_count} containers"
-    else
-        echo "No containers to remove"
     fi
+    local keep_count=$(wc -l < "${KEEP_CONTAINERS_FILE}")
+    echo -e "Stopped: $(color "${stop_count}" "${GREEN}"), Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
 
