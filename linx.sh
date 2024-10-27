@@ -686,7 +686,8 @@ Options:
   -f, --force                 Forcefully stop and remove containers.
 
 Description:
-  Stops and removes all Docker containers except those specified with the --keep option.
+  Stops and removes all Docker containers except those specified with the --keep option
+  and those listed in \$KEEP_CONTAINERS_FILE (usually located at ~/linx/keep_containers).
 EOF
 )
     while [[ "$#" -gt 0 ]]; do
@@ -697,19 +698,30 @@ EOF
         esac
         shift
     done
+    # Read container IDs from ~/linx/keep_containers file
+    local file_keep=""
+    if [[ -f "${KEEP_CONTAINERS_FILE}" ]]; then
+        file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${KEEP_CONTAINERS_FILE}")
+    fi
+    # Combine file_keep and keep
+    local all_keep="$file_keep $keep"
     readarray -t containers_to_stop < <(docker ps -q)
-    if [[ ${#containers_to_stop[@]} -gt 0 ]]; then
+    local stop_count=${#containers_to_stop[@]}
+    if [[ $stop_count -gt 0 ]]; then
         docker ${force:+kill}${force:-stop} "${containers_to_stop[@]}"
     fi
-    read -ra exclude <<< "$keep"
+    echo "Stopped ${stop_count} containers"
+    read -ra exclude <<< "$all_keep"
     readarray -t containers_to_remove < <(comm -23 <(docker ps -aq | sort) <(printf '%s\n' "${exclude[@]}" | sort))
-    if [[ ${#containers_to_remove[@]} -gt 0 ]]; then
+    local remove_count=${#containers_to_remove[@]}
+    if [[ $remove_count -gt 0 ]]; then
         docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
-        echo "Removed ${#containers_to_remove[@]} containers"
+        echo "Removed ${remove_count} containers"
     else
         echo "No containers to remove"
     fi
 }
+
 
 ##############################################################
 # Custom ENV variables

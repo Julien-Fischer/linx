@@ -11,6 +11,9 @@
 export VERSION="1.0.0-alpha2"
 PROJECT="linx"
 INSTALL_DIR="tmp-linx-install"
+LINX_DIR=~/linx
+KEEP_CONTAINERS_FILE="${LINX_DIR}/keep_containers"
+KEEP_IMAGES_FILE="${LINX_DIR}/keep_images"
 FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
 TERMINATOR_DIR=~/.config/terminator
@@ -469,6 +472,11 @@ install_linx() {
     fi
     echo "this will install ${PROJECT} on your system."
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
+
+    mkdir -p "${LINX_DIR}"
+    touch "${KEEP_CONTAINERS_FILE}"
+    touch "${KEEP_IMAGES_FILE}"
+
     update_rc_file ".bashrc"
     update_rc_file ".zshrc"
     if ! install_core "$@"; then
