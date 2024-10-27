@@ -151,6 +151,9 @@ In the meantime, we welcome all contributions and feedback!
 Whether you're interested in submitting code, reporting bugs, or suggesting new features, your input helps us
 improve Linx.
 
+Please refer to the draft of [Contributing to linx](https://github.com/Julien-Fischer/linx/blob/master/CONTRIBUTING.md) for
+more details.
+
 ## Acknowledgments
 
 We would like to extend our gratitude to Eliver Lara and their contributors for their outstanding work
