@@ -661,6 +661,13 @@ alias dpsa="docker ps -a"
 alias dim="docker images"
 alias dima="docker images -a"
 
+dstatus() {
+    echo -e "Images:\n"
+    dim
+    echo -e "\nContainers:\n"
+    dpsa
+}
+
 # Build & Run
 
 # @description (Docker Build Image). Builds an image from a Dockerfile
