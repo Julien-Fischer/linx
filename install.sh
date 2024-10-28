@@ -29,7 +29,7 @@ TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="synthwave_2"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 
-export COMMANDS=("linx" "backup" "port")
+export COMMANDS=("term" "linx" "backup" "port")
 
 # Basic ANSI colors with no styles (bold, italic, etc)
 export RED='\033[0;31m'
@@ -277,91 +277,7 @@ install_terminator_config() {
     add_fragment "layouts"
     add_fragment "plugins"
 
-    set_profile "${default_theme}"
-}
-
-print_profile() {
-    local profile_name="${1}"
-    if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
-        return 1
-    fi
-    local reading_profiles=1
-    local reading_target_profile=1
-    local styles=()
-    local style_string=""
-    while IFS= read -r line; do
-        if [[ "${line}" == "[profiles]" ]]; then
-            reading_profiles=0
-            continue
-        fi
-        if [[ $reading_profiles -eq 0 && "${line}" =~ \[?\[[^\]]+\]\]? ]]; then
-            if [[ "${line}" =~ [[:space:]]*\[${profile_name}\][[:space:]]* ]]; then
-                reading_target_profile=0
-            elif [[ $reading_target_profile -eq 0 ]]; then
-                reading_target_profile=1
-            fi
-            continue
-        fi
-        if [[ $reading_target_profile -eq 0  ]]; then
-            styles+=("${line}")
-        fi
-    done < "${TERMINATOR_CONFIG_FILE}"
-    if [[ "${#styles[@]}" -gt 0 ]]; then
-        for i in "${!styles[@]}"; do
-            if [ $i -eq $((${#styles[@]} - 1)) ]; then
-                style_string+="${styles[i]}"
-            else
-                style_string+="${styles[i]}\n"
-            fi
-        done
-        echo -e "${style_string}"
-    else
-        return 1
-    fi
-}
-
-set_profile() {
-    local profile_name="${1}"
-    local styles=$(print_profile "${profile_name}")
-    if [[ -z "${styles}" ]]; then
-        echo "${profile_name} profile not found."
-        return 1
-    fi
-
-    local temp_file=$(mktemp)
-    local reading_target_profile=false
-    local reading_profiles=false
-
-    while IFS= read -r line; do
-        if is_comment "${line}"; then
-            continue;
-        fi
-        if [[ "${line}" == "[profiles]" ]]; then
-            reading_profiles=true
-        elif [[ $reading_profiles == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != "[profiles]" ]]; then
-            reading_profiles=false
-            reading_target_profile=false
-        fi
-
-        if [[ $reading_profiles == true && "${line}" == "  [[default]]" ]]; then
-            reading_target_profile=true
-            echo "${line}" >> "${temp_file}"
-            echo "${styles}" >> "${temp_file}"
-        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]*\[\[ ]]; then
-            reading_target_profile=false
-            echo "${line}" >> "${temp_file}"
-        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ]]; then
-            continue
-        else
-            echo "${line}" >> "${temp_file}"
-        fi
-    done < "${TERMINATOR_CONFIG_FILE}"
-
-    backup "${TERMINATOR_CONFIG_FILE}" -q
-    sudo mv "$temp_file" "${TERMINATOR_CONFIG_FILE}"
-    touch "${TERMINATOR_DIR}/current.profile"
-    echo "${profile_name}" > "${CURRENT_THEME_FILE}"
+    term profiles --set "${default_theme}"
 }
 
 add_fragment() {

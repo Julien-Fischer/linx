@@ -220,68 +220,6 @@ function prompt() {
     confirm "$@"
 }
 
-# @description Switch to a specified Terminator profile. If no parameter is provided, list the available profiles
-# @param $1  (optional) the name of the profile to switch to
-# @example
-#   # List available profiles
-#   profiles
-#   # Switch to the specified profile
-#   profiles profile_name
-profiles() {
-    local profile_name="${1}"
-    if [[ -z "${profile_name}" ]]; then
-        list_profiles
-        return 0
-    fi
-    if set_profile "$@"; then
-        echo "Switched to ${profile_name} profile. Restart Terminator to apply the theme."
-        return 0
-    fi
-    echo -e "$(color "E:") Could not switch to ${profile_name} profile."
-    return 1
-}
-
-# @description Although this function could be invoked directly, it is usually executed via the profiles function
-# @example
-#  # The following function calls are strictly equivalent:
-#  profiles
-#  print_profile
-list_profiles() {
-    if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
-        return 1
-    fi
-    local reading_profiles=1
-    local profiles=()
-    while IFS= read -r line; do
-        if is_comment "${line}"; then
-            continue;
-        fi
-        if [[ "${line}" == "[profiles]" ]]; then
-            reading_profiles=0
-            continue
-        fi
-        if [[ "${line}" =~ ^\[[^\]]+\]$ && "${line}" != "[profiles]" ]]; then
-            reading_profiles=1
-        fi
-        if [[ $reading_profiles -eq 0 && "${line}" =~ \[\[([^\]]+)\]\] ]]; then
-            profiles+=("${BASH_REMATCH[1]}")
-        fi
-    done < "${TERMINATOR_CONFIG_FILE}"
-    echo "${#profiles[@]} available profiles:"
-    local current_theme=
-    if [[ -f "${CURRENT_THEME_FILE}" ]]; then
-        current_theme=$(cat "${CURRENT_THEME_FILE}")
-    fi
-    for profile in "${profiles[@]}"; do
-        if [[ -n "${current_theme}" && "${profile}" == "${current_theme}" ]]; then
-            echo -e "> $(color "${profile}")"
-        else
-            echo "- ${profile}"
-        fi
-    done
-}
-
 ##############################################################
 # Bash
 ##############################################################
