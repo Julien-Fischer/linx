@@ -534,9 +534,19 @@ gshow() {
     git show "${hash}"
 }
 
+# @description When called with a commit hash, show the stats for that specific commit; otherwise
+#              show the stats for both staged and unstaged changes.
+# @param $1 (optional) a commit hash
 gstat() {
     local hash="${1}"
-    git show "${hash}" --stat
+    if [[ $# -eq 0 ]]; then
+        echo -e "$(color 'Staged:' "${GREEN}")"
+        git diff --cached --stat
+        echo -e "\n$(color 'Unstaged:')"
+        git diff --stat
+    else
+        git show "${hash}" --stat
+    fi
 }
 
 # Changes visualization
