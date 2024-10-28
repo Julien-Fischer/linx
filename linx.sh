@@ -702,9 +702,9 @@ alias dkill="docker kill" # <container_name_or_id>
 #   dclr --force
 dclr() {
     echo "Containers:"
-    dps_clr "$@"
+    echo "  $(dps_clr "$@")"
     echo "Images:"
-    dim_clr "$@"
+    echo "  $(dim_clr "$@")"
 }
 
 # @description (Docker Process Clear) Stop and remove all docker containers except those specified with
@@ -749,7 +749,11 @@ EOF
     readarray -t containers_to_stop < <(docker ps -q)
     local stop_count=${#containers_to_stop[@]}
     if [[ $stop_count -gt 0 ]]; then
-        docker ${force:+kill}${force:-stop} "${containers_to_stop[@]}"
+        if $force; then
+            docker kill "${containers_to_stop[@]}" >/dev/null 2>&1
+        else
+            docker stop "${containers_to_stop[@]}" >/dev/null 2>&1
+        fi
     fi
     read -ra exclude <<< "$all_keep"
     readarray -t containers_to_remove < <(comm -23 <(docker ps -aq | sort) <(printf '%s\n' "${exclude[@]}" | sort))
