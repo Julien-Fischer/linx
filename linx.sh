@@ -687,7 +687,6 @@ dbir() {
 dclr() {
     echo "Containers:"
     dps_clr "$@"
-    echo ""
     echo "Images:"
     dim_clr "$@"
 }
