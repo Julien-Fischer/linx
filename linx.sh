@@ -716,8 +716,56 @@ EOF
     if [[ $remove_count -gt 0 ]]; then
         docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
     fi
-    local keep_count=$(wc -l < "${KEEP_CONTAINERS_FILE}")
+    local keep_count=$(grep -c '[^[:space:]]' "${KEEP_CONTAINERS_FILE}")
     echo -e "Stopped: $(color "${stop_count}" "${GREEN}"), Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
+}
+
+# @description Remove all docker images except those specified with the --keep option (if provided)
+# @flag -f, --force  Force removal of images
+# @flag -k, --keep  Do not remove these image IDs
+# @example
+#   dim_clr
+#   dim_clr -k 617f2e89852e
+#   dim_clr -f
+#   dim_clr -k '617f2e89852e 3a29986a9402' -f
+dim_clr() {
+    local keep=""
+    local force=false
+    local USAGE=$(cat <<EOF
+Usage: dimg_clr [OPTIONS]
+
+Options:
+  -k, --keep 'id1 id2 ...'  Specify image IDs to keep (space-separated).
+  -f, --force               Force removal of images.
+
+Description:
+  Removes all Docker images except those specified with the --keep option
+  and those listed in \$KEEP_IMAGES_FILE (usually located at ~/linx/keep_images).
+EOF
+)
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -k|--keep) keep="$2"; shift ;;
+            -f|--force) force=true ;;
+            *) echo "Unknown parameter: $1"; echo "${USAGE}"; return 1 ;;
+        esac
+        shift
+    done
+    # Read image IDs from ~/linx/keep_images file
+    local file_keep=""
+    if [[ -f "${KEEP_IMAGES_FILE}" ]]; then
+        file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${KEEP_IMAGES_FILE}")
+    fi
+    # Combine file_keep and keep
+    local all_keep="$file_keep $keep"
+    read -ra exclude <<< "$all_keep"
+    readarray -t images_to_remove < <(comm -23 <(docker images -q | sort) <(printf '%s\n' "${exclude[@]}" | sort))
+    local remove_count=${#images_to_remove[@]}
+    if [[ $remove_count -gt 0 ]]; then
+        docker rmi ${force:+-f} "${images_to_remove[@]}" >/dev/null 2>&1
+    fi
+    local keep_count=$(grep -c '[^[:space:]]' "${KEEP_IMAGES_FILE}")
+    echo -e "Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
 
