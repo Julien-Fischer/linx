@@ -96,8 +96,10 @@ This will allow you to interact with the container and manually test linx comman
 
 ### Writing tests
 
-To test your code, open `tests/tests.sh` and add new tests or update existing ones as needed. This script is the core
-of our testing suite, and your contributions help us identify issues early and maintain a stable and robust application.
+To test your code, open the file that contains the test suite you wish to update, and add new tests or update 
+existing ones as needed.
+The test suites are located in `tests/suites`: these functions are the core of our testing suite, and your 
+contributions help us identify issues early and maintain a stable and robust application.
 
 Writing a new test is straightforward:
 
