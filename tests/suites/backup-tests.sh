@@ -5,10 +5,18 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 export BACKUP_TESTS=(
-    "backup_not_throws"
+    "backup_without_parameters_throws"
+    "backup_without_options_copies_file_with_bak_extension"
 )
 
-backup_not_throws() {
+backup_without_parameters_throws() {
+    backup &>/dev/null
+    if $? -ne 0 ; then
+        return 1
+    fi
+}
+
+backup_without_options_copies_file_with_bak_extension() {
     local expected="expected"
     echo $expected > a
 
