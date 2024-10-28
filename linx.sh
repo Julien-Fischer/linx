@@ -677,7 +677,23 @@ dbir() {
     docker run "${image_name}"
 }
 
-# @description Stop and remove all docker containers except those specified with the --keep option (if provided)
+# @description (Docker Clear) Stop and remove all docker containers and images except those specified
+#              in ~/linx/keep_images and ~/linx/keep_containers
+# @flag -f, --force  Forcefully stop all containers and remove images
+# @example
+#   dclr
+#   dclr -f
+#   dclr --force
+dclr() {
+    echo "Containers:"
+    dps_clr "$@"
+    echo ""
+    echo "Images:"
+    dim_clr "$@"
+}
+
+# @description (Docker Process Clear) Stop and remove all docker containers except those specified with
+#              the --keep option (if provided)
 # @flag -f, --force  Send a SIGKILL signal instead of a SIGTERM signal if present
 # @flag -k, --keep  Stop, but do not remove these containers
 # @example
