@@ -128,7 +128,7 @@ parse_parameters() {
                 ;;
             *)
                 echo "Unsupported parameter ${1}"
-                echo "Usage: ./test-runner.sh [-yki] [--keep-alive | --interactive]"
+                echo "Usage: ./test-runner.sh [-ki] [--keep-alive | --interactive]"
                 shift
                 exit 1
                 ;;
