@@ -19,6 +19,7 @@ LIB_FILE_NAME=".${PROJECT}_lib.sh"
 TERMINATOR_DIR=~/.config/terminator
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
+CURRENT_LAYOUT_FILE="${TERMINATOR_DIR}/current.layout"
 THEME_POLICY_FILE="${TERMINATOR_DIR}/theme_policy"
 GITHUB_ACCOUNT="https://github.com/Julien-Fischer"
 REPOSITORY="${GITHUB_ACCOUNT}/${PROJECT}.git"
@@ -248,6 +249,7 @@ should_install_third_party_themes() {
 install_terminator_config() {
     local third_party_themes_enabled=1
     local default_theme=
+    local default_layout="grid"
     if should_install_third_party_themes; then
         echo "Downloading third-party themes..."
         if git clone "${TERMINATOR_THEMES_REPOSITORY}"; then
@@ -260,6 +262,15 @@ install_terminator_config() {
     else
         default_theme="${TERMINATOR_DEFAULT_THEME_NATIVE}"
     fi
+
+    if [[ ! -f "${CURRENT_THEME_FILE}" ]]; then
+        echo "${default_theme}" > "${CURRENT_THEME_FILE}"
+    fi
+    if [[ ! -f "${CURRENT_LAYOUT_FILE}" ]]; then
+        echo "${default_layout}" > "${CURRENT_LAYOUT_FILE}"
+    fi
+    local user_theme=$(cat "${CURRENT_THEME_FILE}")
+    local user_layout=$(cat "${CURRENT_LAYOUT_FILE}")
 
     # generate the configuration file
     echo '' > "${TERMINATOR_CONFIG_FILE}"
@@ -277,7 +288,8 @@ install_terminator_config() {
     add_fragment "layouts"
     add_fragment "plugins"
 
-    term profiles --set "${default_theme}"
+    term profiles --set "${user_theme}"
+    term layouts --set "${user_layout}"
 }
 
 add_fragment() {
@@ -311,13 +323,16 @@ install_core() {
     if git clone "${REPOSITORY}"; then
         INSTALL_PATH="${INSTALL_DIR}/${PROJECT}"
         cd "${PROJECT}" || return 1
+        cp "install.sh" ~/"${LIB_FILE_NAME}"
         # Install linx-native commands
         for command in "${COMMANDS[@]}"; do
             install_command "${command}"
         done
         # Update terminator settings
         mkdir -p "${TERMINATOR_DIR}"
-        backup "${TERMINATOR_CONFIG_FILE}" -q
+        if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
+            backup "${TERMINATOR_CONFIG_FILE}" -q
+        fi
         install_terminator_config
         if [[ ! $? ]]; then
             return 1
@@ -325,7 +340,6 @@ install_core() {
         # Backup & update .linx.sh
         backup "${FUNC_FILE_NAME}" -q
         cp "${FUNC_FILE_NAME}" ~
-        cp "install.sh" ~/"${LIB_FILE_NAME}"
         # Clean up temp files & refresh shell session
         cd ../..
         echo "${PROJECT}: Removing temporary files..."

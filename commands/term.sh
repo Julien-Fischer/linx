@@ -28,8 +28,8 @@ Example:
   term p -s contrast
   # layouts
   term layouts
-  term layouts --print grid
-  term l -p grid
+  term layouts --get grid
+  term l -g grid
 EOF
 )
 
@@ -188,11 +188,11 @@ list_profiles() {
 ##############################################################
 
 print_layout() {
-    echo 'print layout'
+    echo 'print layout: OK'
 }
 
 layouts() {
-    echo 'layouts'
+    echo 'layouts: OK'
 }
 
 ##############################################################
@@ -202,7 +202,7 @@ layouts() {
 handle_profiles() {
     while [[ "$#" -gt 0 ]]; do
         case $1 in
-            -p|--print)
+            -g|--get)
                 print_profile "${2}"
                 return 0
                 ;;
@@ -223,7 +223,7 @@ handle_profiles() {
 handle_layouts() {
     while [[ "$#" -gt 0 ]]; do
         case $1 in
-            -p|--print)
+            -g|--get)
                 print_layout "${2}"
                 return 0
                 ;;
