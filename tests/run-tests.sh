@@ -17,7 +17,7 @@ readonly DOCKER_FILE_DIR=..
 # Build variables
 ################################################################
 # @value 1 for production; 0 if the container should run in interactive mode
-interactive=0
+interactive=1
 # @value 1 for production; 0 to keep the container running in the background for debugging and live interaction
 # If keep_alive=0, you can interact with the container by using:
 #     docker exec -ti "$BUILD_NAME" /bin/bash
