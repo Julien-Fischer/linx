@@ -654,10 +654,14 @@ alias gclear='git reflog expire --expire=now --all && git gc --prune=now'
 # Docker
 ##############################################################
 
+# Visualization
+
 alias dps="docker ps"
 alias dpsa="docker ps -a"
 alias dim="docker images"
 alias dima="docker images -a"
+
+# Build & Run
 
 # @description (Docker Build Image). Builds an image from a Dockerfile
 # @param $1 an arbitrary string to use as the image name
@@ -676,6 +680,11 @@ dbir() {
     dbi "$@"
     docker run "${image_name}"
 }
+
+# Management
+
+alias dstop="docker stop" # <container_name_or_id>
+alias dkill="docker kill" # <container_name_or_id>
 
 # @description (Docker Clear) Stop and remove all docker containers and images except those specified
 #              in ~/linx/keep_images and ~/linx/keep_containers
