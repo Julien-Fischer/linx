@@ -33,6 +33,12 @@ Example:
 EOF
 )
 
+fail() {
+    echo "Unsupported parameter ${1}"
+    echo "${USAGE}"
+    exit 1
+}
+
 ##############################################################
 # Profiles
 ##############################################################
@@ -356,9 +362,7 @@ handle_profiles() {
                 return 0
                 ;;
             *)
-                echo "Unsupported parameter ${1}"
-                echo "${USAGE}"
-                exit 1
+                fail "${1}"
                 ;;
         esac
     done
@@ -377,9 +381,7 @@ handle_layouts() {
                 return 0
                 ;;
             *)
-                echo "Unsupported parameter ${1}"
-                echo "${USAGE}"
-                exit 1
+                fail "${1}"
                 ;;
         esac
     done
@@ -400,9 +402,7 @@ main() {
                 return $?
                 ;;
             *)
-                echo "Unsupported parameter ${1}"
-                echo "${USAGE}"
-                exit 1
+                fail "${1}"
                 ;;
         esac
     done
