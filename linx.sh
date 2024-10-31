@@ -517,6 +517,29 @@ glast() {
     glot | head -$n
 }
 
+# @description Tag the latest commit, or the commit identified by the specified hash (if provided)
+# @param $1 The desired tag name
+# @option -i, --id (optional) the hash of the commit to tag
+gtag() {
+    local tag_name="${1}"
+    shift
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -i|--id)
+                local commit_hash="${2}"
+                git tag "${tag_name}" "${commit_hash}"
+                return 0
+                ;;
+            *)
+                echo "Unsupported parameter ${1}"
+                echo "Usage: gtag [tag_name] [[-i, --id]]"
+                return 1
+                ;;
+        esac
+    done
+    git tag "${tag_name}" "$(glast --id)"
+}
+
 gshow() {
     local hash="${1}"
     git show "${hash}"
