@@ -460,10 +460,35 @@ gfirst() {
     glot asc | head -$n
 }
 
-# @description Find the last commit in the log
+# @description Find the n latest commits in the log
 # @param $1 (optional) the number of commits to find starting from the last one (1 by default)
+# @option -i, --id if the output should be the hash of the latest commit
+# @example
+#   glast
+#   glast 3
+#   glast -i
+#   glast --id
 glast() {
     local n=${1:-1}
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -i|--id)
+                git rev-parse HEAD
+                return 0
+                ;;
+            *)
+                if [[ $1 =~ ^[0-9]+$ ]]; then
+                    n=$1
+
+                else
+                    echo "Unsupported parameter ${1}"
+                    echo "Usage: glast [count] [-i, --id]"
+                    return 1
+                fi
+                ;;
+        esac
+        shift
+    done
     glot | head -$n
 }
 
