@@ -453,10 +453,35 @@ gtree_all() {
     gtree --all
 }
 
-# @description Find the first commit in the log
+# @description Find the n latest commits in the log
 # @param $1 (optional) the number of commits to find starting from the first one (1 by default)
+# @option -i, --id if the output should be the hash of the first commit
+# @example
+#   gfirst
+#   gfirst 3
+#   gfirst -i
+#   gfirst --id
 gfirst() {
     local n=${1:-1}
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -i|--id)
+                git rev-list --max-parents=0 HEAD
+                return 0
+                ;;
+            *)
+                if [[ $1 =~ ^[0-9]+$ ]]; then
+                    n=$1
+
+                else
+                    echo "Unsupported parameter ${1}"
+                    echo "Usage: gfirst [count] [-i, --id]"
+                    return 1
+                fi
+                ;;
+        esac
+        shift
+    done
     glot asc | head -$n
 }
 
