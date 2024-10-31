@@ -401,6 +401,10 @@ main() {
                 handle_layouts "$@"
                 return $?
                 ;;
+            -h|--help)
+                echo "${USAGE}"
+                return 0
+                ;;
             *)
                 fail "${1}"
                 ;;
