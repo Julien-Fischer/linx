@@ -209,7 +209,49 @@ layouts() {
 }
 
 print_layout() {
-    echo 'print layout: OK'
+    local layout_name="${1}"
+    if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
+        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
+        return 1
+    fi
+    local reading_layouts=1
+    local reading_target_layout=1
+    local styles=()
+    local style_string=""
+    while IFS= read -r line; do
+        if [[ "${line}" == "[layouts]" ]]; then
+            reading_layouts=0
+            continue
+        fi
+        if [[ $reading_layouts -eq 0 && "${line}" =~ ^[[:space:]]*\[\[([^]]+)\]\][[:space:]]*$ ]]; then
+            if [[ "${BASH_REMATCH[1]}" == "${layout_name}" ]]; then
+                reading_target_layout=0
+            elif [[ $reading_target_layout -eq 0 ]]; then
+                break
+            fi
+            continue
+        fi
+        if [[ $reading_target_layout -eq 0 ]]; then
+            # Check if the line is the start of a new section
+            if [[ "${line}" =~ ^\[.*\]$ ]]; then
+                break
+            fi
+            styles+=("${line}")
+        fi
+    done < "${TERMINATOR_CONFIG_FILE}"
+    if [[ "${#styles[@]}" -gt 0 ]]; then
+        for i in "${!styles[@]}"; do
+            if [ $i -eq $((${#styles[@]} - 1)) ]; then
+                style_string+="${styles[i]}"
+            else
+                style_string+="${styles[i]}"$'\n'
+            fi
+        done
+        echo -e "${style_string}"
+    else
+        echo "Layout '${layout_name}' not found or has no associated styles."
+        return 1
+    fi
 }
 
 # @description Although this function could be invoked directly, it is usually executed via the layouts function
