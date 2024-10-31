@@ -138,7 +138,6 @@ set_profile() {
 
     backup "${TERMINATOR_CONFIG_FILE}" -q
     sudo mv "$temp_file" "${TERMINATOR_CONFIG_FILE}"
-    touch "${TERMINATOR_DIR}/current.profile"
     echo "${profile_name}" > "${CURRENT_THEME_FILE}"
 }
 
@@ -206,6 +205,50 @@ layouts() {
     fi
     echo -e "$(color "E:") Could not switch to ${layout_name} layout."
     return 1
+}
+
+set_layout() {
+    local layout_name="${1}"
+    local styles=$(print_layout "${layout_name}")
+    if [[ -z "${styles}" ]]; then
+        echo "${layout_name} layout not found."
+        return 1
+    fi
+
+    local temp_file=$(mktemp)
+    local reading_target_layout=false
+    local reading_layouts=false
+
+    while IFS= read -r line; do
+        if is_comment "${line}"; then
+            continue;
+        fi
+        if [[ "${line}" == "[layouts]" ]]; then
+            reading_layouts=true
+        elif [[ $reading_layouts == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[layouts]"* ]]; then
+            reading_layouts=false
+            reading_target_layout=false
+        fi
+        if [[ $reading_layouts == true && "${line}" == *"[[default]]"* ]]; then
+            reading_target_layout=true
+            echo "${line}" >> "${temp_file}"
+            echo "${styles}" >> "${temp_file}"
+        elif [[ $reading_target_layout == true && "${line}" =~ ^[[:space:]]*\[\[[^\[] ]]; then
+            reading_target_layout=false
+            echo "${line}" >> "${temp_file}"
+    elif [[ $reading_target_layout == true &&
+            ( "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ||
+              "${line}" =~ ^[[:space:]]*\[{3}[[:space:]]* )
+         ]]; then
+            continue
+        else
+            echo "${line}" >> "${temp_file}"
+        fi
+    done < "${TERMINATOR_CONFIG_FILE}"
+
+    backup "${TERMINATOR_CONFIG_FILE}" -q
+    sudo mv "$temp_file" "${TERMINATOR_CONFIG_FILE}"
+    echo "${layout_name}" > "${CURRENT_LAYOUT_FILE}"
 }
 
 print_layout() {
