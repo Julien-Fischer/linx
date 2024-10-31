@@ -170,12 +170,12 @@ list_profiles() {
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
     echo "${#profiles[@]} available profiles:"
-    local current_theme=
+    local current_layout=
     if [[ -f "${CURRENT_THEME_FILE}" ]]; then
-        current_theme=$(cat "${CURRENT_THEME_FILE}")
+        current_layout=$(cat "${CURRENT_THEME_FILE}")
     fi
     for profile in "${profiles[@]}"; do
-        if [[ -n "${current_theme}" && "${profile}" == "${current_theme}" ]]; then
+        if [[ -n "${current_layout}" && "${profile}" == "${current_layout}" ]]; then
             echo -e "> $(color "${profile}")"
         else
             echo "- ${profile}"
@@ -187,12 +187,72 @@ list_profiles() {
 # Layouts
 ##############################################################
 
+# @description Switch to a specified Terminator layout. If no parameter is provided, list the available layouts
+# @param $1  (optional) the name of the layout to switch to
+# @example
+#   # List available layouts
+#   layouts
+#   # Switch to the specified layout
+#   layouts layout_name
+layouts() {
+    local layout_name="${1}"
+    if [[ -z "${layout_name}" ]]; then
+        list_layouts
+        return 0
+    fi
+    if set_layout "$@"; then
+        echo "Switched to ${layout_name} layout. Restart Terminator to apply changes."
+        return 0
+    fi
+    echo -e "$(color "E:") Could not switch to ${layout_name} layout."
+    return 1
+}
+
 print_layout() {
     echo 'print layout: OK'
 }
 
-layouts() {
-    echo 'layouts: OK'
+# @description Although this function could be invoked directly, it is usually executed via the layouts function
+# @example
+#  # The following function calls are strictly equivalent:
+#  layouts
+#  print_layout
+list_layouts() {
+    if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
+        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
+        return 1
+    fi
+    local reading_layouts=1
+    local layouts=()
+    while IFS= read -r line; do
+        if is_comment "${line}"; then
+            continue;
+        fi
+        if [[ "${line}" == *"[layouts]"* ]]; then
+            reading_layouts=0
+            continue
+        fi
+        if [[ $reading_layouts -eq 0 && "${line}" =~ ^\[[^\]]+\]$ && "${line}" != "[layouts]" ]]; then
+            reading_layouts=1
+            continue
+        fi
+    if [[ $reading_layouts -eq 0 && "${line}" =~ ^[[:space:]]*\[\[([^]]+)\]\][[:space:]]*$ ]]; then
+        layouts+=("${BASH_REMATCH[1]}")
+    fi
+    done < "${TERMINATOR_CONFIG_FILE}"
+
+    echo "${#layouts[@]} available layouts:"
+    local current_layout=
+    if [[ -f "${CURRENT_LAYOUT_FILE}" ]]; then
+        current_layout=$(cat "${CURRENT_LAYOUT_FILE}")
+    fi
+    for layout in "${layouts[@]}"; do
+        if [[ -n "${current_layout}" && "${layout}" == "${current_layout}" ]]; then
+            echo -e "> $(color "${layout}")"
+        else
+            echo "- ${layout}"
+        fi
+    done
 }
 
 ##############################################################
