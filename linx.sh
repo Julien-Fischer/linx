@@ -113,7 +113,6 @@ translate() {
 #   cat path/to/file | cclip      # copy the file content to the clipboard
 #   cclip -f path/to/file         # Copy the content of the specified file to the clipboard
 #   cclip This is a test string   # copy multiple words as a single string
-#
 cclip() {
     local text=""
 
