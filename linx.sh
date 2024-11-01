@@ -351,7 +351,6 @@ alias upgrades='sudo apt update && apt list --upgradable'
 alias upgrade='sudo apt update && sudo apt upgrade'
 alias sup='sudo apt update && sudo apt upgrade -y && autorem'
 alias remove='sudo apt remove'
-alias pls='sudo'
 
 function install() {
     local software="${1}"
@@ -361,6 +360,10 @@ function install() {
 # Execute the last command with sudo
 please() {
     sudo $(history -p !!)
+}
+
+pls() {
+    please "$@"
 }
 
 # @description Determines whether a software is installed on this system
