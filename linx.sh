@@ -145,14 +145,13 @@ cclip() {
         elif [ -n "$WSL_DISTRO_NAME" ] && command -v clip.exe >/dev/null 2>&1; then
             echo -n "$input" | clip.exe
         else
-            echo "No suitable clipboard utility found." >&2
+            err "No suitable clipboard utility found."
             return 1
         fi
     }
 
-    # Copy the text to clipboard
     if ! _cp_to_clipboard "$text"; then
-        echo "E: Could not copy to clipboard"
+        err "Could not copy to clipboard"
         return 1
     fi
 }
