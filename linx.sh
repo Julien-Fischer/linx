@@ -309,7 +309,8 @@ findf() {
     sudo find "${directory}" -type f -name "*${name}*" 2>/dev/null | grep "${name}"
 }
 
-# @description Finds a directory recursively starting from the current directory (by default), or the specified directory if one is provided
+# @description Finds a directory recursively starting from the current directory (by default), or
+#              the specified directory if one is provided
 # @param $1 the name of the file to look for
 # @param $2 (optional) the current directory
 # @example
@@ -669,7 +670,8 @@ gap() {
   gac "${1}" && gp
 }
 
-# @description Reset the local branch to the state before the last commit, or reset n commits starting from the HEAD if an integer is specified
+# @description Reset the local branch to the state before the last commit, or reset n commits starting
+#              from the HEAD if an integer is specified
 # @param $1 (optional) the number of commits to reset
 # examples
 #   gr    # reset the last commit

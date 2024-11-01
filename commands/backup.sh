@@ -9,14 +9,16 @@ if [[ -f "${HOME}"/.linx_lib.sh ]]; then
 fi
 source "${HOME}"/.bashrc
 
-# @description Backup the element identified by the specified path. If the element to backup is a directory, copy it recursively
+# @description Backup the element identified by the specified path. If the element to backup is
+#              a directory, copy it recursively
 # @param $1 the file or directory to backup
 # @param $2 (optional) an arbitrary string to use as a prefix for the backup name
 # @flag -n if the filename must be dropped (requires that at least -t or $2 are specified)
 # @flag -q if this operation should mute outputs
 # @flag -r if the prefix should be used as a suffix, and the timestamp as a prefix
 # @flag -t if the backup name should be timestamped
-# @flag -z if the date prefix should have not separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires that -t is specified)
+# @flag -z if the date prefix should have not separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
+#          that -t is specified)
 # @return 0 if the operation completed successfully; 1 otherwise
 # @example
 #   backup mydir          # create a copy of mydir, named mydir.bak
