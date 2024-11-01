@@ -75,7 +75,7 @@ print_profile() {
     local styles=()
     local style_string=""
     while IFS= read -r line; do
-        if [[ "${line}" == "[profiles]" ]]; then
+        if [[ "${line}" == *"[profiles]"* ]]; then
             reading_profiles=0
             continue
         fi
@@ -121,14 +121,14 @@ set_profile() {
         if is_comment "${line}"; then
             continue;
         fi
-        if [[ "${line}" == "[profiles]" ]]; then
+        if [[ "${line}" == *"[profiles]"* ]]; then
             reading_profiles=true
-        elif [[ $reading_profiles == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != "[profiles]" ]]; then
+        elif [[ $reading_profiles == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[profiles]"* ]]; then
             reading_profiles=false
             reading_target_profile=false
         fi
 
-        if [[ $reading_profiles == true && "${line}" == "  [[default]]" ]]; then
+        if [[ $reading_profiles == true && "${line}" == *"[[default]]"* ]]; then
             reading_target_profile=true
             echo "${line}" >> "${temp_file}"
             echo "${styles}" >> "${temp_file}"
@@ -163,11 +163,11 @@ list_profiles() {
         if is_comment "${line}"; then
             continue;
         fi
-        if [[ "${line}" == "[profiles]" ]]; then
+        if [[ "${line}" == *"[profiles]"* ]]; then
             reading_profiles=0
             continue
         fi
-        if [[ "${line}" =~ ^\[[^\]]+\]$ && "${line}" != "[profiles]" ]]; then
+        if [[ "${line}" =~ ^\[[^\]]+\]$ && "${line}" != *"[profiles]"* ]]; then
             reading_profiles=1
         fi
         if [[ $reading_profiles -eq 0 && "${line}" =~ \[\[([^\]]+)\]\] ]]; then
@@ -229,7 +229,7 @@ set_layout() {
         if is_comment "${line}"; then
             continue;
         fi
-        if [[ "${line}" == "[layouts]" ]]; then
+        if [[ "${line}" == *"[layouts]"* ]]; then
             reading_layouts=true
         elif [[ $reading_layouts == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[layouts]"* ]]; then
             reading_layouts=false
@@ -268,7 +268,7 @@ print_layout() {
     local styles=()
     local style_string=""
     while IFS= read -r line; do
-        if [[ "${line}" == "[layouts]" ]]; then
+        if [[ "${line}" == *"[layouts]"* ]]; then
             reading_layouts=0
             continue
         fi
@@ -323,7 +323,7 @@ list_layouts() {
             reading_layouts=0
             continue
         fi
-        if [[ $reading_layouts -eq 0 && "${line}" =~ ^\[[^\]]+\]$ && "${line}" != "[layouts]" ]]; then
+        if [[ $reading_layouts -eq 0 && "${line}" =~ ^\[[^\]]+\]$ && "${line}" != *"[layouts]"* ]]; then
             reading_layouts=1
             continue
         fi
