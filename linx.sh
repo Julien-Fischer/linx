@@ -107,12 +107,14 @@ translate() {
 # - clip.exe (WSL)
 # @param $1 A string or multiple strings to be copied to the clipboard.
 # @option -f, --file The path to a file whose content will be copied to the clipboard
+# @option -c, --clear Clear the clipboard
 # @example
 #   cclip 'Hello, world!'         # copy the specified string
 #   ls path/to/directory | cclip  # copy the content of the specified directory
 #   cat path/to/file | cclip      # copy the file content to the clipboard
 #   cclip -f path/to/file         # Copy the content of the specified file to the clipboard
 #   cclip This is a test string   # copy multiple words as a single string
+#   cclip -c                      # clear the clipboard
 cclip() {
     local text=""
 
@@ -122,6 +124,9 @@ cclip() {
     # Check if input is coming from a file
     elif { [ "$1" = "-f" ] || [ "$1" = "--file" ]; } && [ -n "$2" ]; then
         text="$(cat "$2")"
+    # clear the clipboard
+    elif { [ "$1" = "-c" ] || [ "$1" = "--clear" ]; }; then
+        text=""
     # Check if input is coming from the arguments
     elif [ $# -gt 0 ]; then
         text="$*"
