@@ -27,6 +27,7 @@ source "${HOME}"/.bashrc
 #   backup myfile -t -r   # create a copy of myfile with a timestamp as prefix (e.g. 2024-09-03_09-53-42_myfile.bak
 #   backup mydir backup   # create a copy of myfile with backup as a prefix: backup_mydir
 backup() {
+    local USAGE="Usage: backup <filepath|dirpath> [prefix] [-nqrtz]"
     local SEPARATOR="_"
     local source=${1%/} # trim slash
     local prefix="${2}"
@@ -42,7 +43,7 @@ backup() {
     local target=
 
     if [[ -z "${source}" ]]; then
-        echo "Usage: backup <filepath|dirpath> [prefix] [-nqrtz]"
+        echo "${USAGE}"
         return 1
     fi
 
@@ -57,30 +58,32 @@ backup() {
 
     while [[ $# -gt 0 ]]; do
         case $1 in
+            -h|--help)
+                echo "${USAGE}"
+                return 0
+            ;;
             -t|--time)
                 use_time=0
-                shift
                 ;;
             -r|--reverse)
                 reverse=0
-                shift
                 ;;
             -q|--quiet)
                 quiet=0
-                shift
                 ;;
             -n)
                 drop_name=0
-                shift
                 ;;
             -z)
                 compact=0
-                shift
                 ;;
             *)
-                shift
+                err "Unknown parameter ${1}"
+                echo "${USAGE}"
+                return 1
                 ;;
         esac
+        shift
     done
 
     if [[ $use_time -eq 0 ]]; then
