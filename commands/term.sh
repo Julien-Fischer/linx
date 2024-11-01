@@ -68,6 +68,12 @@ profiles() {
 
 print_profile() {
     local profile_name="${1}"
+    if [[ -z "${profile_name}" ]]; then
+        echo "Profile name is required"
+        echo ""
+        echo "${USAGE}"
+        return 1
+    fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
         echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
@@ -109,6 +115,12 @@ print_profile() {
 
 set_profile() {
     local profile_name="${1}"
+    if [[ -z "${profile_name}" ]]; then
+        echo "Profile name is required"
+        echo ""
+        echo "${USAGE}"
+        return 1
+    fi
     local styles=$(print_profile "${profile_name}")
     if [[ -z "${styles}" ]]; then
         echo "${profile_name} profile not found."
@@ -217,6 +229,12 @@ layouts() {
 
 set_layout() {
     local layout_name="${1}"
+    if [[ -z "${layout_name}" ]]; then
+        echo "Profile name is required"
+        echo ""
+        echo "${USAGE}"
+        return 1
+    fi
     local styles=$(print_layout "${layout_name}")
     if [[ -z "${styles}" ]]; then
         echo "${layout_name} layout not found."
@@ -261,6 +279,12 @@ set_layout() {
 
 print_layout() {
     local layout_name="${1}"
+    if [[ -z "${layout_name}" ]]; then
+        echo "Profile name is required"
+        echo ""
+        echo "${USAGE}"
+        return 1
+    fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
         echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
