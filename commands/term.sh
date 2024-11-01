@@ -17,7 +17,7 @@ USAGE=$(cat <<EOF
 Usage: term [OPTIONS]
 
 Options:
-  p, profile [OPTIONS]   Lists the available profiles, or switch to the specified profile
+  p, profiles [OPTIONS]   Lists the available profiles, or switch to the specified profile
   l, layouts [OPTIONS]   Lists the available layouts, or switch to the specified layout
 
 Description:
