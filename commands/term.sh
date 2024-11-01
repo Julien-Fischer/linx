@@ -412,6 +412,8 @@ main() {
                 ;;
         esac
     done
+    echo "${USAGE}"
+    return 1
 }
 
 main "$@"
