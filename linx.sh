@@ -350,9 +350,13 @@ alias update='sudo apt update'
 alias upgrades='sudo apt update && apt list --upgradable'
 alias upgrade='sudo apt update && sudo apt upgrade'
 alias sup='sudo apt update && sudo apt upgrade -y && autorem'
-alias install.sh='sudo apt install.sh'
 alias remove='sudo apt remove'
 alias pls='sudo'
+
+function install() {
+    local software="${1}"
+    sudo apt update && sudo apt install "${software}"
+}
 
 # Execute the last command with sudo
 please() {
