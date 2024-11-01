@@ -17,7 +17,7 @@ source "${HOME}"/.bashrc
 # @flag -q if this operation should mute outputs
 # @flag -r if the prefix should be used as a suffix, and the timestamp as a prefix
 # @flag -t if the backup name should be timestamped
-# @flag -z if the date prefix should have not separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
+# @flag -z if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
 #          that -t is specified)
 # @return 0 if the operation completed successfully; 1 otherwise
 # @example
