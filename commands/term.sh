@@ -9,7 +9,9 @@ if [[ -f "${HOME}"/.linx_lib.sh ]]; then
 fi
 source "${HOME}"/.bashrc
 
-# Manages Terminator configuration
+##############################################################
+# Documentation
+##############################################################
 
 USAGE=$(cat <<EOF
 Usage: term [OPTIONS]
