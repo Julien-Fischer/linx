@@ -249,7 +249,7 @@ install_terminator_config() {
             default_theme="${TERMINATOR_DEFAULT_THEME_THIRD_PARTY}"
             third_party_themes_enabled=0
         else
-            echo -e "$(color "E:") Could not clone repository ${TERMINATOR_THEMES_REPOSITORY}"
+            err "Could not clone repository ${TERMINATOR_THEMES_REPOSITORY}"
             return 1
         fi
     else
@@ -337,12 +337,12 @@ install_core() {
         cd ../..
         echo "${PROJECT}: Removing temporary files..."
         if ! rm -rf "${INSTALL_DIR}"; then
-            echo -e "$(color "E:") Could not remove ${INSTALL_DIR} directory"
+            err "Could not remove ${INSTALL_DIR} directory"
         fi
         source "${HOME}/.bashrc"
         return 0
     else
-        echo -e "$(color "E:") Could not clone repository ${REPOSITORY}"
+        err "Could not clone repository ${REPOSITORY}"
         return 1
     fi
 }
@@ -351,7 +351,7 @@ update_rc_file() {
     local rc_file="${1}"
     local target=~/"${rc_file}"
     local WATERMARK="Created by \`linx\`"
-    DATETIME="$(timestamp)"
+    DATETIME="$(date "+%Y-%m-%d %H:%M:%S")"
     # Check if the wizard should source linx in .bashrc
     if [[ -f "${target}" ]] && ! grep -qF "${WATERMARK}" "${target}"; then
         lines="\n##############################################################\n"
