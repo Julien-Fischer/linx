@@ -17,11 +17,6 @@ export PROMPT_TO_BOTTOM=1
 # Misc
 ##############################################################
 
-# @deprecated
-datetime() {
-    timestamp
-}
-
 # @description A command line calculator
 # @param $1 a mathematical expression
 # @return the expression result
