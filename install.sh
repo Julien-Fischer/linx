@@ -111,64 +111,6 @@ installed() {
     fi
 }
 
-# @description Outputs the current datetime, with desired format (if specified).
-#              Default format: YYYY-MM-DD hh:mm:s
-# @option -i, --iso
-# @option -c, --compact
-# @option -h, --human-readable
-# @option -s, --separators '/' '_' ':'
-# @example
-#   # assuming the current datetime is 2024-11-03 09:34:56
-#   timestamp                # 2024-11-03 09:34:56
-#   timestamp -i,            # 2024-11-03T09:34:56
-#   timestamp -h,            # 2024-11-03_09:34:56
-#   timestamp -c,            # 20241103093456
-#   timestamp -s '/'         # 2024/11/03 09:34:56
-#   timestamp -s '/' '_'     # 2024/11/03_09:34:56
-#   timestamp -s '/' '_' '-' # 2024/11/03_09-34-56
-# shellcheck disable=SC2120
-timestamp() {
-    local format="%Y-%m-%d %H:%M:%S"
-    local date_sep="-"
-    local time_sep=":"
-    local datetime_sep=" "
-
-    while [[ "$#" -gt 0 ]]; do
-        case $1 in
-            -i|--iso)
-                format="%Y-%m-%dT%H:%M:%S"
-                ;;
-            -c|--compact)
-                format="%Y%m%d%H%M%S"
-                ;;
-            -h|--human-readable)
-                datetime_sep="_"
-                format="%Y-%m-%d_%H:%M:%S"
-                ;;
-            -s|--separators)
-                if [[ "$#" -lt 2 ]]; then
-                    err "-s option requires at least one separator"
-                    return 1
-                fi
-                shift
-                date_sep="$1"
-                datetime_sep="${2:-$datetime_sep}"
-                time_sep="${3:-$time_sep}"
-                format="%Y${date_sep}%m${date_sep}%d${datetime_sep}%H${time_sep}%M${time_sep}%S"
-                shift 2
-                ;;
-            *)
-                err "Unknown option ${1}"
-                return 1
-                ;;
-        esac
-        shift
-    done
-
-    date +"$format"
-}
-
-
 is_sourced() {
     if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         return 1
