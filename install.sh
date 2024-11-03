@@ -30,7 +30,7 @@ TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="synthwave_2"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 
-export COMMANDS=("term" "linx" "backup" "port")
+mapfile -t COMMANDS < <(ls -1 ./commands)
 
 # Basic ANSI colors with no styles (bold, italic, etc)
 export RED='\033[0;31m'
@@ -198,7 +198,7 @@ install_dependency() {
 }
 
 install_command() {
-    local command_name="${1}"
+    local command_name=$(basename "${1}" .sh)
     local filepath="commands/${command_name}.sh"
     chmod +x "${filepath}"
     sudo cp "${filepath}" /usr/local/bin/"${command_name}"
