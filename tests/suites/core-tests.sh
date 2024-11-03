@@ -7,12 +7,14 @@
 export CORE_TESTS=(
     'is_installed'
     'lt_lists_dir_content'
-    'it_uses_default_timestamp'
-    'it_uses_custom_date_separator'
-    'it_uses_custom_date_time_separator'
-    'it_uses_custom_time_separator'
-    'it_uses_all_custom_separators'
-    'it_uses_timestamp_format'
+    'timestamp_uses_default_separators'
+    'timestamp_uses_custom_date_separator'
+    'timestamp_uses_custom_datetime_separator'
+    'timestamp_uses_custom_time_separator'
+    'timestamp_uses_all_custom_separators'
+    'timestamp_uses_iso_datetime_format'
+    'timestamp_uses_human_readable_format'
+    'timestamp_uses_compact_format'
 )
 
 # A smoke test asserting that the Test environment is set up
@@ -29,37 +31,50 @@ lt_lists_dir_content() {
     fi
 }
 
-it_uses_default_timestamp() {
+timestamp_uses_default_separators() {
     local result=$(timestamp)
     local expected=$(date "+%Y-%m-%d %H:%M:%S")
     assert_equals "$expected" "$result"
 }
 
-it_uses_custom_date_separator() {
-    local result=$(timestamp "/")
+timestamp_uses_custom_date_separator() {
+    local result=$(timestamp -s "/")
     local expected=$(date "+%Y/%m/%d %H:%M:%S")
     assert_equals "$expected" "$result"
 }
 
-it_uses_custom_date_time_separator() {
-    local result=$(timestamp "-" "_")
+timestamp_uses_custom_datetime_separator() {
+    local result=$(timestamp -s "-" "_")
     local expected=$(date "+%Y-%m-%d_%H:%M:%S")
     assert_equals "$expected" "$result"
 }
 
-it_uses_custom_time_separator() {
-    local result=$(timestamp "-" " " ",")
+timestamp_uses_custom_time_separator() {
+    local result=$(timestamp -s "-" " " ",")
     local expected=$(date "+%Y-%m-%d %H,%M,%S")
     assert_equals "$expected" "$result"
 }
 
-it_uses_all_custom_separators() {
-    local result=$(timestamp "/" "_" ",")
+timestamp_uses_all_custom_separators() {
+    local result=$(timestamp -s "/" "_" ",")
     local expected=$(date "+%Y/%m/%d_%H,%M,%S")
     assert_equals "$expected" "$result"
 }
 
-it_uses_timestamp_format() {
-    local result=$(timestamp)
-    assert_matches "$result" "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+timestamp_uses_iso_datetime_format() {
+    local result=$(timestamp -i)
+    local expected=$(date "+%Y-%m-%dT%H:%M:%S")
+    assert_equals "$expected" "$result"
+}
+
+timestamp_uses_human_readable_format() {
+    local result=$(timestamp -h)
+    local expected=$(date "+%Y-%m-%d_%H:%M:%S")
+    assert_equals "$expected" "$result"
+}
+
+timestamp_uses_compact_format() {
+    local result=$(timestamp -c)
+    local expected=$(date "+%Y%m%d%H%M%S")
+    assert_equals "$expected" "$result"
 }
