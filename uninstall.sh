@@ -63,9 +63,6 @@ uninstall_linx() {
 
     del "${CURRENT_THEME_FILE}"
 
-    # Remove configuration files
-    del "${LINX_DIR}"
-
     # Remove linx core
     del ~/linx.sh
     del ~/.linx_lib.sh
