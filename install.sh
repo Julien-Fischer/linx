@@ -30,8 +30,6 @@ TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="synthwave_2"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 
-mapfile -t COMMANDS < <(ls -1 ./commands)
-
 # Basic ANSI colors with no styles (bold, italic, etc)
 export RED='\033[0;31m'
 export GREEN='\033[0;32m'
@@ -309,6 +307,13 @@ trim_slash() {
 # Installation process
 ##############################################################
 
+install_commands() {
+    mapfile -t COMMANDS < <(ls -1 ./commands)
+    for command in "${COMMANDS[@]}"; do
+        install_command "${command}"
+    done
+}
+
 # @description Sync with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
@@ -317,10 +322,7 @@ install_core() {
         INSTALL_PATH="${INSTALL_DIR}/${PROJECT}"
         cd "${PROJECT}" || return 1
         cp "install.sh" ~/"${LIB_FILE_NAME}"
-        # Install linx-native commands
-        for command in "${COMMANDS[@]}"; do
-            install_command "${command}"
-        done
+        install_commands
         # Update terminator settings
         mkdir -p "${TERMINATOR_DIR}"
         if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
