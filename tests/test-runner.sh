@@ -74,6 +74,7 @@ execute_tests() {
     local pass_count=0
     local fail_count=0
     local suite_count=0
+    local build_status='Passed'
 
     print_separator
     for suite_name in "${!TESTS_TO_RUN[@]}"; do
@@ -96,6 +97,7 @@ execute_tests() {
             else
                 suite_color=$RED
                 fail_count=$((fail_count + 1))
+                build_status='Failed'
             fi
             echo -e "${color}Status: ${status}${NC}"
             if [[ $test_count -lt $((n - 1)) ]]; then
@@ -108,7 +110,12 @@ execute_tests() {
         suite_count=$((suite_count + 1))
     done
     echo -e "${GREEN}${pass_count}${NC} passed. ${RED}${fail_count}${NC} failed."
-    echo -e "[$(date '+%H:%M:%S')] ${suite_color}Tests passed${NC}."
+    echo -e "[$(date '+%H:%M:%S')] ${suite_color}Tests ${build_status}${NC}."
+    if [[ $fail_count -eq 0 ]]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 print_separator() {
@@ -141,6 +148,30 @@ containerized_actions() {
         exec /bin/bash
     elif [[ $keep_alive -eq 0 ]]; then
         tail -f /dev/null
+    fi
+}
+
+###############################################################
+## Assertions
+###############################################################
+
+assert_equals() {
+    local expected="${1}"
+    local actual="${2}"
+    if [[ "${expected}" == "${actual}" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+assert_matches() {
+    local subject="${1}"
+    local pattern="${2}"
+    if [[ $subject =~ $pattern ]]; then
+        return 0
+    else
+        return 1
     fi
 }
 
