@@ -17,6 +17,7 @@ export PROMPT_TO_BOTTOM=1
 # Misc
 ##############################################################
 
+# @deprecated
 datetime() {
     timestamp
 }

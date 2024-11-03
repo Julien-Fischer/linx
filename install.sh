@@ -111,10 +111,19 @@ installed() {
     fi
 }
 
+# @description Outputs the current datetime, formatted with the specified separators (if provided)
+# @param $1 the date separator
+# @param $2 the date / time separator
+# @param $3 the time separator
+# @example
+#   timestamp
+#   timestamp '/'
+#   timestamp '/' '_'
+#   timestamp '/' '_' '-'
 timestamp() {
-    local ds="${1-'-'}"
-    local dts="${2-' '}"
-    local ts="${3-':'}"
+    local ds="${1:--}"
+    local dts="${2:- }"
+    local ts="${3:-:}"
     date "+%Y${ds}%m${ds}%d${dts}%H${ts}%M${ts}%S"
 }
 
