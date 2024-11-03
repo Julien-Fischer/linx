@@ -408,6 +408,9 @@ install_linx() {
     if ! install_core "$@"; then
         return 1
     fi
+    if ! cp 'uninstall.sh' "${LINX_DIR}"; then
+        err "Could not copy uninstall.sh to ${LINX_DIR}"
+    fi
     if install_dependencies "$@" && [[ $linx_already_installed -eq 0 ]]; then
         echo "${PROJECT}: Restart your terminal for all changes to be applied."
     fi
