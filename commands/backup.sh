@@ -89,9 +89,9 @@ backup() {
 
     if [[ $use_time -eq 0 ]]; then
         if [[ $compact -eq 0 ]]; then
-            time=$(timestamp '' '' '')
+            time=$(timestamp -c)
         else
-            time=$(timestamp - _ -)
+            time=$(timestamp -s - _ -)
         fi
     fi
 
@@ -130,7 +130,7 @@ backup() {
         [[ $quiet -ne 0 ]] && echo "Backed up [dir] ${source} at ${target}"
         return 0
     fi
-    [[ $quiet -ne 0 ]] && echo "Could not find any file or directory at ${source}"
+    [[ $quiet -ne 0 ]] && err "Could not find any file or directory at ${source}"
     return 1
 }
 
