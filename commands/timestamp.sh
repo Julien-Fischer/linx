@@ -59,6 +59,7 @@ timestamp() {
         case $1 in
             -h|--help)
                 echo "${USAGE}"
+                return 0
                 ;;
             -i|--iso)
                 format="%Y-%m-%dT%H:%M:%S"
@@ -92,3 +93,5 @@ timestamp() {
 
     date +"$format"
 }
+
+timestamp "$@"
