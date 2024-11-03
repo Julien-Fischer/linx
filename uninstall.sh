@@ -9,10 +9,21 @@ if [ -f ~/.linx_lib.sh ]; then
     source "${HOME}"/.linx_lib.sh
 fi
 
+##############################################################
+# Parameters
+##############################################################
+
+auto_approve=1
+
+##############################################################
+# Constants
+##############################################################
+
 project_name="${PROJECT}"
 
-echo "this will uninstall ${project_name}."
-confirm "Uninstallation" "Proceed?" --abort
+##############################################################
+# Uninstallation process
+##############################################################
 
 try_removing() {
     local path="${1}"
@@ -30,22 +41,52 @@ uninstall_command() {
     fi
 }
 
-if confirm "Removal" "Remove Terminator configuration files?"; then
-    sudo rm ~/.config/terminator/*
-else
-    echo "Configuration files preserved"
-fi
+uninstall_commands() {
+    mapfile -t COMMANDS < <(cat "${LINX_INSTALLED_COMMANDS}")
+    for command in "${COMMANDS[@]}"; do
+        uninstall_command "${command}"
+    done
+    del "${LINX_INSTALLED_COMMANDS}"
+}
 
-# Uninstall linx-native commands
-for command in "${COMMANDS[@]}"; do
-    uninstall_command "${command}"
-done
+uninstall_linx() {
+    echo "this will uninstall ${project_name}."
+    [[ $auto_approve -ne 0 ]] && confirm "Uninstallation" "Proceed?" --abort
 
-del "${CURRENT_THEME_FILE}"
+    if [[ $auto_approve -eq 0 ]] || confirm "Removal" "Remove Terminator configuration files?"; then
+        sudo rm ~/.config/terminator/*
+    else
+        echo "Configuration files preserved"
+    fi
 
-# Remove linx core
-del ~/linx.sh
-del ~/.linx_lib.sh
+    uninstall_commands
 
+    del "${CURRENT_THEME_FILE}"
 
-echo "${project_name} was successfully uninstalled."
+    # Remove configuration files
+    del "${LINX_DIR}"
+
+    # Remove linx core
+    del ~/linx.sh
+    del ~/.linx_lib.sh
+
+    echo "${project_name} was successfully uninstalled."
+}
+
+uninstall() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -y|--yes)
+                auto_approve=0
+                shift
+                ;;
+            *)
+                echo "Usage: ./uninstall.sh [-y]"
+                return 1
+                ;;
+        esac
+    done
+    uninstall_linx "$@"
+}
+
+uninstall "$@"

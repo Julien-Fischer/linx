@@ -9,9 +9,10 @@
 ##############################################################
 
 export VERSION="1.0.0-alpha2"
-PROJECT="linx"
+export PROJECT="linx"
+export LINX_DIR="${HOME}/linx"
 INSTALL_DIR="tmp-linx-install"
-LINX_DIR=~/linx
+LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 KEEP_CONTAINERS_FILE="${LINX_DIR}/keep_containers"
 KEEP_IMAGES_FILE="${LINX_DIR}/keep_images"
 FUNC_FILE_NAME="${PROJECT}.sh"
@@ -311,6 +312,7 @@ install_commands() {
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
     done
+    echo "${COMMANDS[@]}" > "${LINX_INSTALLED_COMMANDS}"
 }
 
 # @description Sync with the latest version from the remote
