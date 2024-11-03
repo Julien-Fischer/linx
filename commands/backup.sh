@@ -13,11 +13,11 @@ source "${HOME}"/.bashrc
 #              a directory, copy it recursively
 # @param $1 the file or directory to backup
 # @param $2 (optional) an arbitrary string to use as a prefix for the backup name
-# @flag -n if the filename must be dropped (requires that at least -t or $2 are specified)
-# @flag -q if this operation should mute outputs
-# @flag -r if the prefix should be used as a suffix, and the timestamp as a prefix
-# @flag -t if the backup name should be timestamped
-# @flag -z if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
+# @flag -n,--no-name if the filename must be dropped (requires that at least -t or $2 are specified)
+# @flag -q,--quiet if this operation should mute outputs
+# @flag -r,--reverse if the prefix should be used as a suffix, and the timestamp as a prefix
+# @flag -t,--time if the backup name should be timestamped
+# @flag -c,--compatc if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
 #          that -t is specified)
 # @return 0 if the operation completed successfully; 1 otherwise
 # @example
@@ -27,7 +27,7 @@ source "${HOME}"/.bashrc
 #   backup myfile -t -r   # create a copy of myfile with a timestamp as prefix (e.g. 2024-09-03_09-53-42_myfile.bak
 #   backup mydir backup   # create a copy of myfile with backup as a prefix: backup_mydir
 backup() {
-    local USAGE="Usage: backup <filepath|dirpath> [prefix] [-nqrtz]"
+    local USAGE="Usage: backup <filepath|dirpath> [[prefix]] [[-cnqrt]]"
     local SEPARATOR="_"
     local source=${1%/} # trim slash
     local prefix="${2}"
@@ -43,6 +43,7 @@ backup() {
     local target=
 
     if [[ -z "${source}" ]]; then
+        err "No source specified."
         echo "${USAGE}"
         return 1
     fi
@@ -71,10 +72,10 @@ backup() {
             -q|--quiet)
                 quiet=0
                 ;;
-            -n)
+            -n|--no-name)
                 drop_name=0
                 ;;
-            -z)
+            -c|--compact)
                 compact=0
                 ;;
             *)
