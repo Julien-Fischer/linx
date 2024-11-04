@@ -8,7 +8,7 @@
 # Constants
 ##############################################################
 
-export VERSION="1.0.0-alpha2"
+export VERSION="1.0.0-alpha3"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
 INSTALL_DIR="tmp-linx-install"
