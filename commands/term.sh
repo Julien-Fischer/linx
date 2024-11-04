@@ -4,8 +4,10 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
-if [[ -f "${HOME}"/.linx_lib.sh ]]; then
-    source "${HOME}"/.linx_lib.sh
+if [[ -f "${LINX_DIR}"/.linx_lib.sh ]]; then
+    source "${LINX_DIR}"/.linx_lib.sh
+else
+    echo "E: Could not source ${LINX_DIR}/.linx_lib.sh"
 fi
 source "${HOME}"/.bashrc
 
@@ -42,28 +44,68 @@ fail() {
 }
 
 ##############################################################
+# Utils
+##############################################################
+
+is_comment() {
+    local line="${1}"
+    if [[ "${line}" =~ ^[[:space:]]*# ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+##############################################################
 # Profiles
 ##############################################################
 
-# @description Switch to a specified Terminator profile. If no parameter is provided, list the available profiles
-# @param $1  (optional) the name of the profile to switch to
-# @example
-#   # List available profiles
-#   profiles
-#   # Switch to the specified profile
-#   profiles profile_name
-profiles() {
+set_profile() {
     local profile_name="${1}"
     if [[ -z "${profile_name}" ]]; then
-        list_profiles
-        return 0
+        echo "Profile name is required"
+        echo ""
+        echo "${USAGE}"
+        return 1
     fi
-    if set_profile "$@"; then
-        echo "Switched to ${profile_name} profile. Restart Terminator to apply the theme."
-        return 0
+    local styles=$(print_profile "${profile_name}")
+    if [[ -z "${styles}" ]]; then
+        echo "${profile_name} profile not found."
+        return 1
     fi
-    echo -e "$(color "E:") Could not switch to ${profile_name} profile."
-    return 1
+
+    local temp_file=$(mktemp)
+    local reading_target_profile=false
+    local reading_profiles=false
+
+    while IFS= read -r line; do
+        if is_comment "${line}"; then
+            continue;
+        fi
+        if [[ "${line}" == *"[profiles]"* ]]; then
+            reading_profiles=true
+        elif [[ $reading_profiles == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[profiles]"* ]]; then
+            reading_profiles=false
+            reading_target_profile=false
+        fi
+
+        if [[ $reading_profiles == true && "${line}" == *"[[default]]"* ]]; then
+            reading_target_profile=true
+            echo "${line}" >> "${temp_file}"
+            echo "${styles}" >> "${temp_file}"
+        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]*\[\[ ]]; then
+            reading_target_profile=false
+            echo "${line}" >> "${temp_file}"
+        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ]]; then
+            continue
+        else
+            echo "${line}" >> "${temp_file}"
+        fi
+    done < "${TERMINATOR_CONFIG_FILE}"
+
+    cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_CONFIG_FILE}.bak"
+    sudo mv "${temp_file}" "${TERMINATOR_CONFIG_FILE}"
+    echo "${profile_name}" > "${CURRENT_THEME_FILE}"
 }
 
 print_profile() {
@@ -113,54 +155,6 @@ print_profile() {
     fi
 }
 
-set_profile() {
-    local profile_name="${1}"
-    if [[ -z "${profile_name}" ]]; then
-        echo "Profile name is required"
-        echo ""
-        echo "${USAGE}"
-        return 1
-    fi
-    local styles=$(print_profile "${profile_name}")
-    if [[ -z "${styles}" ]]; then
-        echo "${profile_name} profile not found."
-        return 1
-    fi
-
-    local temp_file=$(mktemp)
-    local reading_target_profile=false
-    local reading_profiles=false
-
-    while IFS= read -r line; do
-        if is_comment "${line}"; then
-            continue;
-        fi
-        if [[ "${line}" == *"[profiles]"* ]]; then
-            reading_profiles=true
-        elif [[ $reading_profiles == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[profiles]"* ]]; then
-            reading_profiles=false
-            reading_target_profile=false
-        fi
-
-        if [[ $reading_profiles == true && "${line}" == *"[[default]]"* ]]; then
-            reading_target_profile=true
-            echo "${line}" >> "${temp_file}"
-            echo "${styles}" >> "${temp_file}"
-        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]*\[\[ ]]; then
-            reading_target_profile=false
-            echo "${line}" >> "${temp_file}"
-        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ]]; then
-            continue
-        else
-            echo "${line}" >> "${temp_file}"
-        fi
-    done < "${TERMINATOR_CONFIG_FILE}"
-
-    backup "${TERMINATOR_CONFIG_FILE}" -q
-    sudo mv "$temp_file" "${TERMINATOR_CONFIG_FILE}"
-    echo "${profile_name}" > "${CURRENT_THEME_FILE}"
-}
-
 # @description Although this function could be invoked directly, it is usually executed via the profiles function
 # @example
 #  # The following function calls are strictly equivalent:
@@ -200,6 +194,27 @@ list_profiles() {
             echo "- ${profile}"
         fi
     done
+}
+
+# @description Switch to a specified Terminator profile. If no parameter is provided, list the available profiles
+# @param $1  (optional) the name of the profile to switch to
+# @example
+#   # List available profiles
+#   profiles
+#   # Switch to the specified profile
+#   profiles profile_name
+profiles() {
+    local profile_name="${1}"
+    if [[ -z "${profile_name}" ]]; then
+        list_profiles
+        return 0
+    fi
+    if set_profile "${profile_name}"; then
+        echo "Switched to ${profile_name} profile. Restart Terminator to apply the theme."
+        return 0
+    fi
+    echo -e "$(color "E:") Could not switch to ${profile_name} profile."
+    return 1
 }
 
 ##############################################################

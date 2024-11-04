@@ -10,14 +10,15 @@
 
 export VERSION="1.0.0-alpha2"
 export PROJECT="linx"
-export LINX_DIR="${HOME}/linx"
+export LINX_DIR="${HOME}/${PROJECT}"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
-KEEP_CONTAINERS_FILE="${LINX_DIR}/keep_containers"
-KEEP_IMAGES_FILE="${LINX_DIR}/keep_images"
+DOCKER_CONFIG_DIR="${HOME}/docker_config"
+KEEP_CONTAINERS_FILE="${DOCKER_CONFIG_DIR}/keep_containers"
+KEEP_IMAGES_FILE="${DOCKER_CONFIG_DIR}/keep_images"
 FUNC_FILE_NAME="${PROJECT}.sh"
 LIB_FILE_NAME=".${PROJECT}_lib.sh"
-TERMINATOR_DIR=~/.config/terminator
+TERMINATOR_DIR="${HOME}/.config/terminator"
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
 CURRENT_LAYOUT_FILE="${TERMINATOR_DIR}/current.layout"
@@ -200,6 +201,7 @@ install_command() {
     local filepath="commands/${command_name}.sh"
     chmod +x "${filepath}"
     sudo cp "${filepath}" /usr/local/bin/"${command_name}"
+    echo "${command_name}" >> "${LINX_INSTALLED_COMMANDS}"
 }
 
 get_goal() {
@@ -212,7 +214,7 @@ get_goal() {
 }
 
 is_linx_installed() {
-    if [[ -f ~/linx.sh && -f ~/.linx_lib.sh ]]; then
+    if [[ -d "${LINX_DIR}" ]]; then
         return 0
     else
         return 1
@@ -241,6 +243,12 @@ install_terminator_config() {
     local third_party_themes_enabled=1
     local default_theme=
     local default_layout="grid"
+
+    mkdir -p "${TERMINATOR_DIR}"
+    if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
+        backup "${TERMINATOR_CONFIG_FILE}" -q
+    fi
+
     if should_install_third_party_themes; then
         echo "Downloading third-party themes..."
         if git clone "${TERMINATOR_THEMES_REPOSITORY}"; then
@@ -263,7 +271,7 @@ install_terminator_config() {
     local user_theme=$(cat "${CURRENT_THEME_FILE}")
     local user_layout=$(cat "${CURRENT_LAYOUT_FILE}")
 
-    # generate the configuration file
+    # generate the new configuration file
     echo '' > "${TERMINATOR_CONFIG_FILE}"
 
     add_fragment "global"
@@ -288,15 +296,6 @@ add_fragment() {
     cat "${TERMINATOR_LOCAL_CONFIG_DIR}/${fragment}.conf" >> "${TERMINATOR_CONFIG_FILE}"
 }
 
-is_comment() {
-    local line="${1}"
-    if [[ "${line}" =~ ^[[:space:]]*# ]]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 trim_slash() {
     string="${1}"
     trimmed_string=${string%/}
@@ -308,44 +307,42 @@ trim_slash() {
 ##############################################################
 
 install_commands() {
+    sudo mkdir -p /usr/local/bin
+    echo '' > "${LINX_INSTALLED_COMMANDS}"
     mapfile -t COMMANDS < <(ls -1 ./commands)
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
     done
-    echo "${COMMANDS[@]}" > "${LINX_INSTALLED_COMMANDS}"
 }
 
 # @description Sync with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
-    mkdir -p "${INSTALL_DIR}" && cd "${INSTALL_DIR}" || return 1
+    mkdir -p "${INSTALL_DIR}"
+    cd "${INSTALL_DIR}" || rm -rf "${INSTALL_DIR}"
     if git clone "${REPOSITORY}"; then
-        INSTALL_PATH="${INSTALL_DIR}/${PROJECT}"
         cd "${PROJECT}" || return 1
-        cp "install.sh" ~/"${LIB_FILE_NAME}"
+        cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
+        cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
+        source "${HOME}/.bashrc"
         install_commands
-        # Update terminator settings
-        mkdir -p "${TERMINATOR_DIR}"
-        if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-            backup "${TERMINATOR_CONFIG_FILE}" -q
+        # update linx
+        if ! cp 'uninstall.sh' "${LINX_DIR}"; then
+            err "Could not copy uninstall.sh to ${LINX_DIR}"
         fi
-        install_terminator_config
-        if [[ ! $? ]]; then
+        if ! install_terminator_config; then
+            err "Could not update terminator configuration"
             return 1
         fi
-        # Backup & update .linx.sh
-        backup "${FUNC_FILE_NAME}" -q
-        cp "${FUNC_FILE_NAME}" ~
         # Clean up temp files & refresh shell session
         cd ../..
         echo "${PROJECT}: Removing temporary files..."
         if ! rm -rf "${INSTALL_DIR}"; then
             err "Could not remove ${INSTALL_DIR} directory"
         fi
-        source "${HOME}/.bashrc"
         return 0
     else
-        err "Could not clone repository ${REPOSITORY}"
+        echo "E: Could not clone repository ${REPOSITORY}"
         return 1
     fi
 }
@@ -354,12 +351,13 @@ update_rc_file() {
     local rc_file="${1}"
     local target=~/"${rc_file}"
     local WATERMARK="Created by \`linx\`"
+    local SEPARATOR="##############################################################"
     DATETIME="$(date "+%Y-%m-%d %H:%M:%S")"
     # Check if the wizard should source linx in .bashrc
     if [[ -f "${target}" ]] && ! grep -qF "${WATERMARK}" "${target}"; then
-        lines="\n##############################################################\n"
+        lines="\n${SEPARATOR}\n"
         lines+="# ${WATERMARK} on ${DATETIME}"
-        lines+="\n##############################################################\n\n"
+        lines+="\n${SEPARATOR}\n\n"
         lines+=$(cat config/bashrc_config)
         lines+="\n"
         echo -e "${lines}" >> "${target}"
@@ -400,6 +398,7 @@ install_linx() {
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
 
     mkdir -p "${LINX_DIR}"
+    mkdir -p "${DOCKER_CONFIG_DIR}"
     touch "${KEEP_CONTAINERS_FILE}"
     touch "${KEEP_IMAGES_FILE}"
 
@@ -407,9 +406,6 @@ install_linx() {
     update_rc_file ".zshrc"
     if ! install_core "$@"; then
         return 1
-    fi
-    if ! cp 'uninstall.sh' "${LINX_DIR}"; then
-        err "Could not copy uninstall.sh to ${LINX_DIR}"
     fi
     if install_dependencies "$@" && [[ $linx_already_installed -eq 0 ]]; then
         echo "${PROJECT}: Restart your terminal for all changes to be applied."

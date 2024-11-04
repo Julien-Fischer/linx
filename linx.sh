@@ -3,8 +3,8 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 # Source linx
-if [ -f ~/.linx_lib.sh ]; then
-    source "${HOME}"/.linx_lib.sh
+if [ -f "${HOME}"/linx/.linx_lib.sh ]; then
+    source "${HOME}"/linx/.linx_lib.sh
 fi
 
 ##############################################################
@@ -794,7 +794,7 @@ alias dstop="docker stop" # <container_name_or_id>
 alias dkill="docker kill" # <container_name_or_id>
 
 # @description (Docker Clear) Stop and remove all docker containers and images except those specified
-#              in ~/linx/keep_images and ~/linx/keep_containers
+#              in ~/docker_config/keep_images and ~/docker_config/keep_containers
 # @flag -f, --force  Forcefully stop all containers and remove images
 # @example
 #   dclr
@@ -828,7 +828,7 @@ Options:
 
 Description:
   Stops and removes all Docker containers except those specified with the --keep option
-  and those listed in \$KEEP_CONTAINERS_FILE (usually located at ~/linx/keep_containers).
+  and those listed in \$KEEP_CONTAINERS_FILE (usually located at ${KEEP_CONTAINERS_FILE}).
 EOF
 )
     while [[ "$#" -gt 0 ]]; do
@@ -839,7 +839,7 @@ EOF
         esac
         shift
     done
-    # Read container IDs from ~/linx/keep_containers file
+    # Read container IDs from ~/docker_config/keep_containers file
     local file_keep=""
     if [[ -f "${KEEP_CONTAINERS_FILE}" ]]; then
         file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${KEEP_CONTAINERS_FILE}")
@@ -885,7 +885,7 @@ Options:
 
 Description:
   Removes all Docker images except those specified with the --keep option
-  and those listed in \$KEEP_IMAGES_FILE (usually located at ~/linx/keep_images).
+  and those listed in \$KEEP_IMAGES_FILE (usually located at ${KEEP_IMAGES_FILE}).
 EOF
 )
     while [[ "$#" -gt 0 ]]; do
@@ -896,7 +896,7 @@ EOF
         esac
         shift
     done
-    # Read image IDs from ~/linx/keep_images file
+    # Read image IDs from ~/docker_config/keep_images file
     local file_keep=""
     if [[ -f "${KEEP_IMAGES_FILE}" ]]; then
         file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${KEEP_IMAGES_FILE}")

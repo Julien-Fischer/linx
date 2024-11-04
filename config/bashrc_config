@@ -6,6 +6,12 @@
 #FOSS="${HOME}/foss"
 
 # Source linx
-if [ -f ~/linx.sh ]; then
-    source "${HOME}"/linx.sh
+if [[ -f "${HOME}"/linx/linx.sh ]]; then
+    source "${HOME}"/linx/linx.sh
 fi
+
+# Add commands to PATH
+export PATH="$PATH:/usr/local/bin"
+
+# Remove duplicates in the PATH
+export PATH=$(echo $PATH | tr ':' '\n' | awk '!seen[$0]++' | tr '\n' ':' | sed 's/:$//')

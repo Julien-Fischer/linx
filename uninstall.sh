@@ -5,8 +5,11 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 # Source linx
-if [ -f ~/.linx_lib.sh ]; then
-    source "${HOME}"/.linx_lib.sh
+if [ -f "${LINX_DIR}"/.linx_lib.sh ]; then
+    source "${LINX_DIR}"/.linx_lib.sh
+else
+    echo "linx was not found on this system."
+    exit 1
 fi
 
 ##############################################################
@@ -14,12 +17,6 @@ fi
 ##############################################################
 
 auto_approve=1
-
-##############################################################
-# Constants
-##############################################################
-
-project_name="${PROJECT}"
 
 ##############################################################
 # Uninstallation process
@@ -37,38 +34,46 @@ try_removing() {
 uninstall_command() {
     local command="${1}"
     if installed "${command}" -q; then
-        del /usr/local/bin/"${command}"
+        del /usr/local/bin/"${command}" -q
     fi
 }
 
 uninstall_commands() {
-    mapfile -t COMMANDS < <(cat "${LINX_INSTALLED_COMMANDS}")
+    if [[ ! -f "${LINX_INSTALLED_COMMANDS}" ]]; then
+        return 0
+    fi
+    mapfile -t COMMANDS < "${LINX_INSTALLED_COMMANDS}"
     for command in "${COMMANDS[@]}"; do
-        uninstall_command "${command}"
+        command=$(echo "$command" | xargs)
+        if [[ -n "${command}" ]] && uninstall_command "${command}"; then
+            echo "Uninstalled ${command} command"
+        fi
     done
-    del "${LINX_INSTALLED_COMMANDS}"
+    rm "${LINX_INSTALLED_COMMANDS}"
 }
 
-uninstall_linx() {
-    echo "this will uninstall ${project_name}."
-    [[ $auto_approve -ne 0 ]] && confirm "Uninstallation" "Proceed?" --abort
-
-    if [[ $auto_approve -eq 0 ]] || confirm "Removal" "Remove Terminator configuration files?"; then
+uninstall_terminator_config() {
+    if ([[ $auto_approve -eq 0 ]] || \
+       confirm "Removal" "Remove Terminator configuration files?") && \
+       [[ -n $(ls -A ~/.config/terminator) ]]; then
         sudo rm ~/.config/terminator/*
     else
         echo "Configuration files preserved"
     fi
+    if [[ -f "${CURRENT_THEME_FILE}" ]]; then
+        rm "${CURRENT_THEME_FILE}"
+    fi
+}
 
+uninstall_linx() {
+    echo "this will uninstall linx."
+    [[ $auto_approve -ne 0 ]] && confirm "Uninstallation" "Proceed?" --abort
+    uninstall_terminator_config
     uninstall_commands
-
-    del "${CURRENT_THEME_FILE}"
-
-    # Remove linx core
-    del "${LINX_DIR}/uninstall.sh"
-    del ~/linx.sh
-    del ~/.linx_lib.sh
-
-    echo "${project_name} was successfully uninstalled."
+    if [[ -d "${LINX_DIR}" ]]; then
+        del "${LINX_DIR}"
+    fi
+    echo "linx was successfully uninstalled."
 }
 
 uninstall() {
