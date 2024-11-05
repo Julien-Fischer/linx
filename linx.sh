@@ -475,6 +475,28 @@ alias gcl="git clone"
 # @option -d, --demo if this function should generate a demo project with multiple branches
 #                    This option can't be used with --no-commit
 gproject() {
+    local USAGE=$(cat <<EOF
+Usage: gproject [PROJECT_NAME] [OPTIONS]
+
+Generates a new git project with a .gitignore file.
+
+Parameters:
+  PROJECT_NAME    (Optional) The name of the project to generate.
+                  If not provided, defaults to "my_project".
+
+Options:
+  -n, --no-commit  Do not automatically create an initial commit.
+                   This option cannot be used with --demo.
+
+  -d, --demo       Generate a demo project with multiple branches.
+                   This option cannot be used with --no-commit.
+
+Examples:
+  gproject my_new_project
+  gproject my_demo_project --demo
+  gproject --no-commit
+EOF
+    )
     local name
     local no_commit=false
     local demo=false
@@ -498,7 +520,8 @@ gproject() {
                 ;;
             *)
                 err "Invalid parameter: ${1}"
-                echo "Usage: gproject [-nd]"
+                echo "${USAGE}"
+                return 1
                 ;;
         esac
     done
