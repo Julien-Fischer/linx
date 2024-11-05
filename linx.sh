@@ -726,6 +726,18 @@ alias gd='git diff' # <filename>
 
 # History modifications
 
+# @description (Git Reset) Unstage all files, or a specific file (if specified)
+# @param $1 (optional) the name of the file to stage, or nothing if all files must be staged
+gr() {
+    local filename="${1}"
+    if [[ -n "${filename}" ]]; then
+        git reset "${filename}"
+    else
+        git reset
+    fi
+}
+
+# @description (Git Add) all files, or a specific file (if specified)
 # @param $1 (optional) the name of the file to stage, or nothing if all files must be staged
 ga() {
     local filename="${1}"
