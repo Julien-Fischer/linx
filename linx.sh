@@ -465,20 +465,68 @@ upgrade_only() {
 
 # Project initialization
 
-# @description Generates a new git project with a .gitignore file
-# @param $1 the name of the project to generate
-# @option --no-commit if this function should not automatically create an initial commit
-gproject() {
-    local name="${1}"
-    local no_commit="${2}"
-    mkcs "${name}" && git init
-    echo ".idea" > .gitignore
-    if [[ "${no_commit}" != "--no-commit" ]]; then
-        git add . && git commit -m "chore: Initial commit"
-    fi
-}
 alias gin="git init"
 alias gcl="git clone"
+
+# @description Generates a new git project with a .gitignore file
+# @param $1 (optional) the name of the project to generate
+# @option -n, --no-commit if this function should not automatically create an initial commit.
+#                         This option can't be used with --demo
+# @option -d, --demo if this function should generate a demo project with multiple branches
+#                    This option can't be used with --no-commit
+gproject() {
+    local name
+    local no_commit=false
+    local demo=false
+    if [[ $# -eq 0 || $1 == -* ]]; then
+        name="my_project"
+    else
+        name="${1}"
+        shift
+    fi
+    mkp "${name}" && cd "${name}" && git init -q
+    echo ".idea" > .gitignore
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            -n|--no-commit)
+                no_commit=true
+                shift
+                ;;
+            -d|--demo)
+                demo=true
+                shift
+                ;;
+            *)
+                err "Invalid parameter: ${1}"
+                echo "Usage: gproject [-nd]"
+                ;;
+        esac
+    done
+    if ! $no_commit; then
+        git add . && git commit -m "chore: Initial commit" -q
+    fi
+    if $demo; then
+        local original_branch=$(git rev-parse --abbrev-ref HEAD)
+        for branch in master branch-1 branch-2 branch-3; do
+            if git rev-parse --verify "${branch}" >/dev/null 2>&1; then
+                git checkout "${branch}" -q
+            else
+                git checkout -b "${branch}" -q
+            fi
+            for letter in {a..o}; do
+                echo "${letter}" >> "${letter}.txt" && git add . && git commit -m "${letter}" -q
+            done
+            git checkout "${original_branch}" -q
+        done
+    fi
+    echo -e "Created $(color "${name}") at $(pwd)"
+    if git rev-parse --verify HEAD >/dev/null 2>&1; then
+        echo -e "\nHistory:"
+        glo
+    fi
+    echo -e "\nContent:"
+    la
+}
 
 # Project updates
 
