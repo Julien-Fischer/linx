@@ -743,12 +743,12 @@ gap() {
 }
 
 # @description Reset the local branch to the state before the last commit, or reset n commits starting
-#              from the HEAD if an integer is specified
+#              from the HEAD if an integer is specified, and keep the changes in staging
 # @param $1 (optional) the number of commits to reset
 # examples
-#   gr    # reset the last commit
-#   gr 3  # reset the latest 3 commits
-gr() {
+#   grs    # reset the last commit
+#   grs 3  # reset the latest 3 commits
+grs() {
   local n=${1:-1}
   local current_branch=$(git branch --show-current)
   if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
