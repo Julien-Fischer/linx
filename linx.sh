@@ -467,7 +467,7 @@ upgrade_only() {
 
 # @description Generates a new git project with a .gitignore file
 # @param $1 the name of the project to generate
-# @param $2 (optional) --no-commit if this function should not automatically create a initial commit
+# @option --no-commit if this function should not automatically create an initial commit
 gproject() {
     local name="${1}"
     local no_commit="${2}"
