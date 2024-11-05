@@ -5,8 +5,8 @@
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
 # Source linx
-if [ -f "${LINX_DIR}"/.linx_lib.sh ]; then
-    source "${LINX_DIR}"/.linx_lib.sh
+if [ -f "${HOME}"/linx/.linx_lib.sh ]; then
+    source "${HOME}"/linx/.linx_lib.sh
 else
     echo "linx was not found on this system."
     exit 1
