@@ -474,7 +474,7 @@ alias gcl="git clone"
 #                         This option can't be used with --demo
 # @option -d, --demo if this function should generate a demo project with multiple branches
 #                    This option can't be used with --no-commit
-gproject() {
+gproj() {
     local USAGE=$(cat <<EOF
 Usage: gproject [PROJECT_NAME] [OPTIONS]
 
