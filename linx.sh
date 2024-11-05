@@ -572,12 +572,18 @@ gl() {
 
 # @description Git log (one-line)
 # @param $1 (optional) asc to sort the log by ascending order, or the name of the branch
+# @example
+#   glo
+#   glo <branch_name>
 glo() {
     gl "$@" --oneline
 }
 
 # @description Git log (time)
 # @param $1 (optional) asc to sort the log by ascending order
+# @example
+#   glot
+#   glot <branch_name>
 glot() {
     gl "$@" --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit
 }
