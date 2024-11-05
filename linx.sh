@@ -754,7 +754,7 @@ gap() {
   gac "${1}" && gp
 }
 
-# @description Reset the local branch to the state before the last commit, or reset n commits starting
+# @description (Git Reset Soft) Reset the local branch to the state before the last commit, or reset n commits starting
 #              from the HEAD if an integer is specified, and keep the changes in staging
 # @param $1 (optional) the number of commits to reset
 # examples
