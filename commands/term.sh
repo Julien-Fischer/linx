@@ -4,8 +4,8 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
-if [[ -f "${LINX_DIR}"/.linx_lib.sh ]]; then
-    source "${LINX_DIR}"/.linx_lib.sh
+if [[ -f "${HOME}"/linx/.linx_lib.sh ]]; then
+    source "${LINX_DIR}"/linx/.linx_lib.sh
 else
     echo "E: Could not source ${LINX_DIR}/.linx_lib.sh"
 fi

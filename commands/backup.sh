@@ -4,8 +4,8 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
-if [[ -f "${HOME}"/.linx_lib.sh ]]; then
-    source "${HOME}"/.linx_lib.sh
+if [[ -f "${HOME}"/linx/.linx_lib.sh ]]; then
+    source "${HOME}"/linx/.linx_lib.sh
 fi
 source "${HOME}"/.bashrc
 
