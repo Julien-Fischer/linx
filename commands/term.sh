@@ -84,19 +84,19 @@ set_profile() {
         fi
         if [[ "${line}" == *"[profiles]"* ]]; then
             reading_profiles=true
-        elif [[ $reading_profiles == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[profiles]"* ]]; then
+        elif $reading_profiles && [[ "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[profiles]"* ]]; then
             reading_profiles=false
             reading_target_profile=false
         fi
 
-        if [[ $reading_profiles == true && "${line}" == *"[[default]]"* ]]; then
+        if $reading_profiles && [[ "${line}" == *"[[default]]"* ]]; then
             reading_target_profile=true
             echo "${line}" >> "${temp_file}"
             echo "${styles}" >> "${temp_file}"
-        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]*\[\[ ]]; then
+        elif $reading_target_profile && [[ "${line}" =~ ^[[:space:]]*\[\[ ]]; then
             reading_target_profile=false
             echo "${line}" >> "${temp_file}"
-        elif [[ $reading_target_profile == true && "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ]]; then
+        elif $reading_target_profile && [[ "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ]]; then
             continue
         else
             echo "${line}" >> "${temp_file}"
@@ -266,18 +266,18 @@ set_layout() {
         fi
         if [[ "${line}" == *"[layouts]"* ]]; then
             reading_layouts=true
-        elif [[ $reading_layouts == true && "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[layouts]"* ]]; then
+        elif $reading_layouts && [[ "${line}" =~ ^\[[^]]*\]$ && "${line}" != *"[layouts]"* ]]; then
             reading_layouts=false
             reading_target_layout=false
         fi
-        if [[ $reading_layouts == true && "${line}" == *"[[default]]"* ]]; then
+        if $reading_layouts && [[ "${line}" == *"[[default]]"* ]]; then
             reading_target_layout=true
             echo "${line}" >> "${temp_file}"
             echo "${styles}" >> "${temp_file}"
-        elif [[ $reading_target_layout == true && "${line}" =~ ^[[:space:]]*\[\[[^\[] ]]; then
+        elif $reading_target_layout && [[ "${line}" =~ ^[[:space:]]*\[\[[^\[] ]]; then
             reading_target_layout=false
             echo "${line}" >> "${temp_file}"
-    elif [[ $reading_target_layout == true &&
+    elif $reading_target_layout && [[
             ( "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ||
               "${line}" =~ ^[[:space:]]*\[{3}[[:space:]]* )
          ]]; then
