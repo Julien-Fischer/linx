@@ -341,7 +341,7 @@ trim_slash() {
 
 install_commands() {
     sudo mkdir -p /usr/local/bin
-    echo '' > "${LINX_INSTALLED_COMMANDS}"
+    printf '' > "${LINX_INSTALLED_COMMANDS}"
     mapfile -t COMMANDS < <(ls -1 ./commands)
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
