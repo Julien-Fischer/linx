@@ -13,11 +13,12 @@ source "${HOME}"/.bashrc
 #              a directory, copy it recursively
 # @param $1 the file or directory to backup
 # @param $2 (optional) an arbitrary string to use as a prefix for the backup name
-# @flag -n,--no-name if the filename must be dropped (requires that at least -t or $2 are specified)
+# @flag -e,--no-extension if the extension must be dropped (requires that at least -t or $2 are specified)
+# @flag -n,--no-name if the filename must be dropped (requires that at least -t is specified)
 # @flag -q,--quiet if this operation should mute outputs
 # @flag -r,--reverse if the prefix should be used as a suffix, and the timestamp as a prefix
 # @flag -t,--time if the backup name should be timestamped
-# @flag -c,--compatc if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
+# @flag -c,--compact if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
 #          that -t is specified)
 # @return 0 if the operation completed successfully; 1 otherwise
 # @example
@@ -29,7 +30,7 @@ source "${HOME}"/.bashrc
 backup() {
     # shellcheck disable=SC2046
     set -- $(decluster "$@")
-    local USAGE="Usage: backup <filepath|dirpath> [[prefix]] [[-cnqrt]]"
+    local USAGE="Usage: backup <filepath|dirpath> [[prefix]] [[-cenqrt]]"
     local SEPARATOR="_"
     local source=${1%/} # trim slash
     local prefix="${2}"
@@ -39,6 +40,7 @@ backup() {
     local reverse=1
     local drop_name=1
     local compact=1
+    local drop_extension=false
     local name=$(basename "${source}")
     local path=$(dirname "${source}")
     local complete_name=
@@ -64,7 +66,10 @@ backup() {
             -h|--help)
                 echo "${USAGE}"
                 return 0
-            ;;
+                ;;
+            -e|--no-extension)
+                drop_extension=true
+                ;;
             -t|--time)
                 use_time=0
                 ;;
@@ -119,7 +124,14 @@ backup() {
         complete_name="${prefix}${sep_b}${name}${sep_a}${time}"
     fi
 
-    complete_name+=".bak"
+    if ! $drop_extension; then
+        if [[ $use_time -eq 0 || $drop_name -ne 0 ]]; then
+            complete_name+=".bak"
+        else
+            err "-e requires at least that -t or a filename is specified."
+            return 1
+        fi
+    fi
     target="${path}/${complete_name}"
 
     if [[ -f "${source}" ]]; then
