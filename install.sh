@@ -169,18 +169,21 @@ cpv() {
 #   del projects -q dirA  # delete projects, quietly
 del() {
     local path=$(trim_slash "${1}")
-    local quiet=${2:-''}
+    local quiet=false
+    if [[ "${2}" == "-q" || "${2}" == "--quiet" ]]; then
+        quiet=true
+    fi
     if [[ -f "${path}" ]]; then
         sudo rm "${path}"
-        [[ $quiet != "-q" ]] && echo "Removed [file] ${path}"
+        ! $quiet && echo "Removed [file] ${path}"
         return 0
     fi
     if [[ -d "${path}" ]]; then
         sudo rm -r "${path}"
-        [[ $quiet != "-q" ]] && echo "Removed [dir] ${path}"
+        ! $quiet && echo "Removed [dir] ${path}"
         return 0
     fi
-    [[ $quiet != "-q" ]] && echo "Could not find any file or directory at ${path}"
+    ! $quiet && echo "Could not find any file or directory at ${path}"
     return 1
 }
 
