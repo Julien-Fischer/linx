@@ -506,7 +506,10 @@ EOF
         name="${1}"
         shift
     fi
-    mkp "${name}" && cd "${name}" && git init -q
+    if ! (mkp "${name}" && cd "${name}" && git init -q); then
+        err "Could not generate git project at $(pwd)"
+        return 1
+    fi
     echo ".idea" > .gitignore
     while [[ "$#" -gt 0 ]]; do
         case $1 in
