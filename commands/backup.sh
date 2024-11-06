@@ -30,7 +30,38 @@ source "${HOME}"/.bashrc
 backup() {
     # shellcheck disable=SC2046
     set -- $(decluster "$@")
-    local USAGE="Usage: backup <filepath|dirpath> [[prefix]] [[-cenqrt]]"
+    local USAGE=$(cat <<EOF
+Usage: backup <file_or_directory> [prefix] [options]
+
+Backup the element identified by the specified path. If the element to backup is
+a directory, copy it recursively.
+
+Arguments:
+  <file_or_directory>     The file or directory to backup
+  [prefix]                (Optional) An arbitrary string to use as a prefix for the backup name
+
+Options:
+  -e, --no-extension      Drop the file extension (requires that at least -t or prefix are specified)
+  -n, --no-name           Drop the filename (requires that at least -t is specified)
+  -q, --quiet             Mute outputs
+  -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
+  -t, --time              Add a timestamp to the backup name
+  -c, --compact           Use compact date format without separators (requires -t)
+
+Examples:
+  backup mydir                    # Create a copy of mydir, named mydir.bak
+  backup mydir -q dirA            # Backup mydir, quietly
+  backup myfile -t                # Create a copy of myfile with a timestamp as suffix
+                                  # (e.g., myfile_2024-09-03_09-53-42.bak)
+  backup myfile -t -r             # Create a copy of myfile with a timestamp as prefix
+                                  # (e.g., 2024-09-03_09-53-42_myfile.bak)
+  backup mydir backup             # Create a copy of mydir with 'backup' as a prefix
+                                  # (e.g., backup_mydir)
+
+Return:
+  0 if the operation completed successfully; 1 otherwise
+EOF
+)
     local SEPARATOR="_"
     local source=${1%/} # trim slash
     local prefix="${2}"
