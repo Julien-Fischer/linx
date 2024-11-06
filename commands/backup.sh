@@ -152,13 +152,13 @@ backup() {
     local sep_b=${prefix:+$SEPARATOR}
 
     if $drop_name; then
-        if [[ $use_time -ne 0 && "${prefix}" -ne 0 ]]; then
+        if ! $use_time && ! $prefix; then
             err "-n requires that at least -t or \$2 are specified"
             return 1
         else
             name=""
             sep_a=""
-            if [[ $use_time -eq 1 ]]; then
+            if ! $use_time; then
                 sep_b=""
             fi
         fi
