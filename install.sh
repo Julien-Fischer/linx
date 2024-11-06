@@ -420,10 +420,6 @@ install_linx() {
                 ;;
         esac
     done
-
-    if [[ "${1}" == "-y" ]]; then
-        auto_approve=0
-    fi
     echo "this will install ${PROJECT} on your system."
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
 
