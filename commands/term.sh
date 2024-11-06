@@ -120,24 +120,24 @@ print_profile() {
         echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
-    local reading_profiles=1
-    local reading_target_profile=1
+    local reading_profiles=false
+    local reading_target_profile=false
     local styles=()
     local style_string=""
     while IFS= read -r line; do
         if [[ "${line}" == *"[profiles]"* ]]; then
-            reading_profiles=0
+            reading_profiles=true
             continue
         fi
-        if [[ $reading_profiles -eq 0 && "${line}" =~ \[?\[[^\]]+\]\]? ]]; then
+        if $reading_profiles && [[ "${line}" =~ \[?\[[^\]]+\]\]? ]]; then
             if [[ "${line}" =~ [[:space:]]*\[${profile_name}\][[:space:]]* ]]; then
-                reading_target_profile=0
-            elif [[ $reading_target_profile -eq 0 ]]; then
-                reading_target_profile=1
+                reading_target_profile=true
+            elif $reading_target_profile; then
+                reading_target_profile=false
             fi
             continue
         fi
-        if [[ $reading_target_profile -eq 0  ]]; then
+        if $reading_target_profile; then
             styles+=("${line}")
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
@@ -165,20 +165,20 @@ list_profiles() {
         echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
-    local reading_profiles=1
+    local reading_profiles=false
     local profiles=()
     while IFS= read -r line; do
         if is_comment "${line}"; then
             continue;
         fi
         if [[ "${line}" == *"[profiles]"* ]]; then
-            reading_profiles=0
+            reading_profiles=true
             continue
         fi
         if [[ "${line}" =~ ^\[[^\]]+\]$ && "${line}" != *"[profiles]"* ]]; then
-            reading_profiles=1
+            reading_profiles=false
         fi
-        if [[ $reading_profiles -eq 0 && "${line}" =~ \[\[([^\]]+)\]\] ]]; then
+        if $reading_profiles && [[ "${line}" =~ \[\[([^\]]+)\]\] ]]; then
             profiles+=("${BASH_REMATCH[1]}")
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
@@ -213,7 +213,7 @@ profiles() {
         echo "Switched to ${profile_name} profile. Restart Terminator to apply the theme."
         return 0
     fi
-    echo -e "$(color "E:") Could not switch to ${profile_name} profile."
+    err "Could not switch to ${profile_name} profile."
     return 1
 }
 
@@ -238,7 +238,7 @@ layouts() {
         echo "Switched to ${layout_name} layout. Restart Terminator to apply changes."
         return 0
     fi
-    echo -e "$(color "E:") Could not switch to ${layout_name} layout."
+    err "Could not switch to ${layout_name} layout."
     return 1
 }
 
@@ -277,10 +277,14 @@ set_layout() {
         elif $reading_target_layout && [[ "${line}" =~ ^[[:space:]]*\[\[[^\[] ]]; then
             reading_target_layout=false
             echo "${line}" >> "${temp_file}"
-    elif $reading_target_layout && [[
-            ( "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ||
-              "${line}" =~ ^[[:space:]]*\[{3}[[:space:]]* )
-         ]]; then
+        elif $reading_target_layout && [[
+                "${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ||
+                "${line}" =~ ^[[:space:]]*\[{3}[[:space:]]* ]]; then
+
+#    elif $reading_target_layout && [[
+#            ("${line}" =~ ^[[:space:]]+[a-zA-Z_]+[[:space:]]*= ||
+#             "${line}" =~ ^[[:space:]]*\[{3}[[:space:]]*)
+#         ]]; then
             continue
         else
             echo "${line}" >> "${temp_file}"
@@ -304,24 +308,24 @@ print_layout() {
         echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
-    local reading_layouts=1
-    local reading_target_layout=1
+    local reading_layouts=false
+    local reading_target_layout=false
     local styles=()
     local style_string=""
     while IFS= read -r line; do
         if [[ "${line}" == *"[layouts]"* ]]; then
-            reading_layouts=0
+            reading_layouts=true
             continue
         fi
-        if [[ $reading_layouts -eq 0 && "${line}" =~ ^[[:space:]]*\[\[([^]]+)\]\][[:space:]]*$ ]]; then
+        if $reading_layouts && [[ "${line}" =~ ^[[:space:]]*\[\[([^]]+)\]\][[:space:]]*$ ]]; then
             if [[ "${BASH_REMATCH[1]}" == "${layout_name}" ]]; then
-                reading_target_layout=0
-            elif [[ $reading_target_layout -eq 0 ]]; then
+                reading_target_layout=true
+            elif $reading_target_layout; then
                 break
             fi
             continue
         fi
-        if [[ $reading_target_layout -eq 0 ]]; then
+        if $reading_target_layout; then
             # Check if the line is the start of a new section
             if [[ "${line}" =~ ^\[.*\]$ ]]; then
                 break
@@ -354,21 +358,21 @@ list_layouts() {
         echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
-    local reading_layouts=1
+    local reading_layouts=false
     local layouts=()
     while IFS= read -r line; do
         if is_comment "${line}"; then
             continue;
         fi
         if [[ "${line}" == *"[layouts]"* ]]; then
-            reading_layouts=0
+            reading_layouts=true
             continue
         fi
-        if [[ $reading_layouts -eq 0 && "${line}" =~ ^\[[^\]]+\]$ && "${line}" != *"[layouts]"* ]]; then
-            reading_layouts=1
+        if $reading_layouts && [[ "${line}" =~ ^\[[^\]]+\]$ && "${line}" != *"[layouts]"* ]]; then
+            reading_layouts=false
             continue
         fi
-    if [[ $reading_layouts -eq 0 && "${line}" =~ ^[[:space:]]*\[\[([^]]+)\]\][[:space:]]*$ ]]; then
+    if $reading_layouts && [[ "${line}" =~ ^[[:space:]]*\[\[([^]]+)\]\][[:space:]]*$ ]]; then
         layouts+=("${BASH_REMATCH[1]}")
     fi
     done < "${TERMINATOR_CONFIG_FILE}"
