@@ -29,6 +29,7 @@ Options:
   -q, --quiet             Mute outputs
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
   -t, --time              Add a timestamp to the backup name
+  -o, --only-compact      if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnqrt
 
 Examples:
   backup mydir                    # Create a copy of mydir, named mydir.bak
@@ -41,6 +42,7 @@ Examples:
                                   # (e.g., backup_mydir)
   backup mydir -ecnqrt            # Create a copy of mydir using the current compact date as the file name
                                   # (e.g., 20241106215624)
+  backup mydir -o                 # Shorthand for backup mydir -ecnt
 EOF
 )
 
@@ -55,6 +57,7 @@ EOF
 # @flag -t,--time if the backup name should be timestamped
 # @flag -c,--compact if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
 #          that -t is specified)
+# @flag -o,--only-compact if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
 # @return 0 if the operation completed successfully; 1 otherwise
 # @example
 #   backup mydir          # create a copy of mydir, named mydir.bak
@@ -122,6 +125,12 @@ backup() {
             -c|--compact)
                 compact=true
                 ;;
+            -o|--only-compact)
+                drop_extension=true
+                use_time=true
+                drop_name=true
+                compact=true
+                ;;
             *)
                 err "Unknown parameter ${1}"
                 echo "${USAGE}"
@@ -165,7 +174,7 @@ backup() {
         if $use_time || ! $drop_name; then
             complete_name+=".bak"
         else
-            !$quiet && err "-e requires at least that -t or a filename is specified."
+            ! $quiet && err "-e requires at least that -t or a filename is specified."
             return 1
         fi
     fi
