@@ -375,7 +375,7 @@ bye() {
     if command -v loginctl &> /dev/null; then
         loginctl lock-session
     else
-        echo -e "$(color 'E:') loginctl not found. Ensure you're using a system with systemd."
+        err "loginctl not found. Ensure you're using a system with systemd."
     fi
 }
 alias byebye='systemctl poweroff'
@@ -451,7 +451,7 @@ is_installed() {
 upgrade_only() {
     local software="${1}"
     if ! is_installed "${software}" -q; then
-        echo -e "$(color "E:") ${software} needs to be installed first."
+        err "${software} needs to be installed first."
         echo "Looking for ${software} on APT:"
         apt search "${software}"
         return 1
