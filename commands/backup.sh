@@ -27,6 +27,8 @@ source "${HOME}"/.bashrc
 #   backup myfile -t -r   # create a copy of myfile with a timestamp as prefix (e.g. 2024-09-03_09-53-42_myfile.bak
 #   backup mydir backup   # create a copy of myfile with backup as a prefix: backup_mydir
 backup() {
+    # shellcheck disable=SC2046
+    set -- $(decluster "$@")
     local USAGE="Usage: backup <filepath|dirpath> [[prefix]] [[-cnqrt]]"
     local SEPARATOR="_"
     local source=${1%/} # trim slash
