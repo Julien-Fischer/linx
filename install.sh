@@ -52,6 +52,36 @@ auto_approve=1
 # Utils
 ##############################################################
 
+# @description Declusters command-line arguments by separating clustered short options
+#              into individual options while preserving other arguments and their order.
+# @param $@ All command-line arguments passed to the function
+# @example
+#   decluster -abcd
+#   # Output: -a -b -c -d
+#   decluster param1 param2 -abcd
+#   # Output: param1 param2 -a -b -c -d
+#   decluster -abcd param1 param2 -xyz --long-option
+#   # Output: -a -b -c -d param1 param2 -x -y -z --long-option
+#   decluster --long-option -abcd param1 param2 -xyz
+#   # Output: --long-option -a -b -c -d param1 param2 -x -y -z
+decluster() {
+    declare -a args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -[a-zA-Z]*)
+                for (( i=1; i<${#1}; i++ )); do
+                    args+=("-${1:i:1}")
+                done
+                ;;
+            *)
+                args+=("${1}")
+                ;;
+        esac
+        shift
+    done
+    echo "${args[@]}"
+}
+
 # @description Prompts the user for approval
 # @param $1 The action to be confirmed
 # @param $2 The prompt message for the user
