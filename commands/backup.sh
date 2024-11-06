@@ -34,12 +34,12 @@ backup() {
     local SEPARATOR="_"
     local source=${1%/} # trim slash
     local prefix="${2}"
-    local quiet=1
-    local use_time=1
     local time=""
-    local reverse=1
-    local drop_name=1
-    local compact=1
+    local quiet=false
+    local use_time=false
+    local reverse=false
+    local drop_name=false
+    local compact=false
     local drop_extension=false
     local name=$(basename "${source}")
     local path=$(dirname "${source}")
@@ -71,19 +71,19 @@ backup() {
                 drop_extension=true
                 ;;
             -t|--time)
-                use_time=0
+                use_time=true
                 ;;
             -r|--reverse)
-                reverse=0
+                reverse=true
                 ;;
             -q|--quiet)
-                quiet=0
+                quiet=true
                 ;;
             -n|--no-name)
-                drop_name=0
+                drop_name=true
                 ;;
             -c|--compact)
-                compact=0
+                compact=true
                 ;;
             *)
                 err "Unknown parameter ${1}"
@@ -94,8 +94,8 @@ backup() {
         shift
     done
 
-    if [[ $use_time -eq 0 ]]; then
-        if [[ $compact -eq 0 ]]; then
+    if $use_time; then
+        if $compact; then
             time=$(timestamp -c)
         else
             time=$(timestamp -s - _ -)
@@ -105,7 +105,7 @@ backup() {
     local sep_a=${time:+$SEPARATOR}
     local sep_b=${prefix:+$SEPARATOR}
 
-    if [[ $drop_name -eq 0 ]]; then
+    if $drop_name; then
         if [[ $use_time -ne 0 && "${prefix}" -ne 0 ]]; then
             err "-n requires that at least -t or \$2 are specified"
             return 1
@@ -118,17 +118,17 @@ backup() {
         fi
     fi
 
-    if [[ $reverse -ne 0 ]]; then
+    if ! $reverse; then
         complete_name="${time}${sep_a}${name}${sep_b}${prefix}"
     else
         complete_name="${prefix}${sep_b}${name}${sep_a}${time}"
     fi
 
     if ! $drop_extension; then
-        if [[ $use_time -eq 0 || $drop_name -ne 0 ]]; then
+        if $use_time || ! $drop_name; then
             complete_name+=".bak"
         else
-            err "-e requires at least that -t or a filename is specified."
+            !$quiet && err "-e requires at least that -t or a filename is specified."
             return 1
         fi
     fi
@@ -136,15 +136,15 @@ backup() {
 
     if [[ -f "${source}" ]]; then
         sudo cp "${source}" "${target}"
-        [[ $quiet -ne 0 ]] && echo "Backed up [file] ${source} at ${target}"
+        ! $quiet && echo "Backed up [file] ${source} at ${target}"
         return 0
     fi
     if [[ -d "${source}" ]]; then
         sudo rsync "${source}" "${target}" -ah --info=progress2 --partial
-        [[ $quiet -ne 0 ]] && echo "Backed up [dir] ${source} at ${target}"
+        ! $quiet && echo "Backed up [dir] ${source} at ${target}"
         return 0
     fi
-    [[ $quiet -ne 0 ]] && err "Could not find any file or directory at ${source}"
+    ! $quiet && err "Could not find any file or directory at ${source}"
     return 1
 }
 
