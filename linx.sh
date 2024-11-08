@@ -264,9 +264,9 @@ pp() {
 
 alias reload='source ~/.bashrc && clear'
 alias br='vim ~/.bashrc'
-alias ba='vim ~/linx.sh'
+alias ba='vim ${LINX_DIR}/${FUNC_FILE_NAME}'
 alias obr='open ~/.bashrc & disown'
-alias oba='open ~/linx.sh & disown'
+alias oba='open ${LINX_DIR}/${FUNC_FILE_NAME} & disown'
 
 # @description Prompts the user for approval
 # @param $1 The action to be confirmed
