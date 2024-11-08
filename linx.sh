@@ -515,11 +515,9 @@ EOF
         case $1 in
             -n|--no-commit)
                 no_commit=true
-                shift
                 ;;
             -d|--demo)
                 demo=true
-                shift
                 ;;
             *)
                 err "Invalid parameter: ${1}"
@@ -527,6 +525,7 @@ EOF
                 return 1
                 ;;
         esac
+        shift
     done
     if ! $no_commit; then
         git add . && git commit -m "chore: Initial commit" -q
