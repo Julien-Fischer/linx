@@ -75,7 +75,11 @@ decluster() {
                 done
                 ;;
             *)
-                args+=("${1}")
+                if [[ $1 == *[[:space:]]* ]]; then
+                    args+=("'$1'")
+                else
+                    args+=("$1")
+                fi
                 ;;
         esac
         shift
