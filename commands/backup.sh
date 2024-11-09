@@ -22,9 +22,11 @@ Arguments:
   [prefix]                (Optional) An arbitrary string to use as a prefix for the backup name
 
 Options:
+  -b, --basic             Use compact date format without separators (requires -t)
+  -c, --cron              Periodically backup the source using the specified cron expression
+  -d, --destination       The absolute path of the directory where the backup must be created
   -e, --no-extension      Drop the file extension (requires that at least -t or prefix are specified)
   -h, --help              Show this message and exit
-  -b, --basic           Use compact date format without separators (requires -t)
   -n, --no-name           Drop the filename (requires that at least -t is specified)
   -q, --quiet             Mute outputs
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
@@ -32,39 +34,22 @@ Options:
   -o, --only-compact      if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
 
 Examples:
-  backup mydir                    # Create a copy of mydir, named mydir.bak
-  backup mydir -q dirA            # Backup mydir, quietly
-  backup myfile -t                # Create a copy of myfile with a timestamp as suffix
-                                  # (e.g., myfile_2024-09-03_09-53-42.bak)
-  backup myfile -t -r             # Create a copy of myfile with a timestamp as prefix
-                                  # (e.g., 2024-09-03_09-53-42_myfile.bak)
-  backup mydir backup             # Create a copy of mydir with 'backup' as a prefix
-                                  # (e.g., backup_mydir)
-  backup mydir -ecnqrt            # Create a copy of mydir using the current compact date as the file name
-                                  # (e.g., 20241106215624)
-  backup mydir -o                 # Shorthand for backup mydir -ecnt
+  backup mydir                                # Create a copy of mydir, named mydir.bak
+  backup mydir -q dirA                        # Backup mydir, quietly
+  backup myfile -t                            # Create a copy of myfile with a timestamp as suffix
+                                              # (e.g., myfile_2024-09-03_09-53-42.bak)
+  backup myfile -t -r                         # Create a copy of myfile with a timestamp as prefix
+                                              # (e.g., 2024-09-03_09-53-42_myfile.bak)
+  backup mydir backup                         # Create a copy of mydir with 'backup' as a prefix
+                                              # (e.g., backup_mydir)
+  backup mydir -ecnqrt                        # Create a copy of mydir using the current compact date as the file name
+                                              # (e.g., 20241106215624)
+  backup mydir -o                             # Shorthand for backup mydir -ecnt
+  backup mydir -c '0 0 * * 0'                 # Backup mydir every sunday at midnight
+  backup mydir -c '0 0 * * 0' -d /path/to/dir # Backup mydir every sunday at midnight in /path/to/dir
 EOF
 )
 
-# @description Backup the element identified by the specified path. If the element to backup is
-#              a directory, copy it recursively
-# @param $1 the file or directory to backup
-# @param $2 (optional) an arbitrary string to use as a prefix for the backup name
-# @flag -e,--no-extension if the extension must be dropped (requires that at least -t or $2 are specified)
-# @flag -n,--no-name if the filename must be dropped (requires that at least -t is specified)
-# @flag -q,--quiet if this operation should mute outputs
-# @flag -r,--reverse if the prefix should be used as a suffix, and the timestamp as a prefix
-# @flag -t,--time if the backup name should be timestamped
-# @flag -b,--basic if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
-#          that -t is specified)
-# @flag -o,--only-compact if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
-# @return 0 if the operation completed successfully; 1 otherwise
-# @example
-#   backup mydir          # create a copy of mydir, named mydir.bak
-#   backup mydir -q dirA  # backup mydir, quietly
-#   backup myfile -t      # create a copy of myfile with a timestamp as suffix (e.g. myfile_2024-09-03_09-53-42.bak
-#   backup myfile -t -r   # create a copy of myfile with a timestamp as prefix (e.g. 2024-09-03_09-53-42_myfile.bak
-#   backup mydir backup   # create a copy of myfile with backup as a prefix: backup_mydir
 backup() {
     # shellcheck disable=SC2046
     set -- $(decluster "$@")
@@ -85,6 +70,7 @@ backup() {
     local drop_name=false
     local compact=false
     local drop_extension=false
+    local cron_expression=
     local name=$(basename "${source}")
     local path=$(dirname "${source}")
     local complete_name=
@@ -107,23 +93,31 @@ backup() {
 
     while [[ $# -gt 0 ]]; do
         case $1 in
+            -b|--basic)
+                compact=true
+                ;;
+            -c|--cron)
+                cron_expression="${2}"
+                shift
+                ;;
+            -d|--destination)
+                path="${2}"
+                shift
+                ;;
             -e|--no-extension)
                 drop_extension=true
-                ;;
-            -t|--time)
-                use_time=true
-                ;;
-            -r|--reverse)
-                reverse=true
-                ;;
-            -q|--quiet)
-                quiet=true
                 ;;
             -n|--no-name)
                 drop_name=true
                 ;;
-            -b|--basic)
-                compact=true
+            -q|--quiet)
+                quiet=true
+                ;;
+            -r|--reverse)
+                reverse=true
+                ;;
+            -t|--time)
+                use_time=true
                 ;;
             -o|--only-compact)
                 drop_extension=true
@@ -180,6 +174,22 @@ backup() {
     fi
     target="${path}/${complete_name}"
 
+    if [[ -n "${cron_expression}" ]]; then
+        local command="backup '${source}' '${target}' -t"
+        if cron_exists "${cron_expression}" "${command}"; then
+            err "E: Cron job already exists"
+            return 1
+        else
+#            local temp_file=$(mktemp)
+#            crontab -l > "${temp_file}"
+#            echo "${cron_expression} ${command}" >> "${temp_file}"
+#            crontab "${temp_file}"
+#            rm "${temp_file}"
+            (crontab -l 2>/dev/null; echo "${cron_expression} ${command}") | crontab -
+            echo "Cron job created: ${cron_expression} ${command}"
+            return 0
+        fi
+    fi
     if [[ -f "${source}" ]]; then
         sudo cp "${source}" "${target}"
         ! $quiet && echo "Backed up [file] ${source} at ${target}"
