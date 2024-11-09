@@ -49,14 +49,6 @@ linx() {
                 pull_setup
                 return 0
                 ;;
-            -v|--version)
-                echo "${VERSION}"
-                return 0
-                ;;
-            -h|--help)
-                echo "${USAGE}"
-                return 0
-                ;;
             -c|--commands)
                 cat "${LINX_INSTALLED_COMMANDS}"
                 return 0
@@ -67,6 +59,14 @@ linx() {
                 ;;
             -g|--go)
                 cs "${LINX_DIR}"
+                return 0
+                ;;
+            -h|--help)
+                echo "${USAGE}"
+                return 0
+                ;;
+            -v|--version)
+                echo "${VERSION}"
                 return 0
                 ;;
             *)
