@@ -13,8 +13,8 @@ source "${HOME}"/.bashrc
 # Input parameters
 ##############################################################
 
-source="${1}"
-target="${2:-.}"
+source=
+target=
 quiet=false
 
 ##############################################################
@@ -51,14 +51,17 @@ EOF
 ##############################################################
 
 parse_params() {
+    if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
+        echo "${USAGE}"
+        return 0
+    fi
+    source="${1}"
+    target="${2:-.}"
+    shift 2
     while [[ $# -gt 0 ]]; do
         case $1 in
             -q|--quiet)
                 quiet=true
-                ;;
-            -h|--help)
-                echo "${USAGE}"
-                return 0
                 ;;
             *)
                 err "Unknown parameter ${1}"
@@ -74,7 +77,7 @@ copy_file() {
     if [[ ! -f "${source}" ]]; then
         return 1
     fi
-    sudo cp "${source}" "${target}"
+    cp "${source}" "${target}"
     ! $quiet && echo "Backed up [file] ${source} at ${target}"
     return 0
 }
@@ -83,7 +86,7 @@ copy_dir() {
     if [[ ! -d "${source}" ]]; then
         return 1
     fi
-    sudo rsync "${source}" "${target}" -ah --info=progress2 --partial
+    rsync "${source}" "${target}" -ah --info=progress2 --partial
     ! $quiet && echo "Backed up [dir] ${source} at ${target}"
 }
 

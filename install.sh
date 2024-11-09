@@ -11,7 +11,9 @@
 export VERSION="1.0.0-alpha3"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
-export LINX_CRON_SCRIPTS="${LINX_DIR}/cron"
+export CRON_DIR="${LINX_DIR}/cron"
+export CRON_JOBS_FILE="${CRON_DIR}/jobs.log"
+export CRON_ERRORS_FILE="${CRON_DIR}/errors.log"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -86,6 +88,21 @@ decluster() {
     done
     # Use a special delimiter to separate arguments
     (IFS=$'\x1E'; echo "${args[*]}")
+}
+
+add_cron() {
+    local cron_expr="${1}"
+    local command="${2}"
+    local quiet=false
+    if [[ "${3}" == "-q" || "${3}" == "-quiet" ]]; then
+        quiet=true
+    fi
+
+    local cron_job="${cron_expr} ${command}"
+    echo "${cron_job}" > "${CRON_JOBS_FILE}"
+    (crontab -l 2>/dev/null; echo "${cron_job} >> ${CRON_ERRORS_FILE} 2>&1") | crontab -
+
+    ! $quiet && echo "Cron job created: ${cron_expr} ${command}"
 }
 
 # @description Prompts the user for approval
@@ -426,7 +443,7 @@ install_linx() {
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
 
     mkdir -p "${LINX_DIR}"
-    mkdir -p "${LINX_CRON_SCRIPTS}"
+    mkdir -p "${CRON_JOBS_FILE}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
     touch "${KEEP_CONTAINERS_FILE}"
     touch "${KEEP_IMAGES_FILE}"

@@ -51,10 +51,9 @@ EOF
 )
 
 backup() {
-    # shellcheck disable=SC2046
-    set -- $(decluster "$@")
+    IFS=$'\x1E' read -ra new_args < <(decluster "$@")
+    set -- "${new_args[@]}"
 
-    # Check for help flag first
     if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
         echo "${USAGE}"
         return 0
@@ -72,7 +71,8 @@ backup() {
     local drop_extension=false
     local cron_expression=
     local name=$(basename "${source}")
-    local path=$(dirname "${source}")
+    local source_dir=$(dirname "${source}")
+    local target_dir="${source_dir}"
     local complete_name=
     local target=
 
@@ -98,10 +98,11 @@ backup() {
                 ;;
             -c|--cron)
                 cron_expression="${2}"
+                use_time=true
                 shift
                 ;;
             -d|--destination)
-                path="${2}"
+                target_dir="${2}"
                 shift
                 ;;
             -e|--no-extension)
@@ -133,6 +134,30 @@ backup() {
         esac
         shift
     done
+
+    # if cron job, just schedule backup and return
+
+    local absolute_source_dir=$(realpath "${source_dir}")
+    local absolute_target_dir=$(realpath "${target_dir}")
+    src="${absolute_source_dir}/${name}"
+
+    if [[ -n "${cron_expression}" ]]; then
+        if [[ ! -f "${src}" && ! -d "${src}" ]]; then
+            ! $quiet && err "Could not find any file or directory at ${src}"
+            return 1
+        fi
+        local command="/usr/local/bin/backup '${src}' -t -d ${absolute_target_dir}"
+        if cron_exists "${cron_expression}" "${command}"; then
+            err "Cron job already exists"
+            return 1
+        else
+            add_cron "${cron_expression}" "${command}" -q
+            echo -e "$(color "${name}" "${GREEN}") backup scheduled: ${cron_expression}"
+            return 0
+        fi
+    fi
+
+    # otherwise, backup the source now
 
     if $use_time; then
         if $compact; then
@@ -172,36 +197,8 @@ backup() {
             return 1
         fi
     fi
-    target="${path}/${complete_name}"
 
-    if [[ -n "${cron_expression}" ]]; then
-        local command="backup '${source}' '${target}' -t"
-        if cron_exists "${cron_expression}" "${command}"; then
-            err "E: Cron job already exists"
-            return 1
-        else
-#            local temp_file=$(mktemp)
-#            crontab -l > "${temp_file}"
-#            echo "${cron_expression} ${command}" >> "${temp_file}"
-#            crontab "${temp_file}"
-#            rm "${temp_file}"
-            (crontab -l 2>/dev/null; echo "${cron_expression} ${command}") | crontab -
-            echo "Cron job created: ${cron_expression} ${command}"
-            return 0
-        fi
-    fi
-    if [[ -f "${source}" ]]; then
-        sudo cp "${source}" "${target}"
-        ! $quiet && echo "Backed up [file] ${source} at ${target}"
-        return 0
-    fi
-    if [[ -d "${source}" ]]; then
-        sudo rsync "${source}" "${target}" -ah --info=progress2 --partial
-        ! $quiet && echo "Backed up [dir] ${source} at ${target}"
-        return 0
-    fi
-    ! $quiet && err "Could not find any file or directory at ${source}"
-    return 1
+    cpv "${source}" "${target}"
 }
 
 backup "$@"
