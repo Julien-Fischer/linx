@@ -42,9 +42,9 @@ EOF
 # @example
 #   # assuming the current datetime is 2024-11-03 09:34:56
 #   timestamp                # 2024-11-03 09:34:56
+#   timestamp -b,            # 20241103093456
 #   timestamp -i,            # 2024-11-03T09:34:56
 #   timestamp -r,            # 2024-11-03_09:34:56
-#   timestamp -b,            # 20241103093456
 #   timestamp -s '/'         # 2024/11/03 09:34:56
 #   timestamp -s '/' '_'     # 2024/11/03_09:34:56
 #   timestamp -s '/' '_' '-' # 2024/11/03_09-34-56
@@ -57,15 +57,15 @@ timestamp() {
 
     while [[ "$#" -gt 0 ]]; do
         case $1 in
+            -b|--basic)
+                format="%Y%m%d%H%M%S"
+                ;;
             -h|--help)
                 echo "${USAGE}"
                 return 0
                 ;;
             -i|--iso)
                 format="%Y-%m-%dT%H:%M:%S"
-                ;;
-            -b|--basic)
-                format="%Y%m%d%H%M%S"
                 ;;
             -r|--readable)
                 datetime_sep="_"
