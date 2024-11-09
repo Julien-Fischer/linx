@@ -29,7 +29,7 @@ Options:
   -q, --quiet             Mute outputs
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
   -t, --time              Add a timestamp to the backup name
-  -o, --only-compact      if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnqrt
+  -o, --only-compact      if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
 
 Examples:
   backup mydir                    # Create a copy of mydir, named mydir.bak
