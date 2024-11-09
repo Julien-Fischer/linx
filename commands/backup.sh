@@ -24,7 +24,7 @@ Arguments:
 Options:
   -e, --no-extension      Drop the file extension (requires that at least -t or prefix are specified)
   -h, --help              Show this message and exit
-  -c, --compact           Use compact date format without separators (requires -t)
+  -b, --basic           Use compact date format without separators (requires -t)
   -n, --no-name           Drop the filename (requires that at least -t is specified)
   -q, --quiet             Mute outputs
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
@@ -55,7 +55,7 @@ EOF
 # @flag -q,--quiet if this operation should mute outputs
 # @flag -r,--reverse if the prefix should be used as a suffix, and the timestamp as a prefix
 # @flag -t,--time if the backup name should be timestamped
-# @flag -c,--compact if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
+# @flag -b,--basic if the date should have no separator (e.g. 2024-10-21_23-28-41 -> 20241021232841) (requires
 #          that -t is specified)
 # @flag -o,--only-compact if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
 # @return 0 if the operation completed successfully; 1 otherwise
@@ -122,7 +122,7 @@ backup() {
             -n|--no-name)
                 drop_name=true
                 ;;
-            -c|--compact)
+            -b|--basic)
                 compact=true
                 ;;
             -o|--only-compact)
@@ -142,7 +142,7 @@ backup() {
 
     if $use_time; then
         if $compact; then
-            time=$(timestamp -c)
+            time=$(timestamp -b)
         else
             time=$(timestamp -s - _ -)
         fi
