@@ -31,22 +31,24 @@ Options:
   -q, --quiet             Mute outputs
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
   -t, --time              Add a timestamp to the backup name
-  -o, --only-compact      if the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
+  -o, --only-compact      If the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
+  -v, --verbose           Log standard output for debugging when used with --cron
 
 Examples:
-  backup mydir                                # Create a copy of mydir, named mydir.bak
-  backup mydir -q dirA                        # Backup mydir, quietly
-  backup myfile -t                            # Create a copy of myfile with a timestamp as suffix
-                                              # (e.g., myfile_2024-09-03_09-53-42.bak)
-  backup myfile -t -r                         # Create a copy of myfile with a timestamp as prefix
-                                              # (e.g., 2024-09-03_09-53-42_myfile.bak)
-  backup mydir backup                         # Create a copy of mydir with 'backup' as a prefix
-                                              # (e.g., backup_mydir)
-  backup mydir -ecnqrt                        # Create a copy of mydir using the current compact date as the file name
-                                              # (e.g., 20241106215624)
-  backup mydir -o                             # Shorthand for backup mydir -ecnt
-  backup mydir -c '0 0 * * 0'                 # Backup mydir every sunday at midnight
-  backup mydir -c '0 0 * * 0' -d /path/to/dir # Backup mydir every sunday at midnight in /path/to/dir
+  backup mydir                                    # Create a copy of mydir, named mydir.bak
+  backup mydir -q dirA                            # Backup mydir, quietly
+  backup myfile -t                                # Create a copy of myfile with a timestamp as suffix
+                                                  # (e.g., myfile_2024-09-03_09-53-42.bak)
+  backup myfile -t -r                             # Create a copy of myfile with a timestamp as prefix
+                                                  # (e.g., 2024-09-03_09-53-42_myfile.bak)
+  backup mydir backup                             # Create a copy of mydir with 'backup' as a prefix
+                                                  # (e.g., backup_mydir)
+  backup mydir -ecnqrt                            # Create a copy of mydir using the current compact date as the file name
+                                                  # (e.g., 20241106215624)
+  backup mydir -o                                 # Shorthand for backup mydir -ecnt
+  backup mydir -c '0 0 * * 0'                     # Backup mydir every sunday at midnight
+  backup mydir -c '0 0 * * 0' -d /path/to/dir     # Backup mydir every sunday at midnight in /path/to/dir
+  backup mydir -c '0 0 * * 0' -d /path/to/dir -v  # Backup mydir with verbose log level
 EOF
 )
 
@@ -69,6 +71,7 @@ backup() {
     local drop_name=false
     local compact=false
     local drop_extension=false
+    local verbose=false
     local cron_expression=
     local name=$(basename "${source}")
     local source_dir=$(dirname "${source}")
@@ -126,6 +129,9 @@ backup() {
                 drop_name=true
                 compact=true
                 ;;
+            -v|--verbose)
+                verbose=true
+                ;;
             *)
                 err "Unknown parameter ${1}"
                 echo "${USAGE}"
@@ -151,8 +157,17 @@ backup() {
             err "Cron job already exists"
             return 1
         else
-            add_cron "${cron_expression}" "${command}" -q
-            echo -e "$(color "${name}" "${GREEN}") backup scheduled: ${cron_expression}"
+            local args='--quiet'
+            local display_mode=""
+            if $verbose; then
+                args+=' --verbose'
+            fi
+            if $verbose; then
+                display_mode=" with verbose mode"
+            fi
+            # shellcheck disable=SC2086
+            add_cron "${cron_expression}" "${command}" $args
+            echo -e "$(color "${name}" "${GREEN}") backup scheduled: ${cron_expression}${display_mode}."
             return 0
         fi
     fi

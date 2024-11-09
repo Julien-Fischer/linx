@@ -12,8 +12,8 @@ export VERSION="1.0.0-alpha3"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
 export CRON_DIR="${LINX_DIR}/cron"
-export CRON_JOBS_FILE="${CRON_DIR}/jobs.log"
-export CRON_ERRORS_FILE="${CRON_DIR}/errors.log"
+export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
+export CRON_LOG_FILE="${CRON_DIR}/jobs.log"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -90,13 +90,38 @@ decluster() {
     (IFS=$'\x1E'; echo "${args[*]}")
 }
 
+# @description Create a cron job from the specified expression and command only if it does not
+#              exist yet
+# @param $1 A cron expression
+# @param $2 The command or script to schedule
+# @flag -v, --verbose Log standard output for debugging
+# @flag -q, --quiet Mute all outputs
+# @example
+#   add_cron '* * * * *' my_command
+#   add_cron '* * * * *' my_command -v
 add_cron() {
     local cron_expr="${1}"
     local command="${2}"
     local quiet=false
-    if [[ "${3}" == "-q" || "${3}" == "-quiet" ]]; then
-        quiet=true
-    fi
+    local verbose=false
+
+    shift 2
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -q|--quiet)
+                quiet=true
+                ;;
+            -v|--verbose)
+                verbose=true
+                ;;
+            *)
+                err "Invalid parameter: '${1}'"
+                return 1
+                ;;
+        esac
+    shift
+    done
 
     local cron_job="${cron_expr} ${command}"
     if cron_exists "${cron_expr}" "${command}"; then
@@ -105,7 +130,14 @@ add_cron() {
     fi
 
     echo "${cron_job}" > "${CRON_JOBS_FILE}"
-    (crontab -l 2>/dev/null; echo "${cron_job} >> ${CRON_ERRORS_FILE} 2>&1") | crontab -
+
+    stdout_target="/dev/null"
+    stderr_target="${CRON_LOG_FILE}"
+    if $verbose; then
+        stdout_target="${CRON_LOG_FILE}"
+    fi
+    output_redirection=">> ${stdout_target} 2>> ${stderr_target}"
+    (crontab -l 2>/dev/null; echo "${cron_job} ${output_redirection}") | crontab -
 
     ! $quiet && echo "Cron job created: ${cron_job}"
 }
