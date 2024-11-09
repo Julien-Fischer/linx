@@ -25,6 +25,7 @@ Arguments:
 Options:
   -c, --commands          List the native Linx commands
   -d, --dir               Print the absolute path to linx work directory
+  -g, --go                Navigate to linx work directory
   -h, --help              Show this message and exit
   -v, --version           Show Linx version and exit
 EOF
@@ -62,6 +63,10 @@ linx() {
                 ;;
             -d|--dir)
                 echo "${LINX_DIR}"
+                return 0
+                ;;
+            -g|--go)
+                cs "${LINX_DIR}"
                 return 0
                 ;;
             *)
