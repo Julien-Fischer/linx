@@ -4,12 +4,20 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
-if [[ -f "${HOME}"/linx/.linx_lib.sh ]]; then
-    source "${HOME}"/linx/.linx_lib.sh
-else
-    echo "E: Could not source ${HOME}"/linx/.linx_lib.sh
-fi
-source "${HOME}"/.bashrc
+# @param $1 the path of the file to source, relative to $HOME
+require_source() {
+    local filepath="${1}"
+    if [[ -f "${HOME}/${filepath}" ]]; then
+        # shellcheck source=src/util.sh
+        source "${HOME}/${filepath}"
+    else
+        echo "E: Could not source ${HOME}/${filepath}"
+    fi
+}
+
+require_source "/linx/.linx_lib.sh"
+require_source "/linx/linx.sh"
+require_source ".bashrc"
 
 # doc
 
