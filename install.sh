@@ -99,10 +99,15 @@ add_cron() {
     fi
 
     local cron_job="${cron_expr} ${command}"
+    if cron_exists "${cron_expr}" "${command}"; then
+        err "Cron job already exists"
+        return 1
+    fi
+
     echo "${cron_job}" > "${CRON_JOBS_FILE}"
     (crontab -l 2>/dev/null; echo "${cron_job} >> ${CRON_ERRORS_FILE} 2>&1") | crontab -
 
-    ! $quiet && echo "Cron job created: ${cron_expr} ${command}"
+    ! $quiet && echo "Cron job created: ${cron_job}"
 }
 
 # @description Prompts the user for approval

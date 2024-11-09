@@ -198,7 +198,7 @@ backup() {
         fi
     fi
 
-    cpv "${source}" "${target}"
+    cpv "${src}" "${absolute_target_dir}/${complete_name}"
 }
 
 backup "$@"
