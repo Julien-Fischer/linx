@@ -11,6 +11,7 @@
 export VERSION="1.0.0-alpha3"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
+export LINX_CRON_SCRIPTS="${LINX_DIR}/cron"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -427,6 +428,7 @@ install_linx() {
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
 
     mkdir -p "${LINX_DIR}"
+    mkdir -p "${LINX_CRON_SCRIPTS}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
     touch "${KEEP_CONTAINERS_FILE}"
     touch "${KEEP_IMAGES_FILE}"
