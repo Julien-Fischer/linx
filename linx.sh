@@ -267,6 +267,7 @@ alias br='vim ~/.bashrc'
 alias ba='vim ${LINX_DIR}/${FUNC_FILE_NAME}'
 alias obr='open ~/.bashrc & disown'
 alias oba='open ${LINX_DIR}/${FUNC_FILE_NAME} & disown'
+alias linxn='cs ${LINX_DIR}'
 
 # @description Prompts the user for approval
 # @param $1 The action to be confirmed
