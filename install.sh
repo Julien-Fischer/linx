@@ -76,7 +76,7 @@ decluster() {
                 ;;
             *)
                 if [[ $1 == *[[:space:]]* ]]; then
-                    args+=("'$1'")
+                    args+=("$1")
                 else
                     args+=("$1")
                 fi
@@ -84,7 +84,8 @@ decluster() {
         esac
         shift
     done
-    echo "${args[@]}"
+    # Use a special delimiter to separate arguments
+    (IFS=$'\x1E'; echo "${args[*]}")
 }
 
 # @description Prompts the user for approval
@@ -152,38 +153,10 @@ is_sourced() {
     return 0
 }
 
-#cron_exists() {
-#    local cron_expr="${1}"
-#    local command="${2}"
-#    if grep -q -E "^${cron_expr}\s+${command}" "$(crontab -l)"; then
-#        true
-#    else
-#        false
-#    fi
-#}
-
-#cron_exists() {
-#    local cron_expr="${1}"
-#    local command="${2}"
-#    crontab -l 2>/dev/null | grep -q -F -x "${cron_expr} ${command}"
-#}
 cron_exists() {
     local cron_expr="${1}"
     local command="${2}"
     crontab -l 2>/dev/null | grep -q -F "${cron_expr} ${command}"
-}
-
-# @description Copy files with a progress bar
-# @param $1 the file or directory to copy
-# @param $2 the destination
-# @return 0 if the operation completed successfully; 1+ otherwise
-# @example
-#   cpv projects dirA  # copies projects into dirA
-#   cpv projects/ dirA  # copies all files and directories from projects into dirA
-cpv() {
-    local src="${1}"
-    local dest="${2:-.}"
-    rsync "${src}" "${dest}" -ah --info=progress2 --partial
 }
 
 # @description Delete the element identified by the specified path. Supports regular files and directories.
