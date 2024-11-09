@@ -24,6 +24,7 @@ Arguments:
 
 Options:
   -c, --commands          List the native Linx commands
+  -d, --dir               Print the absolute path to linx work directory
   -h, --help              Show this message and exit
   -v, --version           Show Linx version and exit
 EOF
@@ -57,6 +58,10 @@ linx() {
                 ;;
             -c|--commands)
                 cat "${LINX_INSTALLED_COMMANDS}"
+                return 0
+                ;;
+            -d|--dir)
+                echo "${LINX_DIR}"
                 return 0
                 ;;
             *)
