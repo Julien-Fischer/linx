@@ -12,7 +12,7 @@ Default format: YYYY-MM-DD hh:mm:s
 
 Options:
   -i, --iso        Output in ISO 8601 format (YYYY-MM-DDThh:mm:ss)
-  -c, --compact    Output in compact format without separators (YYYYMMDDhhmmss)
+  -b, --basic      Output in Basic ISO 8601 Format format without separators (YYYYMMDDhhmmss)
   -r, --readable   Output in a more readable format (YYYY-MM-DD_hh:mm:ss)
   -s, --separators Specify custom separators for date/time components
                    Up to 3 separators can be provided:
@@ -26,7 +26,7 @@ Examples:
   timestamp                # 2024-11-03 09:34:56
   timestamp -i             # 2024-11-03T09:34:56
   timestamp -r             # 2024-11-03_09:34:56
-  timestamp -c             # 20241103093456
+  timestamp -b             # 20241103093456
   timestamp -s '/'         # 2024/11/03 09:34:56
   timestamp -s '/' '_'     # 2024/11/03_09:34:56
   timestamp -s '/' '_' '-' # 2024/11/03_09-34-56
@@ -36,7 +36,7 @@ EOF
 # @description Outputs the current datetime, with desired format (if specified).
 #              Default format: YYYY-MM-DD hh:mm:s
 # @option -i, --iso
-# @option -c, --compact
+# @option -b, --basic
 # @option -r, --readable
 # @option -s, --separators '/' '_' ':'
 # @example
@@ -44,7 +44,7 @@ EOF
 #   timestamp                # 2024-11-03 09:34:56
 #   timestamp -i,            # 2024-11-03T09:34:56
 #   timestamp -r,            # 2024-11-03_09:34:56
-#   timestamp -c,            # 20241103093456
+#   timestamp -b,            # 20241103093456
 #   timestamp -s '/'         # 2024/11/03 09:34:56
 #   timestamp -s '/' '_'     # 2024/11/03_09:34:56
 #   timestamp -s '/' '_' '-' # 2024/11/03_09-34-56
@@ -64,7 +64,7 @@ timestamp() {
             -i|--iso)
                 format="%Y-%m-%dT%H:%M:%S"
                 ;;
-            -c|--compact)
+            -b|--basic)
                 format="%Y%m%d%H%M%S"
                 ;;
             -r|--readable)
