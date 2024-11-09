@@ -148,6 +148,27 @@ is_sourced() {
     return 0
 }
 
+#cron_exists() {
+#    local cron_expr="${1}"
+#    local command="${2}"
+#    if grep -q -E "^${cron_expr}\s+${command}" "$(crontab -l)"; then
+#        true
+#    else
+#        false
+#    fi
+#}
+
+#cron_exists() {
+#    local cron_expr="${1}"
+#    local command="${2}"
+#    crontab -l 2>/dev/null | grep -q -F -x "${cron_expr} ${command}"
+#}
+cron_exists() {
+    local cron_expr="${1}"
+    local command="${2}"
+    crontab -l 2>/dev/null | grep -q -F "${cron_expr} ${command}"
+}
+
 # @description Copy files with a progress bar
 # @param $1 the file or directory to copy
 # @param $2 the destination
