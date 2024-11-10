@@ -32,6 +32,24 @@ calc() {
     bc -l <<< "$@"
 }
 
+# @description Generate a random integer between min and max
+# @param $1 the lower bound (inclusive)
+# @param $2 the higher bound (inclusive)
+# @example
+#   rand 0 0      # outputs 0
+#   rand 0 1      # outputs 0 or 1
+#   rand 0 10     # outputs any integer between 0 and 10
+#   rand -10 10   # outputs any integer between -10 and 10
+rand() {
+    local min=$1
+    local max=$2
+    if [[ -z "${min}" || -z "${max}" ]]; then
+        err "Usage: rand <min> <max>"
+        return 1
+    fi
+    echo $(( RANDOM % (max - min + 1) + min ))
+}
+
 # Determine the type of an element (regular file, directory, symlink, etc)
 typeof() {
     local element="${1}"
