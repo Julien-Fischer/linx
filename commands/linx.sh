@@ -28,7 +28,8 @@ Backup the element identified by the specified path. If the element to backup is
 a directory, copy it recursively.
 
 Arguments:
-  sync                    Synchronize the local setup with the remote
+  s, sync                 Synchronize the local setup with the remote
+  c, crons                List the native Linx commands
 
 Options:
   -c, --commands          List the native Linx commands
@@ -47,17 +48,37 @@ pull_setup() {
     fi
 }
 
+handle_commands() {
+    cat "${LINX_INSTALLED_COMMANDS}"
+}
+
+handle_crons() {
+    show_crons
+}
+
+show_crons() {
+    if [[ ! -f "${CRON_JOBS_FILE}" && ! -s "${CRON_JOBS_FILE}" ]]; then
+        echo "No cron jobs scheduled via linx."
+        return 1
+    fi
+    cat "${CRON_JOBS_FILE}"
+}
+
 # @description Synchronize the local linx installation with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 linx() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            sync)
+            s|sync)
                 pull_setup
                 return 0
                 ;;
+            c|cron)
+                handle_crons "$@"
+                return 0
+                ;;
             -c|--commands)
-                cat "${LINX_INSTALLED_COMMANDS}"
+                handle_commands "$@"
                 return 0
                 ;;
             -d|--dir)
