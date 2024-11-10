@@ -129,7 +129,7 @@ add_cron() {
         return 1
     fi
 
-    echo "${cron_job}" > "${CRON_JOBS_FILE}"
+    echo "${cron_job}" >> "${CRON_JOBS_FILE}"
 
     stdout_target="/dev/null"
     stderr_target="${CRON_LOG_FILE}"
