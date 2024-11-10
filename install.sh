@@ -498,6 +498,9 @@ update_rc_file() {
         lines+="\n${SEPARATOR}\n\n"
         lines+=$(cat config/bashrc_config)
         lines+="\n"
+        lines+="\n${SEPARATOR}\n"
+        lines+="# End of linx configuration"
+        lines+="\n${SEPARATOR}\n\n"
         echo -e "${lines}" >> "${target}"
     fi
 }
