@@ -235,15 +235,18 @@ print_array() {
 # @example
 installed() {
     local software="${1}"
-    local quiet="${2:-1}"
+    local quiet=false
+    if [[ "${2}" == "-q" || "${2}" == "--quiet" ]]; then
+        quiet=true
+    fi
     if dpkg -s "${software}" &> /dev/null || ls /usr/local/bin | grep -q "${software}"; then
         local location=$(which "${software}")
-        if [[ $quiet -ne 0 ]]; then
+        if ! $quiet; then
             echo "${software} is installed at ${location}"
         fi
         return 0
     else
-        if [[ $quiet -ne 0 ]]; then
+        if ! $quiet; then
             echo "${software} is not installed."
         fi
         return 1
@@ -324,8 +327,7 @@ request_dir() {
 install_dependency() {
     local software="${1}"
     local reason="${2}"
-    local quiet=0
-    if ! installed "${software}" $quiet; then
+    if ! installed "${software}" --quiet; then
         if [[ $auto_approve -ne 0 ]] && confirm "${PROJECT}: ${software} installation" "${PROJECT}: Do you wish to install ${software} ${reason}?"; then
             sudo apt install "${software}"
         fi
