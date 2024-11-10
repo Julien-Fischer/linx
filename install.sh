@@ -8,7 +8,7 @@
 # Constants
 ##############################################################
 
-export VERSION="1.0.0-alpha3"
+export VERSION="1.0.0-alpha4"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
 export CRON_DIR="${LINX_DIR}/cron"
