@@ -53,22 +53,22 @@ rand() {
 # Determine the type of an element (regular file, directory, symlink, etc)
 typeof() {
     local element="${1}"
-    if [ -d "$element" ]; then
-        echo "$element is a directory."
-    elif [ -L "$element" ]; then
-        echo "$element is a symbolic link."
-    elif [ -p "$element" ]; then
-        echo "$element is a named pipe."
-    elif [ -S "$element" ]; then
-        echo "$element is a socket."
-    elif [ -b "$element" ]; then
-        echo "$element is a block device."
-    elif [ -c "$element" ]; then
-        echo "$element is a character device."
-    elif [ -f "$element" ]; then
-        echo "$element is a regular file."
+    if [ -d "${element}" ]; then
+        echo "${element} is a directory."
+    elif [ -L "${element}" ]; then
+        echo "${element} is a symbolic link."
+    elif [ -p "${element}" ]; then
+        echo "${element} is a named pipe."
+    elif [ -S "${element}" ]; then
+        echo "${element} is a socket."
+    elif [ -b "${element}" ]; then
+        echo "${element} is a block device."
+    elif [ -c "${element}" ]; then
+        echo "${element} is a character device."
+    elif [ -f "${element}" ]; then
+        echo "${element} is a regular file."
     else
-        echo "$element is of an unknown type."
+        type "${element}"
     fi
 }
 
