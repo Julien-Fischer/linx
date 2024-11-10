@@ -53,16 +53,92 @@ handle_commands() {
 }
 
 handle_crons() {
-    show_crons
+    while [[ $# -gt 0 ]]; do
+        echo "evaluating... '${1}'"
+        case $1 in
+            -d|--delete)
+                echo 'Type the index of the job you wish to delete:'
+                mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
+                read_array linx_jobs
+                local index=$(prompt "Which job do you wish to delete?")
+                local job_to_remove="${linx_jobs[((index-1))]}"
+                remove_cron_entry "${job_to_remove}"
+                remove_first_line_containing "${CRON_JOBS_FILE}" "${job_to_remove}"
+                echo "${job_to_remove} has been removed."
+                return 0
+                ;;
+            *)
+                err "Invalid parameter ${1}"
+                echo "${CRON_USAGE}"
+                return 1
+                ;;
+        esac
+    done
+    read_crons
 }
 
-show_crons() {
+remove_cron_entry() {
+    local substring="$1"
+    if crontab -l | grep -q "$substring"; then
+        crontab -l | grep -v "$substring" | crontab -
+        return 0
+    else
+        err "No cron entry found containing '${substring}'."
+        return 1
+    fi
+}
+
+# @description Remove the first line matching the specified substring
+# @param $1 The file to process
+# @param $2 The substring to match
+remove_first_line_containing() {
+    local file="$1"
+    local substring="$2"
+
+    # Check if the file exists
+    if [[ ! -f "$file" ]]; then
+        err "File '$file' does not exist."
+        return 1
+    fi
+
+    # Check if the substring exists in the file
+    if grep -q "$substring" "$file"; then
+        # Create a temporary file
+        local temp_file=$(mktemp)
+
+        # Remove the line containing the substring and save to temp file
+        grep -v "$substring" "$file" > "$temp_file"
+
+        # Replace the original file with the modified content
+        mv "$temp_file" "$file"
+        return 0
+    else
+        err "No entry found containing '$substring' in file '$file'."
+        return 1
+    fi
+}
+
+
+read_crons() {
     if [[ ! -f "${CRON_JOBS_FILE}" && ! -s "${CRON_JOBS_FILE}" ]]; then
         echo "No cron jobs scheduled via linx."
         return 1
     fi
     cat "${CRON_JOBS_FILE}"
 }
+
+read_array() {
+    # Use nameref to reference the passed array
+    local -n array_ref="$1"
+    local line_number=1
+
+    for line in "${array_ref[@]}"; do
+        printf "[%d] %s\n" "$line_number" "$line"
+        ((line_number++))
+    done
+}
+
+
 
 # @description Synchronize the local linx installation with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
@@ -74,6 +150,7 @@ linx() {
                 return 0
                 ;;
             c|cron)
+                shift
                 handle_crons "$@"
                 return 0
                 ;;
