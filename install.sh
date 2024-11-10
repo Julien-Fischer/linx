@@ -163,7 +163,7 @@ function prompt() {
 #  confirm "Installation" "Proceed?" --abort
 #
 #  # Use return status
-#  if [[ confirm "Installation" "Proceed?"]]; then
+#  if confirm "Installation" "Proceed?"; then
 #    # on abort
 #  else
 #    # on confirm...
