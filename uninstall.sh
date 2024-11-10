@@ -16,7 +16,7 @@ fi
 # Parameters
 ##############################################################
 
-auto_approve=1
+auto_approve=false
 
 ##############################################################
 # Uninstallation process
@@ -52,8 +52,19 @@ uninstall_commands() {
     rm "${LINX_INSTALLED_COMMANDS}"
 }
 
+uninstall_cron_jobs() {
+    local crons=$(linx cron)
+    local n=$(echo "$crons" | grep -c .)
+    if [[ $n -gt 0 ]]; then
+        echo "${n} cron jobs were installed using linx."
+        if $auto_approve || confirm "Removal" "Remove them?"; then
+            linx cron --clear -y
+        fi
+    fi
+}
+
 uninstall_terminator_config() {
-    if ([[ $auto_approve -eq 0 ]] || \
+    if ($auto_approve || \
        confirm "Removal" "Remove Terminator configuration files?") && \
        [[ -n $(ls -A ~/.config/terminator) ]]; then
         sudo rm ~/.config/terminator/*
@@ -67,8 +78,9 @@ uninstall_terminator_config() {
 
 uninstall_linx() {
     echo "this will uninstall linx."
-    [[ $auto_approve -ne 0 ]] && confirm "Uninstallation" "Proceed?" --abort
+    ! $auto_approve && confirm "Uninstallation" "Proceed?" --abort
     uninstall_terminator_config
+    uninstall_cron_jobs
     uninstall_commands
     if [[ -d "${LINX_DIR}" ]]; then
         del "${LINX_DIR}"
@@ -80,7 +92,7 @@ uninstall() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -y|--yes)
-                auto_approve=0
+                auto_approve=true
                 shift
                 ;;
             *)

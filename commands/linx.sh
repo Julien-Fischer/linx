@@ -50,24 +50,19 @@ handle_commands() {
 }
 
 handle_crons() {
+    local args=""
+    local delete_all=false
+    local delete_one=false
     while [[ $# -gt 0 ]]; do
         case $1 in
+            -y|--yes)
+                args+=' --yes'
+                ;;
             -c|--clear)
-                echo "This will clear all cron jobs scheduled via linx."
-                confirm "Deletion" "Proceed?" --abort
-                mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
-                for ((i=0; i<${#linx_jobs[@]}; i++)); do
-                    remove_job $i
-                done
-                return 0
+                delete_all=true
                 ;;
             -d|--delete)
-                echo 'Type the index of the job you wish to delete:'
-                mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
-                print_array linx_jobs
-                local index=$(prompt "Which job do you wish to delete?")
-                remove_job $((index-1))
-                return 0
+                delete_one=true
                 ;;
             *)
                 err "Invalid parameter ${1}"
@@ -75,8 +70,39 @@ handle_crons() {
                 return 1
                 ;;
         esac
+        shift
     done
+    if $delete_all; then
+        # shellcheck disable=SC2086
+        delete_all_jobs $args
+        return 0
+    fi
+    if $delete_one; then
+        delete_job
+        return 0
+    fi
     read_crons
+}
+
+delete_job() {
+    echo 'Type the index of the job you wish to delete:'
+    mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
+    print_array linx_jobs
+    local index=$(prompt "Which job do you wish to delete?")
+    remove_job $((index-1))
+}
+
+delete_all_jobs() {
+    local auto_approve=false
+    if [[ "${1}" == '-y' || "${1}" == '--yes' ]]; then
+        auto_approve=true
+    fi
+    echo "This will clear all cron jobs scheduled via linx."
+    ! $auto_approve && confirm "Deletion" "Proceed?" --abort
+    mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
+    for ((i=0; i<${#linx_jobs[@]}; i++)); do
+        remove_job $i
+    done
 }
 
 remove_job() {
@@ -105,7 +131,7 @@ remove_cron_entry() {
 }
 
 read_crons() {
-    if [[ ! -f "${CRON_JOBS_FILE}" && ! -s "${CRON_JOBS_FILE}" ]]; then
+    if [[ ! -f "${CRON_JOBS_FILE}" || ! -s "${CRON_JOBS_FILE}" ]]; then
         echo "No cron jobs scheduled via linx."
         return 1
     fi

@@ -120,7 +120,7 @@ add_cron() {
                 return 1
                 ;;
         esac
-    shift
+        shift
     done
 
     local cron_job="${cron_expr} ${command}"
@@ -129,6 +129,7 @@ add_cron() {
         return 1
     fi
 
+    touch "${CRON_JOBS_FILE}"
     echo "${cron_job}" >> "${CRON_JOBS_FILE}"
 
     stdout_target="/dev/null"
@@ -529,7 +530,7 @@ install_linx() {
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
 
     mkdir -p "${LINX_DIR}"
-    mkdir -p "${CRON_JOBS_FILE}"
+    mkdir -p "${CRON_DIR}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
     touch "${KEEP_CONTAINERS_FILE}"
     touch "${KEEP_IMAGES_FILE}"
