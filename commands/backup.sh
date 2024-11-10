@@ -25,7 +25,7 @@ Arguments:
 
 Options:
   -b, --basic             Use compact date format without separators (requires -t)
-  -c, --cron              Periodically backup the source using the specified cron expression
+  -c, --cron              Periodically backup the source using a cron expression
   -d, --destination       The absolute path of the directory where the backup must be created
   -e, --no-extension      Drop the file extension (requires that at least -t or prefix are specified)
   -h, --help              Show this message and exit
