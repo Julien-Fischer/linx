@@ -56,15 +56,21 @@ handle_crons() {
     while [[ $# -gt 0 ]]; do
         echo "evaluating... '${1}'"
         case $1 in
+            -c|--clear)
+                echo "This will clear all cron jobs scheduled via linx."
+                confirm "Deletion" "Proceed?" --abort
+                mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
+                for ((i=0; i<${#linx_jobs[@]}; i++)); do
+                    remove_job $i
+                done
+                return 0
+                ;;
             -d|--delete)
                 echo 'Type the index of the job you wish to delete:'
                 mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
-                read_array linx_jobs
+                print_array linx_jobs
                 local index=$(prompt "Which job do you wish to delete?")
-                local job_to_remove="${linx_jobs[((index-1))]}"
-                remove_cron_entry "${job_to_remove}"
-                remove_first_line_containing "${CRON_JOBS_FILE}" "${job_to_remove}"
-                echo "${job_to_remove} has been removed."
+                remove_job $((index-1))
                 return 0
                 ;;
             *)
@@ -75,6 +81,20 @@ handle_crons() {
         esac
     done
     read_crons
+}
+
+remove_job() {
+    local index="${1}"
+    local job_to_remove="${linx_jobs[index]}"
+    if ! remove_cron_entry "${job_to_remove}"; then
+        err "Could not remove ${job_to_remove} from the crontab"
+        return 1
+    fi
+    if ! remove_first_line_containing "${CRON_JOBS_FILE}" "${job_to_remove}"; then
+        err "Could not remove ${job_to_remove} from linx files"
+        return 1
+    fi
+    echo "${job_to_remove} has been removed."
 }
 
 remove_cron_entry() {
@@ -94,26 +114,17 @@ remove_cron_entry() {
 remove_first_line_containing() {
     local file="$1"
     local substring="$2"
-
-    # Check if the file exists
-    if [[ ! -f "$file" ]]; then
-        err "File '$file' does not exist."
+    if [[ ! -f "${file}" ]]; then
+        err "File '${file}' does not exist."
         return 1
     fi
-
-    # Check if the substring exists in the file
-    if grep -q "$substring" "$file"; then
-        # Create a temporary file
+    if grep -q "${substring}" "${file}"; then
         local temp_file=$(mktemp)
-
-        # Remove the line containing the substring and save to temp file
-        grep -v "$substring" "$file" > "$temp_file"
-
-        # Replace the original file with the modified content
-        mv "$temp_file" "$file"
+        grep -v "$substring" "${file}" > "${temp_file}"
+        mv "${temp_file}" "${file}"
         return 0
     else
-        err "No entry found containing '$substring' in file '$file'."
+        err "No entry found containing '${substring}' in file '${file}'."
         return 1
     fi
 }
@@ -127,11 +138,10 @@ read_crons() {
     cat "${CRON_JOBS_FILE}"
 }
 
-read_array() {
+print_array() {
     # Use nameref to reference the passed array
     local -n array_ref="$1"
     local line_number=1
-
     for line in "${array_ref[@]}"; do
         printf "[%d] %s\n" "$line_number" "$line"
         ((line_number++))
