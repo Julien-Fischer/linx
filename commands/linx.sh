@@ -125,24 +125,22 @@ delete_all_jobs() {
 remove_job() {
     local index="${1}"
     local job_to_remove="${linx_jobs[index]}"
-    if ! remove_cron_entry "${job_to_remove}"; then
-        err "Could not remove ${job_to_remove} from the crontab"
-        return 1
-    fi
-    if ! remove_first_line_containing "${CRON_JOBS_FILE}" "${job_to_remove}"; then
-        err "Could not remove ${job_to_remove} from linx files"
-        return 1
-    fi
+    remove_cron_entry "${job_to_remove}" --quiet
+    remove_first_line_containing "${CRON_JOBS_FILE}" "${job_to_remove}"
     echo "${job_to_remove} has been removed."
 }
 
 remove_cron_entry() {
+    local quiet=false
     local substring="$1"
+    if [[ "${2}" == "-q" || "${2}" == "--quiet" ]]; then
+        quiet=true
+    fi
     if crontab -l | grep -q "$substring"; then
         crontab -l | grep -v "$substring" | crontab -
         return 0
     else
-        err "No cron entry found containing '${substring}'."
+        ! $quiet && err "No cron entry found containing '${substring}'."
         return 1
     fi
 }
