@@ -479,7 +479,7 @@ Examples:
   gproject my_demo_project --demo
   gproject --no-commit
 EOF
-    )
+)
     local name
     local no_commit=false
     local demo=false
@@ -489,7 +489,7 @@ EOF
         name="${1}"
         shift
     fi
-    if ! (mkp "${name}" && cd "${name}" && git init -q); then
+    if ! mkcs "${name}" && ! git init -q; then
         err "Could not generate git project at $(pwd)"
         return 1
     fi
@@ -651,43 +651,6 @@ glast() {
         shift
     done
     glot | head -$n
-}
-
-# @description Tag the latest commit, or the commit identified by the specified hash (if provided)
-# @param $1 The desired tag name
-# @option -i, --id (optional) the hash of the commit to tag
-# @flag -p, --push (optional) to automatically push the tag on the remote
-# @example
-#   gtag 1.0.0
-#   gtag 1.0.0 --id 3804a28
-#   gtag 1.0.0 -p
-#   gtag 1.0.0 -i 3804a28 -p
-gtag() {
-    local tag_name="${1}"
-    local push=false
-    shift
-    while [[ "$#" -gt 0 ]]; do
-        case $1 in
-            -i|--id)
-                local commit_hash="${2}"
-                git tag "${tag_name}" "${commit_hash}"
-                return 0
-                ;;
-            -p|--push)
-                push=true
-                shift
-                ;;
-            *)
-                echo "Unsupported parameter ${1}"
-                echo "Usage: gtag [tag_name] [[-i,--id] [-p,--push]]"
-                return 1
-                ;;
-        esac
-    done
-    git tag "${tag_name}" "$(glast --id)"
-    if $push; then
-        git push origin "${tag_name}"
-    fi
 }
 
 gshow() {
