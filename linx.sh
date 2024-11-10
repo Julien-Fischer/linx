@@ -269,24 +269,6 @@ alias obr='open ~/.bashrc & disown'
 alias oba='open ${LINX_DIR}/${FUNC_FILE_NAME} & disown'
 alias linxn='cs ${LINX_DIR}'
 
-# @description Prompts the user for approval
-# @param $1 The action to be confirmed
-# @param $2 The prompt message for the user
-# @return 0 if user confirms, 1 otherwise
-# @example
-#  # Abort on anything other than y or yes (case insensitive)
-#  prompt "Installation" "Proceed?" --abort
-#
-#  # Use return status
-#  if [[ prompt "Installation" "Proceed?"]]; then
-#    # on abort
-#  else
-#    # on confirm...
-#  fi
-function prompt() {
-    confirm "$@"
-}
-
 ##############################################################
 # Bash
 ##############################################################

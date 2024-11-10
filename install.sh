@@ -142,7 +142,19 @@ add_cron() {
     ! $quiet && echo "Cron job created: ${cron_job}"
 }
 
-# @description Prompts the user for approval
+
+
+# @description Prompt the user for a value
+# @param $1 The prompt message for the user
+# @example
+#  prompt "Desired filename:"
+function prompt() {
+    local msg="${1}"
+    read -p "${msg} " user_input
+    echo "${user_input}"
+}
+
+# @description Prompt the user for approval
 # @param $1 The action to be confirmed
 # @param $2 The prompt message for the user
 # @return 0 if user confirms, 1 otherwise
