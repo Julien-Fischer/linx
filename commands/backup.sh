@@ -24,17 +24,22 @@ Arguments:
   [prefix]                (Optional) An arbitrary string to use as a prefix for the backup name
 
 Options:
-  -b, --basic             Use compact date format without separators (requires -t)
-  -c, --cron              Periodically backup the source using a cron expression
   -d, --destination       The absolute path of the directory where the backup must be created
-  -e, --no-extension      Drop the file extension (requires that at least -t or prefix are specified)
   -h, --help              Show this message and exit
-  -n, --no-name           Drop the filename (requires that at least -t is specified)
   -q, --quiet             Mute outputs
+  -b, --basic             Use compact date format without separators (requires -t)
+
+Tile options:
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
   -t, --time              Add a timestamp to the backup name
-  -o, --only-compact      If the filename must be a simple compact date. This is equivalent to backup [filename] -ecnt
+  -o, --only-compact      If the filename must be a simple compact date. This is equivalent to backup [filename] -bt --no-extension --no-name
+  --no-extension          Drop the file extension (requires that at least -t or prefix are specified)
+  --no-name               Drop the filename (requires that at least -t is specified)
+
+Cron options:
+  -c, --cron              Periodically backup the source using a cron expression
   -v, --verbose           Log standard output for debugging when used with --cron
+  -e, --erase             Clear the original file once it is backed up. Useful for log management
 
 Examples:
   backup mydir                                    # Create a copy of mydir, named mydir.bak
@@ -45,12 +50,13 @@ Examples:
                                                   # (e.g., 2024-09-03_09-53-42_myfile.bak)
   backup mydir backup                             # Create a copy of mydir with 'backup' as a prefix
                                                   # (e.g., backup_mydir)
-  backup mydir -ecnqrt                            # Create a copy of mydir using the current compact date as the file name
+  backup mydir -bt --no-extension --no-name       # Create a copy of mydir using the current compact date as the file name
                                                   # (e.g., 20241106215624)
-  backup mydir -o                                 # Shorthand for backup mydir -ecnt
+  backup mydir -o                                 # Shorthand for: backup mydir -bt --no-extension --no-name
   backup mydir -c '0 0 * * 0'                     # Backup mydir every sunday at midnight
   backup mydir -c '0 0 * * 0' -d /path/to/dir     # Backup mydir every sunday at midnight in /path/to/dir
   backup mydir -c '0 0 * * 0' -d /path/to/dir -v  # Backup mydir with verbose log level
+  backup mydir -c '0 0 * * *' -d /path/to/dir -e  # Backup mydir every day and clear its content
 EOF
 )
 
@@ -78,6 +84,7 @@ backup() {
     local compact=false
     local drop_extension=false
     local verbose=false
+    local erase=false
     local cron_expression=
     local name=$(basename "${source}")
     local source_dir=$(dirname "${source}")
@@ -114,10 +121,13 @@ backup() {
                 target_dir="${2}"
                 shift
                 ;;
-            -e|--no-extension)
+            -e|--erase)
+                erase=true
+                ;;
+            --no-extension)
                 drop_extension=true
                 ;;
-            -n|--no-name)
+            --no-name)
                 drop_name=true
                 ;;
             -q|--quiet)
@@ -167,13 +177,16 @@ backup() {
             local display_mode=""
             if $verbose; then
                 args+=' --verbose'
+                display_mode="with verbose mode"
             fi
-            if $verbose; then
-                display_mode=" with verbose mode"
+            if $erase; then
+                args+=' --erase'
             fi
             # shellcheck disable=SC2086
             add_cron "${cron_expression}" "${command}" $args
-            echo -e "$(color "${name}" "${GREEN}") backup scheduled: ${cron_expression}${display_mode}."
+            echo -e "$(color "${name}" "${GREEN}") backup scheduled: ${cron_expression} ${display_mode}."
+            echo -e "Command: $(color "${command}" "${GREEN}")"
+            echo -e "Params: $(color "${args}" "${YELLOW}")"
             return 0
         fi
     fi
@@ -219,7 +232,15 @@ backup() {
         fi
     fi
 
-    cpv "${src}" "${absolute_target_dir}/${complete_name}"
+    local target_path="${absolute_target_dir}/${complete_name}"
+    if ! cpv "${src}" "${target_path}"; then
+        err "Could not copy ${src} to ${target_path}"
+        return 1
+    fi
+
+    if $erase; then
+        printf '' > "${src}"
+    fi
 }
 
 backup "$@"

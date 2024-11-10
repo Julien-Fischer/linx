@@ -104,6 +104,7 @@ add_cron() {
     local command="${2}"
     local quiet=false
     local verbose=false
+    local custom_params=''
 
     shift 2
 
@@ -116,14 +117,13 @@ add_cron() {
                 verbose=true
                 ;;
             *)
-                err "Invalid parameter: '${1}'"
-                return 1
+                custom_params+=" ${1}"
                 ;;
         esac
         shift
     done
 
-    local cron_job="${cron_expr} ${command}"
+    local cron_job="${cron_expr} ${command}${custom_params}"
     if cron_exists "${cron_expr}" "${command}"; then
         err "Cron job already exists"
         return 1
