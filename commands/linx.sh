@@ -41,6 +41,18 @@ Options:
 EOF
 )
 
+CRON_USAGE=$(cat <<EOF
+  Usage: linx cron [OPTIONS]
+
+  List the cron jobs installed via linx.
+
+  Options:
+    -c, --clear           Remove all cron jobs installed via linx
+    -d, --delete          Delete a specific cron jobs installed via linx
+    -h, --help            Show this message and exit
+EOF
+)
+
 ##############################################################
 # Process
 ##############################################################
@@ -63,6 +75,10 @@ handle_crons() {
                 ;;
             -d|--delete)
                 delete_one=true
+                ;;
+            -h|--help)
+                echo "${CRON_USAGE}"
+                return 0
                 ;;
             *)
                 err "Invalid parameter ${1}"
