@@ -98,6 +98,7 @@ handle_crons() {
         return 0
     fi
     read_crons
+    return $?
 }
 
 delete_job() {
@@ -148,7 +149,6 @@ remove_cron_entry() {
 
 read_crons() {
     if [[ ! -f "${CRON_JOBS_FILE}" || ! -s "${CRON_JOBS_FILE}" ]]; then
-        echo "No cron jobs scheduled via linx."
         return 1
     fi
     cat "${CRON_JOBS_FILE}"
