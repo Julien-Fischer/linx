@@ -42,6 +42,12 @@ export YELLOW='\033[0;33m'
 export BLUE='\033[0;34m'
 export MAGENTA='\033[0;35m'
 export CYAN='\033[0;36m'
+export RED_BOLD='\033[1;31m'
+export GREEN_BOLD='\033[1;32m'
+export YELLOW_BOLD='\033[1;33m'
+export BLUE_BOLD='\033[1;34m'
+export MAGENTA_BOLD='\033[1;35m'
+export CYAN_BOLD='\033[1;36m'
 export NC='\033[0m'
 
 
