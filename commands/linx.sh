@@ -19,7 +19,9 @@ require_source "/linx/.linx_lib.sh"
 require_source "/linx/linx.sh"
 require_source ".bashrc"
 
-# doc
+##############################################################
+# Doc
+##############################################################
 
 USAGE=$(cat <<EOF
 Usage: linx [OPTIONS]
@@ -39,14 +41,9 @@ Options:
 EOF
 )
 
-pull_setup() {
-    if install_core; then
-        echo "${PROJECT} successfully synced"
-    else
-        echo "${PROJECT}: failed to sync"
-        return 1
-    fi
-}
+##############################################################
+# Process
+##############################################################
 
 handle_commands() {
     cat "${LINX_INSTALLED_COMMANDS}"
@@ -54,7 +51,6 @@ handle_commands() {
 
 handle_crons() {
     while [[ $# -gt 0 ]]; do
-        echo "evaluating... '${1}'"
         case $1 in
             -c|--clear)
                 echo "This will clear all cron jobs scheduled via linx."
@@ -108,28 +104,6 @@ remove_cron_entry() {
     fi
 }
 
-# @description Remove the first line matching the specified substring
-# @param $1 The file to process
-# @param $2 The substring to match
-remove_first_line_containing() {
-    local file="$1"
-    local substring="$2"
-    if [[ ! -f "${file}" ]]; then
-        err "File '${file}' does not exist."
-        return 1
-    fi
-    if grep -q "${substring}" "${file}"; then
-        local temp_file=$(mktemp)
-        grep -v "$substring" "${file}" > "${temp_file}"
-        mv "${temp_file}" "${file}"
-        return 0
-    else
-        err "No entry found containing '${substring}' in file '${file}'."
-        return 1
-    fi
-}
-
-
 read_crons() {
     if [[ ! -f "${CRON_JOBS_FILE}" && ! -s "${CRON_JOBS_FILE}" ]]; then
         echo "No cron jobs scheduled via linx."
@@ -138,16 +112,14 @@ read_crons() {
     cat "${CRON_JOBS_FILE}"
 }
 
-print_array() {
-    # Use nameref to reference the passed array
-    local -n array_ref="$1"
-    local line_number=1
-    for line in "${array_ref[@]}"; do
-        printf "[%d] %s\n" "$line_number" "$line"
-        ((line_number++))
-    done
+pull_setup() {
+    if install_core; then
+        echo "${PROJECT} successfully synced"
+    else
+        echo "${PROJECT}: failed to sync"
+        return 1
+    fi
 }
-
 
 
 # @description Synchronize the local linx installation with the latest version from the remote

@@ -9,7 +9,9 @@ if [[ -f "${HOME}"/linx/.linx_lib.sh ]]; then
 fi
 source "${HOME}"/.bashrc
 
-# doc
+##############################################################
+# Doc
+##############################################################
 
 USAGE=$(cat <<EOF
 Usage: backup <file_or_directory> [prefix] [options]
@@ -51,6 +53,10 @@ Examples:
   backup mydir -c '0 0 * * 0' -d /path/to/dir -v  # Backup mydir with verbose log level
 EOF
 )
+
+##############################################################
+# Process
+##############################################################
 
 backup() {
     IFS=$'\x1E' read -ra new_args < <(decluster "$@")

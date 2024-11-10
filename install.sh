@@ -189,6 +189,43 @@ function confirm() {
     esac
 }
 
+# @description Remove the first line matching the specified substring
+# @param $1 The file to process
+# @param $2 The substring to match
+# @example
+#   remove_first_line_containing myfile "hello, world!"
+remove_first_line_containing() {
+    local file="$1"
+    local substring="$2"
+    if [[ ! -f "${file}" ]]; then
+        err "File '${file}' does not exist."
+        return 1
+    fi
+    if grep -q "${substring}" "${file}"; then
+        local temp_file=$(mktemp)
+        grep -v "$substring" "${file}" > "${temp_file}"
+        mv "${temp_file}" "${file}"
+        return 0
+    else
+        err "No entry found containing '${substring}' in file '${file}'."
+        return 1
+    fi
+}
+
+# @description Print an array with line numbers
+# @param $1  the reference of the array to print
+# @example
+#   print_array my_array
+print_array() {
+    # Use nameref to reference the passed array
+    local -n array_ref="$1"
+    local line_number=1
+    for line in "${array_ref[@]}"; do
+        printf "[%d] %s\n" "$line_number" "$line"
+        ((line_number++))
+    done
+}
+
 # @description Determines whether a software is installed on this system
 # @param $1 the software name
 # @param $2 0 to mute echo messages; 1 otherwise
