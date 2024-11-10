@@ -31,7 +31,7 @@ a directory, copy it recursively.
 
 Arguments:
   s, sync                 Synchronize the local setup with the remote
-  c, crons                List the native Linx commands
+  c, cron                 List the native Linx commands
 
 Options:
   -c, --commands          List the native Linx commands
