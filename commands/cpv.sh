@@ -90,7 +90,7 @@ copy_dir() {
     if [[ ! -d "${source}" ]]; then
         return 1
     fi
-    rsync "${source}" "${target}" -ah --info=progress2 --partial
+    rsync "${source}/" "${target}" -ah --info=progress2 --partial
     ! $quiet && echo "Copied [dir] ${source} at ${target}"
 }
 
