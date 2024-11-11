@@ -477,7 +477,7 @@ alias gcl="git clone"
 #                    This option can't be used with --no-commit
 gproj() {
     local USAGE=$(cat <<EOF
-Usage: gproject [PROJECT_NAME] [OPTIONS]
+Usage: gproj [PROJECT_NAME] [OPTIONS]
 
 Generates a new git project with a .gitignore file.
 
@@ -493,9 +493,9 @@ Options:
                    This option cannot be used with --no-commit.
 
 Examples:
-  gproject my_new_project
-  gproject my_demo_project --demo
-  gproject --no-commit
+  gproj my_new_project
+  gproj my_demo_project --demo
+  gproj --no-commit
 EOF
 )
     local name
