@@ -28,8 +28,8 @@ Description:
   Copy files and directories from SOURCE to DESTINATION with a visual progress bar.
 
 Positional parameters:
-  $1            (Source) The file or directory to copy. This can be a single file, a directory, or a wildcard pattern.
-  $2            (Target) The destination where the files or directories will be copied. This should be a valid path.
+  \$1            (Source) The file or directory to copy. This can be a single file, a directory, or a wildcard pattern.
+  \$2            (Target) The destination where the files or directories will be copied. This should be a valid path.
 
 Options:
   -h, --help    Display this help message and exit
@@ -50,14 +50,7 @@ EOF
 # Process
 ##############################################################
 
-parse_params() {
-    if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
-        echo "${USAGE}"
-        return 0
-    fi
-    source="${1}"
-    target="${2:-.}"
-    shift 2
+parse_options() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -q|--quiet)
@@ -71,6 +64,17 @@ parse_params() {
         esac
         shift
     done
+}
+
+parse_params() {
+    if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
+        echo "${USAGE}"
+        return 0
+    fi
+    source="${1}"
+    target="${2:-.}"
+    shift 2
+    parse_options "$@"
 }
 
 copy_file() {
