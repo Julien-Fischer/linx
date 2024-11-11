@@ -29,7 +29,7 @@ Options:
   -q, --quiet             Mute outputs
   -b, --basic             Use compact date format without separators (requires -t)
 
-Tile options:
+Naming options:
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
   -t, --time              Add a timestamp to the backup name
   -o, --only-compact      If the filename must be a simple compact date. This is equivalent to backup [filename] -bt --no-extension --no-name
