@@ -247,7 +247,14 @@ backup() {
     fi
 
     if $erase; then
-        printf '' > "${src}"
+        if [[ -d "${source}" ]]; then
+            rm -rf "${source:?}"/{*,.*}
+        elif [[ -f "${source}" ]]; then
+            printf '' > "${src}"
+        else
+            err "${source} is neither a file nor a directory"
+            return 1
+        fi
     fi
 }
 
