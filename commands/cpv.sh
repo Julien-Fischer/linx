@@ -96,11 +96,11 @@ copy_dir() {
 
 cpv() {
     parse_params "$@"
-    if ! copy_file && ! copy_dir; then
-        ! $quiet && err "Could not find any file or directory at ${source}"
-        return 1
+    if copy_file || copy_dir; then
+        return 0
     fi
-    return 0
+    ! $quiet && err "Could not find any file or directory at ${source}"
+    return 1
 }
 
 cpv "$@"
