@@ -82,7 +82,7 @@ copy_file() {
         return 1
     fi
     cp "${source}" "${target}"
-    ! $quiet && echo "Backed up [file] ${source} at ${target}"
+    ! $quiet && echo "Copied [file] ${source} at ${target}"
     return 0
 }
 
@@ -91,7 +91,7 @@ copy_dir() {
         return 1
     fi
     rsync "${source}" "${target}" -ah --info=progress2 --partial
-    ! $quiet && echo "Backed up [dir] ${source} at ${target}"
+    ! $quiet && echo "Copied [dir] ${source} at ${target}"
 }
 
 cpv() {
