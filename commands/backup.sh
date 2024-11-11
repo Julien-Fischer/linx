@@ -40,6 +40,7 @@ Cron options:
   -c, --cron              Periodically backup the source using a cron expression
   -v, --verbose           Log standard output for debugging when used with --cron
   -e, --erase             Clear the original file once it is backed up. Useful for log management
+  -i, --instantly         Backup the source before scheduling a recurring backup
 
 Examples:
   backup mydir                                    # Create a copy of mydir, named mydir.bak
@@ -57,6 +58,7 @@ Examples:
   backup mydir -c '0 0 * * 0' -d /path/to/dir     # Backup mydir every sunday at midnight in /path/to/dir
   backup mydir -c '0 0 * * 0' -d /path/to/dir -v  # Backup mydir with verbose log level
   backup mydir -c '0 0 * * *' -d /path/to/dir -e  # Backup mydir every day and clear its content
+  backup mydir -c '0 0 * * *' -d /path/to/dir -i  # Backup mydir right now, then every day
 EOF
 )
 
@@ -85,6 +87,7 @@ backup() {
     local drop_extension=false
     local verbose=false
     local erase=false
+    local instantly=false
     local cron_expression=
     local name=$(basename "${source}")
     local source_dir=$(dirname "${source}")
@@ -123,6 +126,9 @@ backup() {
                 ;;
             -e|--erase)
                 erase=true
+                ;;
+            -i|--instantly)
+                instantly=true
                 ;;
             --no-extension)
                 drop_extension=true
@@ -187,7 +193,9 @@ backup() {
             echo -e "$(color "${name}" "${GREEN}") backup scheduled: ${cron_expression} ${display_mode}."
             echo -e "Command: $(color "${command}" "${GREEN}")"
             echo -e "Params: $(color "${args}" "${YELLOW}")"
-            return 0
+            if ! $instantly; then
+                return 0
+            fi
         fi
     fi
 
