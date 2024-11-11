@@ -14,6 +14,7 @@ export LINX_DIR="${HOME}/${PROJECT}"
 export CRON_DIR="${LINX_DIR}/cron"
 export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
 export CRON_LOG_FILE="${CRON_DIR}/jobs.log"
+COMMANDS_DIR="/usr/local/bin"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -245,7 +246,7 @@ installed() {
     if [[ "${2}" == "-q" || "${2}" == "--quiet" ]]; then
         quiet=true
     fi
-    if dpkg -s "${software}" &> /dev/null || ls /usr/local/bin | grep -q "${software}"; then
+    if dpkg -s "${software}" &> /dev/null || compgen -G "${COMMANDS_DIR}/*${software}*" > /dev/null; then
         local location=$(which "${software}")
         if ! $quiet; then
             echo "${software} is installed at ${location}"
