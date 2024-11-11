@@ -507,8 +507,16 @@ EOF
         name="${1}"
         shift
     fi
-    if ! mkcs "${name}" && ! git init -q; then
-        err "Could not generate git project at $(pwd)"
+    if ! mkdir -p "${name}"; then
+        err "Could not create directory ${name}"
+        return 1
+    fi
+    if ! cd "${name}"; then
+        err "Could not change directory to ${name}"
+        return 1
+    fi
+    if ! git init -q; then
+        err "Could not initialize git repository in $(pwd)"
         return 1
     fi
     echo ".idea" > .gitignore
