@@ -345,7 +345,7 @@ install_command() {
     local command_name=$(basename "${1}" .sh)
     local filepath="commands/${command_name}.sh"
     chmod +x "${filepath}"
-    sudo cp "${filepath}" /usr/local/bin/"${command_name}"
+    sudo cp "${filepath}" "${COMMANDS_DIR}"/"${command_name}"
     echo "${command_name}" >> "${LINX_INSTALLED_COMMANDS}"
 }
 
@@ -452,7 +452,7 @@ trim_slash() {
 ##############################################################
 
 install_commands() {
-    sudo mkdir -p /usr/local/bin
+    sudo mkdir -p "${COMMANDS_DIR}"
     printf '' > "${LINX_INSTALLED_COMMANDS}"
     mapfile -t COMMANDS < <(ls -1 ./commands)
     for command in "${COMMANDS[@]}"; do

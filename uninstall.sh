@@ -34,7 +34,7 @@ try_removing() {
 uninstall_command() {
     local command="${1}"
     if installed "${command}" -q; then
-        del /usr/local/bin/"${command}" -q
+        del "${COMMANDS_DIR}/${command}" -q
     fi
 }
 

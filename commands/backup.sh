@@ -174,7 +174,7 @@ backup() {
             ! $quiet && err "Could not find any file or directory at ${src}"
             return 1
         fi
-        local command="/usr/local/bin/backup '${src}' -t -d ${absolute_target_dir}"
+        local command="${COMMANDS_DIR}/backup '${src}' -t -d ${absolute_target_dir}"
         if cron_exists "${cron_expression}" "${command}"; then
             err "Cron job already exists"
             return 1
