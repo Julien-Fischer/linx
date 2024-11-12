@@ -26,12 +26,12 @@ require_source ".bashrc"
 USAGE=$(cat <<EOF
 Usage: linx [OPTIONS]
 
-Backup the element identified by the specified path. If the element to backup is
-a directory, copy it recursively.
+Manages linx local and remote configuration.
 
 Arguments:
-  s, sync                 Synchronize the local setup with the remote
+  b, backup               Create a timestamped backup of linx local configuration
   c, cron                 List the native Linx commands
+  s, sync                 Synchronize the local setup with the remote
 
 Options:
   -c, --commands          List the native Linx commands
@@ -54,7 +54,7 @@ EOF
 )
 
 BACKUP_USAGE=$(cat <<EOF
-  Usage: linx sync [OPTIONS]
+  Usage: linx backup [OPTIONS]
 
   Create a timestamped backup as a zip file before synchronizing the local version of linx.
 
@@ -151,7 +151,7 @@ handle_backup() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h|--help)
-                echo "${SYNC_USAGE}"
+                echo "${BACKUP_USAGE}"
                 return 0
                 ;;
             *)
