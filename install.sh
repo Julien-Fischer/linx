@@ -318,7 +318,7 @@ color() {
 
 err() {
     local message="${1}"
-    echo -e "$(color "E:") ${message}"
+    echo -e "$(color "E:") ${message}" >&2
 }
 
 request_dir() {
