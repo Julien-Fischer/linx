@@ -41,6 +41,17 @@ Options:
 EOF
 )
 
+SYNC_USAGE=$(cat <<EOF
+  Usage: linx sync [OPTIONS]
+
+  Synchronize the local configuration with the remote.
+
+  Options:
+    -b, --backup          Create a timestamped backup as a zip file before synchronizing the local version of linx
+    -h, --help            Show this message and exit
+EOF
+)
+
 CRON_USAGE=$(cat <<EOF
   Usage: linx cron [OPTIONS]
 
@@ -57,7 +68,71 @@ EOF
 # Process
 ##############################################################
 
+backup_local_config() {
+    set -e  # Exit immediately if a command exits with a non-zero status
+    trap 'err "Backup failed."; return 1' ERR
+
+    local filename="linx_$(timestamp -s - _ -)"
+    local absolute_path="${LINX_BACKUPS_DIR}/${filename}"
+
+    local temp_dir=$(mktemp -d)
+    local command_dir_backup="${temp_dir}/commands"
+
+    echo "${VERSION}" > "${temp_dir}/VERSION"
+    cp -r "${LINX_DIR}" "${temp_dir}/" > /dev/null
+    cp -r "${TERMINATOR_DIR}" "${temp_dir}/" > /dev/null
+    mkdir -p "${command_dir_backup}" > /dev/null
+
+    while IFS= read -r cmd; do
+        if [[ -n "${cmd}" ]]; then
+            local command_file="${COMMANDS_DIR}/${cmd}"
+            if [[ -f "${command_file}" ]]; then
+                cp "${command_file}" "${command_dir_backup}/" > /dev/null
+            else
+                echo "Warning: ${cmd} not found in ${COMMANDS_DIR}"
+            fi
+        fi
+    done < <(read_commands)
+
+    (cd "${temp_dir}" && sudo zip -r "${absolute_path}" . > /dev/null)
+
+    rm -rf "${temp_dir}" > /dev/null
+
+    echo -e "Backed up local configuration at $(color "${absolute_path}" "${GREEN_BOLD}")"
+
+    trap - ERR  # Reset the error trap
+    set +e  # Reset the exit-on-error option
+}
+
+
+handle_sync() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -b|--backup)
+                backup_local_config "$@"
+                ;;
+            -h|--help)
+                echo "${SYNC_USAGE}"
+                return 0
+                ;;
+            *)
+                err "Invalid parameter ${1}"
+                echo "${SYNC_USAGE}"
+                return 1
+                ;;
+        esac
+        shift
+    done
+
+    pull_setup
+    return $?
+}
+
 handle_commands() {
+    read_commands
+}
+
+read_commands() {
     cat "${LINX_INSTALLED_COMMANDS}"
 }
 
@@ -168,7 +243,8 @@ linx() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             s|sync)
-                pull_setup
+                shift
+                handle_sync "$@"
                 return 0
                 ;;
             c|cron)
@@ -177,6 +253,7 @@ linx() {
                 return 0
                 ;;
             -c|--commands)
+                shift
                 handle_commands "$@"
                 return 0
                 ;;
