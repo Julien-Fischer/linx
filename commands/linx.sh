@@ -48,6 +48,17 @@ SYNC_USAGE=$(cat <<EOF
 
   Options:
     -b, --backup          Create a timestamped backup as a zip file before synchronizing the local version of linx
+                          This is equivalent of executing linx b && linx s
+    -h, --help            Show this message and exit
+EOF
+)
+
+BACKUP_USAGE=$(cat <<EOF
+  Usage: linx sync [OPTIONS]
+
+  Create a timestamped backup as a zip file before synchronizing the local version of linx.
+
+  Options:
     -h, --help            Show this message and exit
 EOF
 )
@@ -134,6 +145,25 @@ handle_commands() {
 
 read_commands() {
     cat "${LINX_INSTALLED_COMMANDS}"
+}
+
+handle_backup() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                echo "${SYNC_USAGE}"
+                return 0
+                ;;
+            *)
+                err "Invalid parameter ${1}"
+                echo "${BACKUP_USAGE}"
+                return 1
+                ;;
+        esac
+    done
+
+    backup_local_config
+    return $?
 }
 
 handle_crons() {
@@ -242,14 +272,19 @@ pull_setup() {
 linx() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            s|sync)
-                shift
-                handle_sync "$@"
-                return 0
-                ;;
             c|cron)
                 shift
                 handle_crons "$@"
+                return 0
+                ;;
+            b|backup)
+                shift
+                handle_backup "$@"
+                return 0
+                ;;
+            s|sync)
+                shift
+                handle_sync "$@"
                 return 0
                 ;;
             -c|--commands)
