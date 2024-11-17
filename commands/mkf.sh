@@ -127,7 +127,7 @@ write_file() {
         local template_file="${MKF_TEMPLATE_DIR}/${template_name}"
         if [[ ! -e "${template_file}" ]]; then
             echo "${SCRIPT_NAME}: Could not find template ${template_name} in ${MKF_TEMPLATE_DIR}"
-            list_templates "$MKF_TEMPLATE_DIR" 'Found'
+            list_templates
             exit 1
         fi
         local text=$(cat "${template_file}")
@@ -151,6 +151,18 @@ open_file() {
 ##############################################################
 # Template
 ##############################################################
+
+list_templates() {
+    local templates=()
+    get_file_names "${MKF_TEMPLATE_DIR}" "templates"
+    template_count=${#templates[@]}
+    if [[ $template_count -eq 0 ]]; then
+        echo "No template in ${MKF_TEMPLATE_DIR}"
+        return 0
+    fi
+    echo "Found ${template_count} templates:"
+    printf "    - %s\n" "${templates[@]}"
+}
 
 delete_template() {
     local name="${1}"
@@ -197,7 +209,7 @@ read_template() {
         printf "%s\n" "${text//\$\{CURRENT_DATE\}/${CURRENT_DATE}}"
     else
         echo "Could not locate template file '${name}' in ${MKF_TEMPLATE_DIR}"
-        list_templates "${MKF_TEMPLATE_DIR}" 'Found'
+        list_templates
         exit 1
     fi
 }
@@ -251,7 +263,7 @@ print_settings_help() {
 
 handle_template() {
     if [ $# -eq 0 ]; then
-        list_templates "${MKF_TEMPLATE_DIR}" 'Found'
+        list_templates
         return 0
     fi
     while [[ $# -gt 0 ]]; do
@@ -265,7 +277,7 @@ handle_template() {
                 exit 0
                 ;;
             -l|--list)
-                list_templates "${MKF_TEMPLATE_DIR}" 'Found'
+                list_templates
                 exit 0
                 ;;
             read)
@@ -350,37 +362,34 @@ process_generate_options() {
         case $1 in
             -b|--basic)
                 PARAMETERS["basic"]="${1}"
-                shift
                 ;;
             -c|--content)
                 require_value "${1}" "${2}"
                 PARAMETERS["content"]="${2}"
-                shift 2
+                shift
                 ;;
             -d|--directory)
                 require_value "${1}" "${2}"
                 PARAMETERS["directory"]="${2}"
-                shift 2
+                shift
                 ;;
             -e|--extension)
                 require_value "${1}" "${2}"
-                echo "[debug] set ${1} ${2}"
                 PARAMETERS["extension"]="${2}"
-                shift 2
+                shift
                 ;;
             -n|--name)
                 require_value "${1}" "${2}"
                 PARAMETERS["filename"]="${2}"
-                shift 2
+                shift
                 ;;
             -t|--time)
                 PARAMETERS["datetime"]=1
-                shift
                 ;;
             -T|--template)
                 require_value "${1}" "${2}"
                 PARAMETERS["template_name"]="${2}"
-                shift 2
+                shift
                 ;;
             -o|--open)
                 PARAMETERS["auto_open"]=1
@@ -388,12 +397,12 @@ process_generate_options() {
                     PARAMETERS["software"]="${2}"
                     shift
                 fi
-                shift
                 ;;
             *)
                 fail "$*"
                 ;;
         esac
+        shift
     done
 }
 

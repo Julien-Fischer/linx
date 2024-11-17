@@ -356,6 +356,27 @@ del() {
     return 1
 }
 
+# @description Retrieves the names of the files in the specified directory
+# @param $1  the path of the directory to process
+# @param $2  the name of the array to use for storing the file names
+# @return an array of strings
+# @example
+#   get_file_names /home/john array_name
+#   get_file_names .. array_name
+#   get_file_names / array_name
+get_file_names() {
+    local directory=
+    directory=$(resolve_directory_path "${1}")
+    local array_nameref="${2}"
+    local -n file_array="${array_nameref}"
+    for file in "${directory}"/*; do
+        if [[ -f "${file}" ]]; then
+            filename=$(basename "${file}")
+            file_array+=("${filename}")
+        fi
+    done
+}
+
 current_dir() {
     if is_sourced; then
         pwd
@@ -495,7 +516,6 @@ is_linx_installed() {
     else
         return 1
     fi
-
 }
 
 third_party_themes_installed() {
@@ -592,7 +612,6 @@ install_commands() {
 }
 
 update_mkf_config() {
-    echo "debug: $(pwd)"
     cat "config/mkf/mkf_config" > "${MKF_CONFIG_FILE}"
     cp -rf "config/mkf/templates"/* "${MKF_TEMPLATE_DIR}"
 }
