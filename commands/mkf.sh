@@ -94,6 +94,9 @@ format_date() {
 
 format_filename() {
     formatted_filename="${formatted_date}"
+    if [[ -n "${PARAMETERS["basic"]}" ]]; then
+        formatted_filename="$(timestamp --basic)"
+    fi
     if [[ -n "${PARAMETERS["filename"]}" ]]; then
         formatted_filename+="_${PARAMETERS["filename"]}"
     fi
@@ -345,6 +348,10 @@ process_option() {
 process_generate_options() {
     while [[ $# -gt 0 ]]; do
         case $1 in
+            -b|--basic)
+                PARAMETERS["basic"]="${1}"
+                shift
+                ;;
             -c|--content)
                 require_value "${1}" "${2}"
                 PARAMETERS["content"]="${2}"

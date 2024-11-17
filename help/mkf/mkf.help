@@ -14,6 +14,7 @@ Commands:
 
 Options:
 
+  -b, --basic                        Uses a Basic ISO 8601 datetime prefix without separators (YYYYMMDDhhmmss)
   -c, --content [content]            The content to write in this file
   -d, --directory [directory]        The directory where the file will be generated
   -e, --extension [extension]        Specify the desired extension (no extension by default)
@@ -34,3 +35,4 @@ Examples:
   mkf hello -T meeting               # Generate a file named 'hello' from the 'meeting' template
   mkf -h                             # Display this message
   sudo mkf -e log -d / -t            # Generate a file in the root directory with a datetime prefix and .log extension
+  mkf -be log                        # Generate a file with basic datetime prefix and log extension (eg: 20241117034536.log)
