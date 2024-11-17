@@ -93,12 +93,12 @@ format_date() {
 }
 
 format_filename() {
+    formatted_filename="${formatted_date}"
     if [[ -n "${PARAMETERS["filename"]}" ]]; then
-        formatted_filename="${formatted_date}_${PARAMETERS["filename"]}${PARAMETERS["extension"]}"
-    elif [[ "${PARAMETERS["extension"]}" ]]; then
-        formatted_filename="${formatted_date}${PARAMETERS["filename"]}"
-    else
-        formatted_filename="${formatted_date}"
+        formatted_filename+="_${PARAMETERS["filename"]}"
+    fi
+    if [[ -n "${PARAMETERS["extension"]}" ]]; then
+        formatted_filename+=".${PARAMETERS["extension"]}"
     fi
 }
 
@@ -357,6 +357,7 @@ process_generate_options() {
                 ;;
             -e|--extension)
                 require_value "${1}" "${2}"
+                echo "[debug] set ${1} ${2}"
                 PARAMETERS["extension"]="${2}"
                 shift 2
                 ;;
