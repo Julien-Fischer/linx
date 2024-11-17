@@ -86,24 +86,6 @@ fail() {
     exit 1
 }
 
-resolve_directory_path() {
-    directory_path="${PARAMETERS["directory"]}"
-    # Handle '~' for home directory
-    if [[ "$directory_path" == "~"* ]]; then
-        directory_path="${directory_path/#\~/$HOME}"
-    fi
-    # Use readlink or realpath to get the absolute path
-    if command -v realpath >/dev/null 2>&1; then
-        directory_path="$(realpath -m -- "$directory_path")"
-    else
-        directory_path="$(readlink -f -- "$directory_path")"
-    fi
-    # Check that the specified directory exists on the file system
-    if [ ! -e "${directory_path}" ]; then
-        fail "The specified directory does not exist: ${directory_path}" "path"
-    fi
-}
-
 format_date() {
     if [[ "${PARAMETERS["datetime"]}" -eq 1 ]]; then
         formatted_date="${CURRENT_DATE}_${CURRENT_TIME}"
@@ -121,7 +103,7 @@ format_filename() {
 }
 
 generate_file() {
-    resolve_directory_path
+    directory_path=$(resolve_directory_path "${PARAMETERS["directory"]}")
     format_date
     format_filename
     write_file

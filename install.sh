@@ -223,6 +223,26 @@ array_contains() {
     return 1
 }
 
+resolve_directory_path() {
+    local directory_path="${1:-.}"
+    # Handle '~' for home directory
+    if [[ "${directory_path}" == "~"* ]]; then
+        directory_path="${directory_path/#\~/$HOME}"
+    fi
+    # Use readlink or realpath to get the absolute path
+    if command -v realpath >/dev/null 2>&1; then
+        directory_path="$(realpath -m -- "${directory_path}")"
+    else
+        directory_path="$(readlink -f -- "${directory_path}")"
+    fi
+    # Check that the specified directory exists on the file system
+    if [[ ! -e "${directory_path}" ]]; then
+        err "The specified directory does not exist: ${directory_path}" "path"
+        return 1
+    fi
+    echo "${directory_path}"
+}
+
 # @description Remove leading and trailing whitespaces
 # @example trim '     hello    world!      '
 #          output: hello world
@@ -418,7 +438,7 @@ put_property() {
 
     if ! $found; then
         echo "${key_trim}=${value_trim}" >> "${temp_file}"
-        echo -e "Added $(color "${key_trim}" "${GREEN_BOLD}")=$(color "${value_trim}" "${YELLOW_BOLD}")"
+        echo -e "Added $(color "${key_trim}" "${GREEN_BOLD}") = $(color "${value_trim}" "${YELLOW_BOLD}")"
     else
         echo -e "$(color "${key_trim}" "${GREEN_BOLD}") was set to $(color "${value_trim}" "${YELLOW_BOLD}")"
     fi
