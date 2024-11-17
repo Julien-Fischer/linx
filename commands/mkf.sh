@@ -98,7 +98,7 @@ format_filename() {
     elif [[ "${PARAMETERS["extension"]}" ]]; then
         formatted_filename="${formatted_date}${PARAMETERS["filename"]}"
     else
-        formatted_filename="$formatted_date"
+        formatted_filename="${formatted_date}"
     fi
 }
 
