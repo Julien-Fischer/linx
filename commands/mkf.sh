@@ -182,13 +182,13 @@ delete_template() {
     fi
 }
 
-# @description Add a new template with the specified name and content
+# @description Set a template with the specified name and content, erasing any existing one
 # @param $1 the name of the template to create
 # @param $2 the template content
 # @return 0 if the template could be installed; 1 otherwise
 # @example
-#   add_template "demo" 'Hello, world!'
-add_template() {
+#   put_template "demo" 'Hello, world!'
+put_template() {
     local name="${1}"
     local content="${2}"
     local path="${MKF_TEMPLATE_DIR}/${name}"
@@ -196,9 +196,9 @@ add_template() {
         echo 'This template already exists.'
         confirm 'Template creation' 'Are you sure you want to proceed?' --abort
     fi
-    echo "${content}" > "${name}"
+    echo -e "${content}" > "${name}"
     sudo mv "${name}" "${path}"
-    echo "Installed new template; ${name}."
+    echo "Installed template $(color "${name}" "${GREEN}")."
 }
 
 read_template() {
@@ -289,10 +289,10 @@ handle_template() {
                 delete_template "${2}" "${3}"
                 shift 2
                 ;;
-            add)
+            put)
                 require_value "${1}" "${2}"
                 require_value "${1}" "${3}"
-                add_template "${2}" "${3}"
+                put_template "${2}" "${3}"
                 shift 3
                 ;;
             *)
