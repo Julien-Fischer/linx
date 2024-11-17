@@ -178,7 +178,7 @@ delete_template() {
         sudo rm "${template}"
         echo "Deleted ${name} template."
     else
-        echo "Could not locate ${name} in ${MKF_TEMPLATE_DIR}"
+        err "Could not locate ${name} in ${MKF_TEMPLATE_DIR}"
     fi
 }
 
@@ -196,9 +196,9 @@ put_template() {
         echo 'This template already exists.'
         confirm 'Template creation' 'Are you sure you want to proceed?' --abort
     fi
-    echo -e "${content}" > "${name}"
+    echo "${content}" > "${name}"
     sudo mv "${name}" "${path}"
-    echo "Installed template $(color "${name}" "${GREEN}")."
+    echo -e "Installed template $(color "${name}" "${GREEN_BOLD}")."
 }
 
 read_template() {
@@ -208,9 +208,9 @@ read_template() {
         local text=$(cat "${path}")
         printf "%s\n" "${text//\$\{CURRENT_DATE\}/${CURRENT_DATE}}"
     else
-        echo "Could not locate template file '${name}' in ${MKF_TEMPLATE_DIR}"
+        err "Could not locate template file '${name}' in ${MKF_TEMPLATE_DIR}"
         list_templates
-        exit 1
+        return 1
     fi
 }
 
