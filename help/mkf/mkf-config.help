@@ -1,0 +1,25 @@
+Manages mkf settings.
+If no argument is specified, lists the available settings.
+
+Usage:
+
+  mkf config [OPTIONS]
+
+Commands:
+
+  read [name]                             Read the value of the specified setting
+  put [-k name][-v value]                 Add or update an existing setting using the specified key and value
+
+Options:
+
+  -l, --list                              List the available templates (both native and custom)
+  -p, --path                              Print the path to the settings file (usually ${MKF_CONFIG_FILE})
+  -h, --help                              Display this help message and exit
+
+Examples:
+
+  mkf config                              # List the available settings
+  mkf config read timezone                # Read the value of the 'timezone' setting
+  mkf config --path                       # Print the path where the settings file is located, generally ${LINX_DIR}
+  mkf config --help                       # Display this help message and exit
+  mkf config --list [[expr]]              # List the available settings

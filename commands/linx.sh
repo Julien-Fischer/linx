@@ -20,62 +20,6 @@ require_source "/linx/linx.sh"
 require_source ".bashrc"
 
 ##############################################################
-# Doc
-##############################################################
-
-USAGE=$(cat <<EOF
-Usage: linx [OPTIONS]
-
-Manages linx local and remote configuration.
-
-Arguments:
-  b, backup               Create a timestamped backup of linx local configuration
-  c, cron                 List the native Linx commands
-  s, sync                 Synchronize the local setup with the remote
-
-Options:
-  -c, --commands          List the native Linx commands
-  -d, --dir               Print the absolute path to linx work directory
-  -h, --help              Show this message and exit
-  -v, --version           Show Linx version and exit
-EOF
-)
-
-SYNC_USAGE=$(cat <<EOF
-  Usage: linx sync [OPTIONS]
-
-  Synchronize the local configuration with the remote.
-
-  Options:
-    -b, --backup          Create a timestamped backup as a zip file before synchronizing the local version of linx
-                          This is equivalent of executing linx b && linx s
-    -h, --help            Show this message and exit
-EOF
-)
-
-BACKUP_USAGE=$(cat <<EOF
-  Usage: linx backup [OPTIONS]
-
-  Create a timestamped backup as a zip file before synchronizing the local version of linx.
-
-  Options:
-    -h, --help            Show this message and exit
-EOF
-)
-
-CRON_USAGE=$(cat <<EOF
-  Usage: linx cron [OPTIONS]
-
-  List the cron jobs installed via linx.
-
-  Options:
-    -c, --clear           Remove all cron jobs installed via linx
-    -d, --delete          Delete a specific cron jobs installed via linx
-    -h, --help            Show this message and exit
-EOF
-)
-
-##############################################################
 # Process
 ##############################################################
 
@@ -123,12 +67,12 @@ handle_sync() {
                 backup_local_config "$@"
                 ;;
             -h|--help)
-                echo "${SYNC_USAGE}"
+                get_help "linx-sync"
                 return 0
                 ;;
             *)
                 err "Invalid parameter ${1}"
-                echo "${SYNC_USAGE}"
+                get_help "linx-sync"
                 return 1
                 ;;
         esac
@@ -151,12 +95,12 @@ handle_backup() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h|--help)
-                echo "${BACKUP_USAGE}"
+                get_help "linx-backup"
                 return 0
                 ;;
             *)
                 err "Invalid parameter ${1}"
-                echo "${BACKUP_USAGE}"
+                get_help "linx-backup"
                 return 1
                 ;;
         esac
@@ -182,12 +126,12 @@ handle_crons() {
                 delete_one=true
                 ;;
             -h|--help)
-                echo "${CRON_USAGE}"
+                get_help "linx-cron"
                 return 0
                 ;;
             *)
                 err "Invalid parameter ${1}"
-                echo "${CRON_USAGE}"
+                get_help "linx-cron"
                 return 1
                 ;;
         esac
@@ -297,7 +241,11 @@ linx() {
                 return 0
                 ;;
             -h|--help)
-                echo "${USAGE}"
+                get_help "linx"
+                return 0
+                ;;
+            -i|--info)
+                print_info
                 return 0
                 ;;
             -v|--version)
@@ -306,7 +254,7 @@ linx() {
                 ;;
             *)
                 err "Invalid parameter ${1}"
-                echo "${USAGE}"
+                get_help "linx"
                 return 1
                 ;;
         esac

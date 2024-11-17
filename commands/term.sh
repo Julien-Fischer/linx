@@ -15,31 +15,9 @@ source "${HOME}"/.bashrc
 # Documentation
 ##############################################################
 
-USAGE=$(cat <<EOF
-Usage: term [OPTIONS]
-
-Options:
-  p, profiles [OPTIONS]   Lists the available profiles, or switch to the specified profile
-  l, layouts [OPTIONS]   Lists the available layouts, or switch to the specified layout
-
-Description:
-  Manages Terminator configuration directly in the command-line
-
-Example:
-  # themes
-  term profiles
-  term profiles --set contrast
-  term p -s contrast
-  # layouts
-  term layouts
-  term layouts --get grid
-  term l -g grid
-EOF
-)
-
 fail() {
     echo "Unsupported parameter ${1}"
-    echo "${USAGE}"
+    get_help "term"
     exit 1
 }
 
@@ -65,7 +43,7 @@ set_profile() {
     if [[ -z "${profile_name}" ]]; then
         echo "Profile name is required"
         echo ""
-        echo "${USAGE}"
+        get_help "term"
         return 1
     fi
     local styles=$(print_profile "${profile_name}")
@@ -113,7 +91,7 @@ print_profile() {
     if [[ -z "${profile_name}" ]]; then
         echo "Profile name is required"
         echo ""
-        echo "${USAGE}"
+        get_help "term"
         return 1
     fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
@@ -247,7 +225,7 @@ set_layout() {
     if [[ -z "${layout_name}" ]]; then
         echo "Profile name is required"
         echo ""
-        echo "${USAGE}"
+        get_help "term"
         return 1
     fi
     local styles=$(print_layout "${layout_name}")
@@ -301,7 +279,7 @@ print_layout() {
     if [[ -z "${layout_name}" ]]; then
         echo "Profile name is required"
         echo ""
-        echo "${USAGE}"
+        get_help "term"
         return 1
     fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
@@ -447,7 +425,7 @@ main() {
                 return $?
                 ;;
             -h|--help)
-                echo "${USAGE}"
+                get_help "term"
                 return 0
                 ;;
             *)
@@ -455,7 +433,7 @@ main() {
                 ;;
         esac
     done
-    echo "${USAGE}"
+    get_help "term"
     return 1
 }
 

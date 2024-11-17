@@ -11,13 +11,17 @@
 export VERSION="1.0.0-alpha4"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
+export HELP_DIR="${LINX_DIR}/help"
 export CRON_DIR="${LINX_DIR}/cron"
 export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
 export CRON_LOG_FILE="${CRON_DIR}/jobs.log"
-LINX_BACKUPS_DIR="/var/backups"
+export LINX_BACKUPS_DIR="/var/backups"
 COMMANDS_DIR="/usr/local/bin"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
+MKF_DIR="${LINX_DIR}/mkf"
+MKF_CONFIG_FILE="${MKF_DIR}/config"
+MKF_TEMPLATE_DIR="${MKF_DIR}/templates"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
 KEEP_CONTAINERS_FILE="${DOCKER_CONFIG_DIR}/keep_containers"
 KEEP_IMAGES_FILE="${DOCKER_CONFIG_DIR}/keep_images"
@@ -37,13 +41,18 @@ TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 
-# Basic ANSI colors with no styles (bold, italic, etc)
+########################################################################
+# Constants
+########################################################################
+
+# Basic ANSI colors
 export RED='\033[0;31m'
 export GREEN='\033[0;32m'
 export YELLOW='\033[0;33m'
 export BLUE='\033[0;34m'
 export MAGENTA='\033[0;35m'
 export CYAN='\033[0;36m'
+# Bold ANSI colors
 export RED_BOLD='\033[1;31m'
 export GREEN_BOLD='\033[1;32m'
 export YELLOW_BOLD='\033[1;33m'
@@ -151,13 +160,11 @@ add_cron() {
     ! $quiet && echo "Cron job created: ${cron_job}"
 }
 
-
-
 # @description Prompt the user for a value
 # @param $1 The prompt message for the user
 # @example
 #  prompt "Desired filename:"
-function prompt() {
+prompt() {
     local msg="${1}"
     read -p "${msg} " user_input
     echo "${user_input}"
@@ -177,7 +184,7 @@ function prompt() {
 #  else
 #    # on confirm...
 #  fi
-function confirm() {
+confirm() {
     local abort=0
     if [[ $# -ge 3 && "$3" == "--abort" ]]; then
         abort=1
@@ -196,6 +203,34 @@ function confirm() {
             return 1
             ;;
     esac
+}
+
+# @description Determines whether an array contains the specified element
+# @param $1 the element to look for
+# @param $2 the array to process
+# @return 0 if the element is found; 1 otherwise
+# @example
+#   array_contains "apple" "${fruits[@]}"
+array_contains() {
+    local needle="$1"
+    shift
+    local array=("$@")
+    for element in "${array[@]}"; do
+        if [[ "$element" == "$needle" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# @description Remove leading and trailing whitespaces
+# @example trim '     hello    world!      '
+#          output: hello world
+trim() {
+    local s="${1}"
+    s="${s#"${s%%[![:space:]]*}"}"
+    s="${s%"${s##*[![:space:]]}"}"
+    echo "$s"
 }
 
 # @description Remove the first line matching the specified substring
@@ -321,6 +356,80 @@ err() {
     echo -e "$(color "E:") ${message}" >&2
 }
 
+print_info() {
+    echo "linx $(linx --version)"
+    echo "Author: Julien Fischer <julien.fischer@agiledeveloper.net>"
+    echo "Repository: ${REPOSITORY}"
+    echo "For help, use linx --help or linx -h"
+}
+
+get_property() {
+    local file="${1}"
+    local key="${2}"
+
+    if [[ -z "${file}" ]]; then
+        err "Could not find file ${file}"
+        return 1
+    fi
+
+    while IFS='=' read -r k v; do
+        k=$(trim "${k}")
+
+        if [[ $k == "$key" ]]; then
+            v=$(trim "${v}")
+            # Remove leading/trailing quotes from the value
+            v="${v#\"}"
+            v="${v%\"}"
+            echo "${v}"
+            return 0
+        fi
+    done < "${file}"
+
+    err "Could not find key ${key} in file ${file}"
+    return 1
+}
+
+put_property() {
+    local file="${1}"
+    local key="${2}"
+    local value="${3}"
+    local temp_file=$(mktemp)
+    local found=false
+
+    if [[ -z "${file}" ]]; then
+        err "Could not find file ${file}"
+        return 1
+    fi
+    while IFS='=' read -r k v; do
+        k=$(trim "${k}")
+        v=$(trim "${v}")
+        key_trim=$(trim "${key}")
+        value_trim=$(trim "${value}")
+        if [[ -z "$k" ]]; then
+            continue
+        fi
+        if [[ "$k" == "${key_trim}" ]]; then
+            echo "${key_trim}=${value_trim}" >> "${temp_file}"
+            found=true
+        else
+            echo "$k=$v" >> "${temp_file}"
+        fi
+    done < "$file"
+
+    if ! $found; then
+        echo "${key_trim}=${value_trim}" >> "${temp_file}"
+        echo -e "Added $(color "${key_trim}" "${GREEN_BOLD}")=$(color "${value_trim}" "${YELLOW_BOLD}")"
+    else
+        echo -e "$(color "${key_trim}" "${GREEN_BOLD}") was set to $(color "${value_trim}" "${YELLOW_BOLD}")"
+    fi
+
+    mv "${temp_file}" "$file"
+}
+
+get_help() {
+    cat "${HELP_DIR}/${1}.help"
+}
+
 request_dir() {
     local var="${1}"
     local var_name="${2}"
@@ -348,6 +457,7 @@ install_command() {
     chmod +x "${filepath}"
     sudo cp "${filepath}" "${COMMANDS_DIR}"/"${command_name}"
     echo "${command_name}" >> "${LINX_INSTALLED_COMMANDS}"
+    cp -rf "help/${command_name}"/* "${HELP_DIR}"/
 }
 
 get_goal() {
@@ -461,6 +571,12 @@ install_commands() {
     done
 }
 
+update_mkf_config() {
+    echo "debug: $(pwd)"
+    cat "config/mkf/mkf_config" > "${MKF_CONFIG_FILE}"
+    cp -rf "config/mkf/templates"/* "${MKF_TEMPLATE_DIR}"
+}
+
 # @description Sync with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
@@ -471,6 +587,7 @@ install_core() {
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
         cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
         source "${HOME}/.bashrc"
+        update_mkf_config
         install_commands
         # update linx
         if ! cp 'uninstall.sh' "${LINX_DIR}"; then
@@ -518,7 +635,7 @@ install_dependencies() {
         install_dependency git 'for version management'
         install_dependency terminator 'as a terminal emulator'
         install_dependency neofetch 'as a system information tool'
-        install_dependency mkf 'to generate timestamped files from templates'
+        install_dependency zip 'as a file compression utility'
     fi
 }
 
@@ -543,6 +660,8 @@ install_linx() {
     [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
 
     mkdir -p "${LINX_DIR}"
+    mkdir -p "${HELP_DIR}"
+    mkdir -p "${MKF_TEMPLATE_DIR}"
     mkdir -p "${CRON_DIR}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
     touch "${KEEP_CONTAINERS_FILE}"

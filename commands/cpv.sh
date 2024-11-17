@@ -18,35 +18,6 @@ target=
 quiet=false
 
 ##############################################################
-# Doc
-##############################################################
-
-USAGE=$(cat <<EOF
-Usage: cpv [OPTIONS] SOURCE DESTINATION
-
-Description:
-  Copy files and directories from SOURCE to DESTINATION with a visual progress bar.
-
-Positional parameters:
-  \$1            (Source) The file or directory to copy. This can be a single file, a directory, or a wildcard pattern.
-  \$2            (Target) The destination where the files or directories will be copied. This should be a valid path.
-
-Options:
-  -h, --help    Display this help message and exit
-  -q, --quiet   Mute outputs
-
-Return Values:
-  0             If the operation completed successfully.
-  1+            If an error occurred during the operation.
-
-Examples:
-  cpv myfile dirA            # Copies myfile into 'dirA'.
-  cpv projects dirA          # Copies the 'projects' directory into 'dirA'.
-  cpv projects/ dirA         # Copies all files and directories from 'projects' into 'dirA'.
-EOF
-)
-
-##############################################################
 # Process
 ##############################################################
 
@@ -58,7 +29,7 @@ parse_options() {
                 ;;
             *)
                 err "Unknown parameter ${1}"
-                echo "${USAGE}"
+                get_help "cpv"
                 return 1
                 ;;
         esac
@@ -68,7 +39,7 @@ parse_options() {
 
 parse_params() {
     if [[ "${1}" == '-h' || "${1}" == '--help' ]]; then
-        echo "${USAGE}"
+        get_help "cpv"
         return 0
     fi
     source="${1}"

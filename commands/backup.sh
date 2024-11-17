@@ -10,59 +10,6 @@ fi
 source "${HOME}"/.bashrc
 
 ##############################################################
-# Doc
-##############################################################
-
-USAGE=$(cat <<EOF
-Usage: backup <file_or_directory> [prefix] [options]
-
-Backup the element identified by the specified path. If the element to backup is
-a directory, copy it recursively.
-
-Arguments:
-  <file_or_directory>     The file or directory to backup
-  [prefix]                (Optional) An arbitrary string to use as a prefix for the backup name
-
-Options:
-  -d, --destination       The absolute path of the directory where the backup must be created
-  -h, --help              Show this message and exit
-  -q, --quiet             Mute outputs
-  -b, --basic             Use compact date format without separators (requires -t)
-
-Naming options:
-  -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix
-  -t, --time              Add a timestamp to the backup name
-  -o, --only-compact      If the filename must be a simple compact date. This is equivalent to backup [filename] -bt --no-extension --no-name
-  --no-extension          Drop the file extension (requires that at least -t or prefix are specified)
-  --no-name               Drop the filename (requires that at least -t is specified)
-
-Cron options:
-  -c, --cron              Periodically backup the source using a cron expression
-  -v, --verbose           Log standard output for debugging when used with --cron
-  -e, --erase             Clear the original file once it is backed up. Useful for log management
-  -i, --instantly         Backup the source before scheduling a recurring backup
-
-Examples:
-  backup mydir                                    # Create a copy of mydir, named mydir.bak
-  backup mydir -q dirA                            # Backup mydir, quietly
-  backup myfile -t                                # Create a copy of myfile with a timestamp as suffix
-                                                  # (e.g., myfile_2024-09-03_09-53-42.bak)
-  backup myfile -t -r                             # Create a copy of myfile with a timestamp as prefix
-                                                  # (e.g., 2024-09-03_09-53-42_myfile.bak)
-  backup mydir backup                             # Create a copy of mydir with 'backup' as a prefix
-                                                  # (e.g., backup_mydir)
-  backup mydir -bt --no-extension --no-name       # Create a copy of mydir using the current compact date as the file name
-                                                  # (e.g., 20241106215624)
-  backup mydir -o                                 # Shorthand for: backup mydir -bt --no-extension --no-name
-  backup mydir -c '0 0 * * 0'                     # Backup mydir every sunday at midnight
-  backup mydir -c '0 0 * * 0' -d /path/to/dir     # Backup mydir every sunday at midnight in /path/to/dir
-  backup mydir -c '0 0 * * 0' -d /path/to/dir -v  # Backup mydir with verbose log level
-  backup mydir -c '0 0 * * *' -d /path/to/dir -e  # Backup mydir every day and clear its content
-  backup mydir -c '0 0 * * *' -d /path/to/dir -i  # Backup mydir right now, then every day
-EOF
-)
-
-##############################################################
 # Process
 ##############################################################
 
@@ -71,7 +18,7 @@ backup() {
     set -- "${new_args[@]}"
 
     if [[ "${1}" == "-h" || "${1}" == "--help" ]]; then
-        echo "${USAGE}"
+        get_help "backup"
         return 0
     fi
 
@@ -97,7 +44,7 @@ backup() {
 
     if [[ -z "${source}" ]]; then
         err "No source specified."
-        echo "${USAGE}"
+        get_help "backup"
         return 1
     fi
 
@@ -156,7 +103,7 @@ backup() {
                 ;;
             *)
                 err "Unknown parameter ${1}"
-                echo "${USAGE}"
+                get_help "backup"
                 return 1
                 ;;
         esac

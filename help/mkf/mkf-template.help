@@ -1,0 +1,29 @@
+
+Manages the template files.
+If no argument is specified, lists the available templates.
+
+Usage:
+
+  mkf template [OPTIONS]
+
+Commands:
+
+  rm [name] [-y,--yes]                    Deletes the specified template
+  read [name]                             Reads the specified template file
+  put [name] [content]                    Add a new template
+
+Options:
+
+  -l, --list                              Lists the available templates (both native and custom)
+  -p, --path                              Prints the path to the templates directory (usually ${TARGET_TEMPLATE_DIR})
+  -h, --help                              Display this help message and exit
+
+Examples:
+
+  mkf template                              # List the available templates
+  mkf template rm meeting                   # Delete the 'meeting' template
+  mkf template read meeting                 # Reads the 'meeting' template file
+  mkf template add -n log -c 'Hello'        # Add a new template named 'log' and writes 'Hello' into it
+  mkf template --path                       # Print ${TARGET_TEMPLATE_DIR}
+  mkf template --help                       # Display this help message and exit
+  mkf template --list [[expr]]              # List the available templates

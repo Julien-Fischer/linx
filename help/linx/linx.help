@@ -1,0 +1,15 @@
+Usage: linx [OPTIONS]
+
+Manages linx local and remote configuration.
+
+Arguments:
+  b, backup               Create a timestamped backup of linx local configuration
+  c, cron                 List the native Linx commands
+  s, sync                 Synchronize the local setup with the remote
+
+Options:
+  -c, --commands          List the native Linx commands
+  -d, --dir               Print the absolute path to linx work directory
+  -h, --help              Show this message and exit
+  -i, --info              Provide info about the installed version of linx
+  -v, --version           Show Linx version and exit

@@ -1,0 +1,16 @@
+Usage: gtag create <tagname> [-c <commit_hash>] [-p]
+
+Description:
+  Tag a commit
+
+Options:
+  -c, --commit <hash>               Specify the hash of the commit to tag (default is the latest commit).
+  -p, --push                        Push the new tag to the remote repository.
+  -h, --help                        Display this help message and exit.
+
+Examples:
+  gtag c v1.0.0                       # Tag the latest commit with v1.0.0.
+  gtag c v1.0.0 -p                    # Tag and push v1.0.0 to the remote repository.
+  gtag c v1.0.0 -c 3804a28            # Tag commit 3804a28 with tag v1.0.0.
+  gtag c v1.0.0 -c 3804a28 -p         # Tag commit 3804a28 and push tag v1.0.0 to the remote repository.
+  gtag c -h                           # Display this help message and exit

@@ -1,0 +1,36 @@
+Generates a file named <current_date>_<file-name> where <current_date> is today's date using the 'yyyy-MM-dd' format and <file-name> is the specified filename.
+Example: if today's date is sept. 15, 2024, 'mkf report' would create a file name '2024-09-15_report'.
+If no directory is specified, this command creates the file in the current working directory.
+If no filename is specified, the name of the created file will be the current date
+
+Usage:
+
+  mkf [[COMMAND] [OPTIONS]]
+
+Commands:
+  (no command)                       Generate an empty file named after the current date
+  c,  config                         Manage mkf settings and template variables
+  t,  template                       Manage mkf templates
+
+Options:
+
+  -c, --content [content]            The content to write in this file
+  -d, --directory [directory]        The directory where the file will be generated
+  -e, --extension [extension]        Specify the desired extension (no extension by default)
+  -n, --name [name]                  Specify the filename to append to the ISO date or datetime
+  -o, --open [[software]]            Automatically opens the file upon generation using default or specified software.
+  -t, --time                         Uses a datetime prefix instead of a date prefix.
+  -T, --template [template_name]     Initializes the file using the specified template
+                                     To modify or add new templates, navigate to ${TARGET_TEMPLATE_DIR}
+  -h, --help                         Display this help message and exit
+
+Examples:
+
+  mkf                                # Generate a file using the current date as its name.
+  mkf -e log                         # Generate a file with .log extension
+  mkf hello.log -d ~/logs            # Generate a file in home/username/logs
+  mkf -o                             # Generate a file and open it in its default software
+  mkf -o vim                         # Generate a file and open it in VIM
+  mkf hello -T meeting               # Generate a file named 'hello' from the 'meeting' template
+  mkf -h                             # Display this message
+  sudo mkf -e log -d / -t            # Generate a file in the root directory with a datetime prefix and .log extension

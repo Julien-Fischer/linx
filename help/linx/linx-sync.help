@@ -1,0 +1,8 @@
+Usage: linx sync [OPTIONS]
+
+Synchronize the local configuration with the remote.
+
+Options:
+  -b, --backup          Create a timestamped backup as a zip file before synchronizing the local version of linx
+                        This is equivalent of executing linx b && linx s
+  -h, --help            Show this message and exit

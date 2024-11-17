@@ -1,0 +1,8 @@
+Usage: linx cron [OPTIONS]
+
+List the cron jobs installed via linx.
+
+Options:
+  -c, --clear           Remove all cron jobs installed via linx
+  -d, --delete          Delete a specific cron jobs installed via linx
+  -h, --help            Show this message and exit

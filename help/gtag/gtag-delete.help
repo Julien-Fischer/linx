@@ -1,0 +1,16 @@
+Usage: gtag delete [<tagname>] [-p]
+
+Description:
+  When used without a positional parameter, deletes the latest tag.
+  When used with a positional parameter, deletes the specified tag name.
+
+Options:
+  -h, --help                Display this help message and exit.
+  -p, --push                Delete the tag both locally and on the remote repository.
+
+Examples:
+  gtag d                    # Delete the latest tag.
+  gtag d -p                 # Delete the latest tag both locally and remotely.
+  gtag d v1.0.0             # Delete v1.0.0.
+  gtag d v1.0.0 -p          # Delete v1.0.0 both locally and remotely.
+  gtag d -h                 # Display this help message and exit

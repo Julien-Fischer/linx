@@ -1,0 +1,16 @@
+Usage: gtag [command] [options]
+
+Description:
+  Quickly create and delete tags, both locally and on the remote
+
+Commands:
+  (no command)              List all tags, sorted by descending order.
+  c, create <tagname>       Tag the latest commit with the specified tag name.
+  d, delete [tagname]       Delete the latest tag or a specified tag name.
+
+Options:
+  -h, --help                Display this help message and exit.
+
+Examples:
+  gtag                      # List all tags, sorted by descending order
+  gtag -h                   # Display this message and exit

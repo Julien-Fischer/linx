@@ -10,71 +10,6 @@ fi
 source "${HOME}"/.bashrc
 
 ##############################################################
-# Doc
-##############################################################
-
-USAGE=$(cat <<EOF
-Usage: gtag [command] [options]
-
-Description:
-  Quickly create and delete tags, both locally and on the remote
-
-Commands:
-  (no command)              List all tags, sorted by descending order.
-  c, create <tagname>       Tag the latest commit with the specified tag name.
-  d, delete [tagname]       Delete the latest tag or a specified tag name.
-
-Options:
-  -h, --help                Display this help message and exit.
-
-Examples:
-  gtag                      # List all tags, sorted by descending order
-  gtag -h                   # Display this message and exit
-EOF
-)
-
-CREATE_USAGE=$(cat <<EOF
-Usage: gtag create <tagname> [-c <commit_hash>] [-p]
-
-Description:
-  Tag a commit
-
-Command: gtag create
-  Options:
-    -c, --commit <hash>               Specify the hash of the commit to tag (default is the latest commit).
-    -p, --push                        Push the new tag to the remote repository.
-    -h, --help                        Display this help message and exit.
-
-Examples:
-  gtag c v1.0.0                       # Tag the latest commit with v1.0.0.
-  gtag c v1.0.0 -p                    # Tag and push v1.0.0 to the remote repository.
-  gtag c v1.0.0 -c 3804a28            # Tag commit 3804a28 with tag v1.0.0.
-  gtag c v1.0.0 -c 3804a28 -p         # Tag commit 3804a28 and push tag v1.0.0 to the remote repository.
-  gtag c -h                           # Display this help message and exit
-EOF
-)
-
-DELETE_USAGE=$(cat <<EOF
-Usage: gtag delete [<tagname>] [-p]
-
-Description:
-  When used without a positional parameter, deletes the latest tag.
-  When used with a positional parameter, deletes the specified tag name.
-
-Options:
-  -h, --help                Display this help message and exit.
-  -p, --push                Delete the tag both locally and on the remote repository.
-
-Examples:
-  gtag d                    # Delete the latest tag.
-  gtag d -p                 # Delete the latest tag both locally and remotely.
-  gtag d v1.0.0             # Delete v1.0.0.
-  gtag d v1.0.0 -p          # Delete v1.0.0 both locally and remotely.
-  gtag d -h                 # Display this help message and exit
-EOF
-)
-
-##############################################################
 # Utils
 ##############################################################
 
@@ -90,7 +25,7 @@ get_tags() {
 
 create_tag() {
     if [[ "${1}" == "-h" || "${1}" == "${--help}" ]]; then
-        echo "${CREATE_USAGE}"
+        get_help "gtag-create"
         return 0
     fi
 
@@ -111,7 +46,7 @@ create_tag() {
                 ;;
             *)
                 err "Invalid parameter: ${1}"
-                echo "${CREATE_USAGE}"
+                get_help "gtag-create"
                 return 1
                 ;;
         esac
@@ -130,7 +65,7 @@ create_tag() {
 
 delete_tag() {
     if [[ "${1}" == "-h" || "${1}" == "${--help}" ]]; then
-        echo "${DELETE_USAGE}"
+        get_help "gtag-delete"
         return 0
     fi
 
@@ -146,7 +81,7 @@ delete_tag() {
                 ;;
             *)
                 err "Invalid parameter: ${1}"
-                echo "${DELETE_USAGE}"
+                get_help "gtag-delete"
                 return 1
                 ;;
         esac
@@ -182,11 +117,11 @@ gtag() {
             delete_tag "$@"
             ;;
         -h|--help)
-            echo "${USAGE}"
+            get_help "gtag"
         ;;
         *)
             err "Unknown command: ${1}"
-            echo "${USAGE}"
+            get_help "gtag"
             return 1
             ;;
     esac

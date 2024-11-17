@@ -9,12 +9,10 @@ if [[ -f "${HOME}"/linx/.linx_lib.sh ]]; then
 fi
 source "${HOME}"/.bashrc
 
-USAGE="Usage: port [kill] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]"
-
 
 list_ports() {
     if [[ ("${1}" == "-"* && -z "${2}") ]]; then
-        echo "${USAGE}"
+        get_help "port"
         return 1
     fi
     local filter_type=""
@@ -38,7 +36,7 @@ list_ports() {
                 shift 2
                 ;;
             *)
-                echo "${USAGE}"
+                get_help "port"
                 return 1
                 ;;
         esac
@@ -112,7 +110,7 @@ kill_process_by_pid() {
 kill_process_by_pname() {
     local process_name="${1}"
     if [[ -z "${process_name}" ]]; then
-        echo "${USAGE}"
+        get_help "port"
         return 1
     fi
     kill_all "${process_name}"
@@ -126,7 +124,7 @@ kill_process_by_port() {
 
 kill_process() {
     if [[ $# -eq 0 || ("${1}" == "-"* && -z "${2}") ]]; then
-        echo "${USAGE}"
+        get_help "port"
         return 1
     elif [[ $# -eq 1 ]]; then
         kill_process_by_port "${1}"
@@ -144,7 +142,7 @@ kill_process() {
                 return 0
                 ;;
             *)
-                echo "${USAGE}"
+                get_help "port"
                 return 1
                 ;;
         esac
@@ -179,7 +177,7 @@ main() {
             shift
             ;;
         *)
-            echo "${USAGE}"
+            get_help "port"
             shift
             ;;
     esac

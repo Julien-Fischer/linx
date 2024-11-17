@@ -1,0 +1,6 @@
+Usage: linx backup [OPTIONS]
+
+Create a timestamped backup as a zip file before synchronizing the local version of linx.
+
+Options:
+  -h, --help            Show this message and exit
