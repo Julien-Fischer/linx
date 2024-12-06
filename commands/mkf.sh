@@ -262,7 +262,7 @@ print_settings_help() {
 ##############################################################
 
 handle_template() {
-    if [ $# -eq 0 ]; then
+    if [[ $# -eq 0 ]]; then
         list_templates
         return 0
     fi
@@ -322,14 +322,14 @@ handle_settings() {
                 return 0
                 ;;
             read)
-                require_value "$1" "$2"
-                read_setting "$2"
+                require_value "${1}" "${2}"
+                read_setting "${2}"
                 shift 2
                 ;;
             put)
-                require_value "$1" "$2"
-                require_value "$1" "$3"
-                put_setting "$2" "$3"
+                require_value "${1}" "${2}"
+                require_value "${1}" "${3}"
+                put_setting "${2}" "${3}"
                 shift 3
                 ;;
             *)
