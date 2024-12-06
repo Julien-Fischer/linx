@@ -1,1 +1,1 @@
-Usage: port [kill] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]
+Usage: port [[kill <pid>]] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]
