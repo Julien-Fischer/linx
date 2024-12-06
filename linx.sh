@@ -679,6 +679,8 @@ glast() {
     glot | head -$n
 }
 
+# Changes visualization
+
 gdiff() {
     git diff "${1}"
 }
@@ -702,8 +704,6 @@ gstat() {
         git show "${hash}" --stat
     fi
 }
-
-# Changes visualization
 
 alias gs='git status'
 alias gd='git diff' # <filename>
