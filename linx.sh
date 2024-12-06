@@ -679,6 +679,10 @@ glast() {
     glot | head -$n
 }
 
+gdiff() {
+    git diff "${1}"
+}
+
 gshow() {
     local hash="${1}"
     git show "${hash}"
