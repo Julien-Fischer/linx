@@ -617,7 +617,8 @@ gtree_all() {
 
 # @description Find the n latest commits in the log
 # @param $1 (optional) the number of commits to find starting from the first one (1 by default)
-# @option -i, --id if the output should be the hash of the first commit
+# @option -i, --id if the output should be the hash of the initial commit
+# @option -s, --short if the output should be the short hash of the initial commit
 # @example
 #   gfirst
 #   gfirst 3
@@ -631,10 +632,13 @@ gfirst() {
                 git rev-list --max-parents=0 HEAD
                 return 0
                 ;;
+            -s|--short)
+                git rev-list --max-parents=0 HEAD --abbrev-commit
+                return 0
+                ;;
             *)
                 if [[ $1 =~ ^[0-9]+$ ]]; then
                     n=$1
-
                 else
                     echo "Unsupported parameter ${1}"
                     echo "Usage: gfirst [count] [-i, --id]"
@@ -650,6 +654,7 @@ gfirst() {
 # @description Find the n latest commits in the log
 # @param $1 (optional) the number of commits to find starting from the last one (1 by default)
 # @option -i, --id if the output should be the hash of the latest commit
+# @option -s, --short if the output should be the short hash of the latest commit
 # @example
 #   glast
 #   glast 3
@@ -661,6 +666,10 @@ glast() {
         case $1 in
             -i|--id)
                 git rev-parse HEAD
+                return 0
+                ;;
+            -s|--short)
+                git rev-parse --short HEAD
                 return 0
                 ;;
             *)
