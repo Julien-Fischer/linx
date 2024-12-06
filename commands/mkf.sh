@@ -161,7 +161,7 @@ list_templates() {
         return 0
     fi
     echo "Found ${template_count} templates:"
-    printf "    - %s\n" "${templates[@]}"
+    printf "  - %s\n" "${templates[@]}"
 }
 
 delete_template() {
@@ -314,7 +314,7 @@ handle_settings() {
                 return 0
                 ;;
             -p|--path)
-                echo "${LINX_DIR}"
+                echo "${MKF_CONFIG_FILE}"
                 return 0
                 ;;
             -l|--list)
