@@ -466,6 +466,7 @@ upgrade_only() {
 
 # Project initialization
 
+alias ginit="git init"
 alias gin="git init"
 alias gcl="git clone"
 
