@@ -679,6 +679,14 @@ install_dependencies() {
     fi
 }
 
+setup_vim() {
+    local VIM_CONFIG_FILE="${HOME}/.vimrc"
+    if [[ ! -f "${VIM_CONFIG_FILE}" ]]; then
+        cat config/vim_config > "${VIM_CONFIG_FILE}"
+        echo "Added vim configuration to ${VIM_CONFIG_FILE}"
+    fi
+}
+
 # @description Sync with the latest version of functions/aliases and Terminator profiles from the remote
 # @param $1 (optional) 0 if first install; 1 otherwise
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
@@ -714,6 +722,9 @@ install_linx() {
     fi
     if install_dependencies "$@" && [[ $linx_already_installed -eq 0 ]]; then
         echo "${PROJECT}: Restart your terminal for all changes to be applied."
+    fi
+    if ! setup_vim; then
+        return 1
     fi
     local success=$(is_linx_installed)
     local goal=$(get_goal $linx_already_installed)
