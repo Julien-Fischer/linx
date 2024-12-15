@@ -126,6 +126,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 - curl (for browsing the web from the terminal)
 - jq (for JSON parsing)
 - Neofetch
+- simplescreenrecorder
 - mkf (Make File)
 
 ## Requirements

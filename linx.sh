@@ -175,6 +175,14 @@ cclip() {
     fi
 }
 
+function rec() {
+    if ! installed simplescreenrecorder -q; then
+        err "simplescreenrecorder is not installed. Use sudo apt upgrade && sudo apt update simplescreenrecorder to install it."
+        return 1
+    fi
+    simplescreenrecorder --start-recording >/dev/null 2>&1
+}
+
 ##############################################################
 # Visualization
 ##############################################################
