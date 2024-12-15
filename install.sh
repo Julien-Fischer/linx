@@ -675,7 +675,8 @@ install_dependencies() {
         install_dependency terminator 'as a terminal emulator'
         install_dependency neofetch 'as a system information tool'
         install_dependency zip 'as a file compression utility'
-        install_dependency simplescreenrecorder 'as screen recorder'
+        install_dependency simplescreenrecorder 'as a screen recorder'
+        install_dependency rsync 'for copying / transferring files'
     fi
 }
 

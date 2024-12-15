@@ -127,6 +127,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 - jq (for JSON parsing)
 - Neofetch
 - simplescreenrecorder
+- rsync
 - mkf (Make File)
 
 ## Requirements
