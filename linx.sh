@@ -417,7 +417,7 @@ alias autorem='sudo apt autoremove'
 alias update='sudo apt update'
 alias upgrades='sudo apt update && apt list --upgradable'
 alias upgrade='sudo apt update && sudo apt upgrade'
-alias sup='sudo apt update && sudo apt upgrade -y && autorem'
+alias sup='sudo apt update && sudo apt upgrade -y'
 alias remove='sudo apt remove'
 
 function install() {
