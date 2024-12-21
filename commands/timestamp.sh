@@ -4,6 +4,10 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
+# Source linx
+if [ -f "${HOME}"/linx/.linx_lib.sh ]; then
+    source "${HOME}"/linx/.linx_lib.sh
+fi
 
 # @description Outputs the current datetime, with desired format (if specified).
 #              Default format: YYYY-MM-DD hh:mm:s
