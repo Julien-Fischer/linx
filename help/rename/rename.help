@@ -1,0 +1,82 @@
+Renames all files in a specified directory using a naming scheme and an optional sort order.
+
+Usage:
+
+  rename [path/to/dir] --as [naming_scheme] --sort [[sort_rule]] [[-r, --recursive]]
+
+Positional Parameter:
+
+  path/to/dir: Path to the directory to process (i.e . for the current directory).
+
+Options:
+
+  --as [naming_scheme]`: Defines the naming scheme for renaming files. Accepted values:
+    c (creation date)
+    m (last modified date)
+    t (current date)
+    i (auto-incremented integer)
+    d (name_of_containing_dir)
+
+    These values can be combined to create complex naming schemes.
+    for instance
+        cmt  renames files using their creation date, followed by their last modified date, followed by the current date
+        tmc  uses the same attributes as cmt, but in the reverse order
+
+  - --sort [sort_rule]: (Optional) Specifies how files are sorted before renaming. Accepted values:
+    c (creation date)
+    m (last modified date)
+    n (file name)
+    t (file type)
+    s (file size)
+
+    These values can be combined to create complex sorting criteria.
+    for instance
+        cmt sorts the files using their creation date as the primary criterion, then by its last modified date, then by its type
+        tmc uses the same attributes as cmt, but in the reverse order. So t takes precedence over m and c in the sorting algorithm
+
+Flags:
+
+  -r, --recursive      Renames files recursively in all subdirectories starting from the directory specified by the first positional parameter
+  --dry-run            Displays how files in `data` and subdirectories would be renamed using auto-incremented integers without making changes.
+  --ignore-extension   ...
+
+Examples
+
+1. Rename files in the `photos` directory using the files creation date followed by an auto-incremented integer
+
+  rename ./photos --as ci
+
+  # Expected output:
+  some_photo.jpg    -> 2023-12-01_001.jpg
+  another_photo.jpg -> 2023-12-01_002.jpg
+
+2. Rename all files in `projects` and its subdirectories recursively, using the name of their containing directory followed by an auto-incremented integer
+
+  rename ./projects --as d --recursive
+
+  # Expected Output:
+  projects/file1.txt        -> projects_001.txt
+  projects/file2.txt        -> projects_002.txt
+  projects/subdir/file1.txt -> subdir_001.txt
+  projects/subdir/file2.txt -> subdir_002.txt
+
+
+3. Renames files in `docs` using their file type, sorted by file type.
+
+  rename ./docs --as t --sort t
+
+  # Expected Output:
+  doc1.pdf -> pdf_001.pdf
+  doc2.txt -> txt_001.txt
+  doc3.pdf -> pdf_002.pdf
+
+4. Dry Run for Recursive Renaming
+
+Displays how files in `data` and subdirectories would be renamed using auto-incremented integers without making changes.
+
+  rename ./data --as i -r --dry-run
+
+Expected Output:
+
+  [Dry Run] data/file1.csv        -> data/001.csv
+  [Dry Run] data/subdir/file2.csv -> data/subdir/002.csv
