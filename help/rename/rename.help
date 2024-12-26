@@ -1,8 +1,14 @@
 Renames all files in a specified directory using a naming scheme and an optional sort order.
 
+This command can be run in three primary modes:
+
+- Interactive (default): The command performs a dry run first, then prompts the user to either confirm or abort the operation
+- Dry run (--dry-run): Executes only a dry run to test naming schemes and sorting orders without making any actual changes
+- Execute (-y or --yes): Renames all files directly without performing a dry run as a preview
+
 Usage:
 
-  rename [path/to/dir] --as [naming_scheme] --sort [[sort_rule]] [[-r, --recursive]]
+  rename [path/to/dir] --as [naming_scheme] --sort [[sort_rule]] [[OPTIONS]]
 
 Positional Parameter:
 

@@ -811,7 +811,7 @@ alias gsp="git stash pop"
 alias gsa="git stash apply"
 
 gsl() {
-    git stash list
+    git stash list --pretty=format:"%gd - %ci - %s" | sed 's/ [+-][0-9]\{4\}//g' && echo ''
 }
 
 # @description drops a stash entry

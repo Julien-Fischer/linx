@@ -18,6 +18,7 @@ NAMING_SCHEME=""
 SORT_RULE="n"
 RECURSIVE=false
 DRY_RUN=false
+execute=false
 ignore_extension=false
 
 ##############################################################
@@ -95,6 +96,7 @@ parse_arguments() {
         -i|--ignore-extension) ignore_extension=true ;;
         -r|--recursive) RECURSIVE=true ;;
         --dry-run) DRY_RUN=true ;;
+        -y|--yes) execute=true ;;
         -h|--help) get_help 'rename'; exit 0 ;;
         *) DIR="$1" ;;
       esac
@@ -117,7 +119,7 @@ fetch_files() {
     fi
 
     files=$(get_sorted_files "$SORT_RULE")
-    return 0
+    return $?
 }
 
 get_sorted_files() {
@@ -182,9 +184,9 @@ rename_files() {
 
         if $DRY_RUN; then
             echo "[Dry Run] ${basename} -> ${new_name}"
-        else
+        elif $execute; then
             mv "${file}" "${containing_dir_path}/${new_name}"
-            echo "Renamed: ${file} -> ${new_name}"
+            echo "Renamed: ${basename} -> ${new_name}"
         fi
 
         count=$((count + 1))
@@ -196,5 +198,17 @@ rename_files() {
 parse_arguments "$@"
 
 if fetch_files; then
-    rename_files
+    if $DRY_RUN; then
+        rename_files
+    elif $execute; then
+        rename_files
+    else
+        DRY_RUN=true
+        rename_files
+        if confirm "Renaming" "Proceed with the renaming?"; then
+            DRY_RUN=false
+            execute=true
+            rename_files
+        fi
+    fi
 fi
