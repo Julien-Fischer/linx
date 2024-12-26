@@ -30,6 +30,10 @@ files=
 # Utils
 ##############################################################
 
+show_help() {
+    get_help 'rename'
+}
+
 append_creation_date() {
     local file="${1}"
     echo "$(date -d @"$(stat --format='%W' "$file")" +"%Y-%m-%d")_"
@@ -57,6 +61,26 @@ append_current_date() {
 append_auto_incremented_integer() {
     local count="${1}"
     echo "$(printf "%03d" "${count}")_"
+}
+
+sort_by_creation_date() {
+    echo "$files" | xargs stat --format='%W %n' | sort | cut -d' ' -f2-
+}
+
+sort_by_modified_date() {
+    echo "$files" | xargs stat --format='%Y %n' | sort | cut -d' ' -f2-
+}
+
+sort_by_name() {
+    echo "$files" | sort
+}
+
+sort_by_type() {
+    echo "$files" | xargs file --mime-type | sort -k2 | cut -d':' -f1
+}
+
+sort_by_size() {
+    echo "$files" | xargs du -b | sort -n | cut -f2-
 }
 
 ##############################################################
@@ -97,15 +121,19 @@ fetch_files() {
 }
 
 get_sorted_files() {
-  local sort_rule="$1"
-  case $sort_rule in
-    c) echo "$files" | xargs stat --format='%W %n' | sort | cut -d' ' -f2- ;; # Creation date
-    m) echo "$files" | xargs stat --format='%Y %n' | sort | cut -d' ' -f2- ;; # Modified date
-    n) echo "$files" | sort ;;                                                # Name
-    t) echo "$files" | xargs file --mime-type | sort -k2 | cut -d':' -f1 ;;   # Type
-    s) echo "$files" | xargs du -b | sort -n | cut -f2- ;;                    # Size
-    *) echo "$files" ;;                                                       # No sorting
-  esac
+    local sort_rule="$1"
+    local sorted_files
+
+    case $sort_rule in
+        c) sorted_files=$(sort_by_creation_date) ;;
+        m) sorted_files=$(sort_by_modified_date) ;;
+        n) sorted_files=$(sort_by_name) ;;
+        t) sorted_files=$(sort_by_type) ;;
+        s) sorted_files=$(sort_by_size) ;;
+        *) err "rename: Unknown sort option: $1" && exit 1 ;;
+    esac
+
+    echo "$sorted_files"
 }
 
 ##############################################################
