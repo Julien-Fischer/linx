@@ -41,41 +41,41 @@ Flags:
 
 Examples
 
-1. Rename files in the `photos` directory using the files creation date followed by an auto-incremented integer
+  1. Rename files in the `photos` directory using the files creation date followed by an auto-incremented integer
 
-  rename ./photos --as ci
+    rename ./photos --as ci
 
-  # Expected output:
-  some_photo.jpg    -> 2023-12-01_001.jpg
-  another_photo.jpg -> 2023-12-01_002.jpg
+    # Expected output:
+    some_photo.jpg    -> 2023-12-01_001.jpg
+    another_photo.jpg -> 2023-12-01_002.jpg
 
-2. Rename all files in `projects` and its subdirectories recursively, using the name of their containing directory followed by an auto-incremented integer
+  2. Rename all files in `projects` and its subdirectories recursively, using the name of their containing directory followed by an auto-incremented integer
 
-  rename ./projects --as d --recursive
+    rename ./projects --as d --recursive
 
-  # Expected Output:
-  projects/file1.txt        -> projects_001.txt
-  projects/file2.txt        -> projects_002.txt
-  projects/subdir/file1.txt -> subdir_001.txt
-  projects/subdir/file2.txt -> subdir_002.txt
+    # Expected Output:
+    projects/file1.txt        -> projects_001.txt
+    projects/file2.txt        -> projects_002.txt
+    projects/subdir/file1.txt -> subdir_001.txt
+    projects/subdir/file2.txt -> subdir_002.txt
 
 
-3. Renames files in `docs` using their file type, sorted by file type.
+  3. Renames files in `docs` using their file type, sorted by file type.
 
-  rename ./docs --as t --sort t
+    rename ./docs --as t --sort t
 
-  # Expected Output:
-  doc1.pdf -> pdf_001.pdf
-  doc2.txt -> txt_001.txt
-  doc3.pdf -> pdf_002.pdf
+    # Expected Output:
+    doc1.pdf -> pdf_001.pdf
+    doc2.txt -> txt_001.txt
+    doc3.pdf -> pdf_002.pdf
 
-4. Dry Run for Recursive Renaming
+  4. Dry Run for Recursive Renaming
 
-Displays how files in `data` and subdirectories would be renamed using auto-incremented integers without making changes.
+  Displays how files in `data` and subdirectories would be renamed using auto-incremented integers without making changes.
 
-  rename ./data --as i -r --dry-run
+    rename ./data --as i -r --dry-run
 
-Expected Output:
+  Expected Output:
 
-  [Dry Run] data/file1.csv        -> data/001.csv
-  [Dry Run] data/subdir/file2.csv -> data/subdir/002.csv
+    [Dry Run] data/file1.csv        -> data/001.csv
+    [Dry Run] data/subdir/file2.csv -> data/subdir/002.csv
