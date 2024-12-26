@@ -13,11 +13,11 @@ fi
 # Input
 ##############################################################
 
-DIR="."
-NAMING_SCHEME=""
-SORT_RULE="n"
-RECURSIVE=false
-DRY_RUN=false
+root_dir="."
+naming_scheme=""
+sort_rule="n"
+recursive=false
+dry_run=false
 execute=false
 ignore_extension=false
 
@@ -91,20 +91,20 @@ sort_by_size() {
 parse_arguments() {
     while [[ "$#" -gt 0 ]]; do
       case $1 in
-        --as) NAMING_SCHEME="$2"; shift ;;
-        --sort) SORT_RULE="$2"; shift ;;
+        --as) naming_scheme="$2"; shift ;;
+        --sort) sort_rule="$2"; shift ;;
         -i|--ignore-extension) ignore_extension=true ;;
-        -r|--recursive) RECURSIVE=true ;;
-        --dry-run) DRY_RUN=true ;;
+        -r|--recursive) recursive=true ;;
+        --dry-run) dry_run=true ;;
         -y|--yes) execute=true ;;
         -h|--help) get_help 'rename'; exit 0 ;;
-        *) DIR="$1" ;;
+        *) root_dir="$1" ;;
       esac
       shift
     done
 
     # Validate input
-    if [[ -z "$NAMING_SCHEME" ]]; then
+    if [[ -z "$naming_scheme" ]]; then
         err "Naming scheme (--as) is required."
         show_help
         exit 1
@@ -112,13 +112,13 @@ parse_arguments() {
 }
 
 fetch_files() {
-    if $RECURSIVE; then
-        files=$(find "$DIR" -type f)
+    if $recursive; then
+        files=$(find "$root_dir" -type f)
     else
-        files=$(find "$DIR" -maxdepth 1 -type f)
+        files=$(find "$root_dir" -maxdepth 1 -type f)
     fi
 
-    files=$(get_sorted_files "$SORT_RULE")
+    files=$(get_sorted_files "$sort_rule")
     return $?
 }
 
@@ -150,7 +150,7 @@ compute_new_name() {
     local filename="${basename%.*}"
     local new_name=""
 
-    for CHAR in $(echo "$NAMING_SCHEME" | grep -o .); do
+    for CHAR in $(echo "$naming_scheme" | grep -o .); do
         case $CHAR in
             c|--created-date)   new_name+=$(append_creation_date "${file}") ;;
             f|--filename)       new_name+=$(append_file_name "${filename}") ;;
@@ -182,7 +182,7 @@ rename_files() {
 
         local new_name=$(compute_new_name "${file}" "${containing_dir_path}" "${containing_dir_name}" "${count}")
 
-        if $DRY_RUN; then
+        if $dry_run; then
             echo "[Dry Run] ${basename} -> ${new_name}"
         elif $execute; then
             mv "${file}" "${containing_dir_path}/${new_name}"
@@ -198,15 +198,15 @@ rename_files() {
 parse_arguments "$@"
 
 if fetch_files; then
-    if $DRY_RUN; then
+    if $dry_run; then
         rename_files
     elif $execute; then
         rename_files
     else
-        DRY_RUN=true
+        dry_run=true
         rename_files
         if confirm "Renaming" "Proceed with the renaming?"; then
-            DRY_RUN=false
+            dry_run=false
             execute=true
             rename_files
         fi
