@@ -90,17 +90,23 @@ sort_by_size() {
 
 parse_arguments() {
     while [[ "$#" -gt 0 ]]; do
-      case $1 in
-        --as) naming_scheme="$2"; shift ;;
-        --sort) sort_rule="$2"; shift ;;
-        -i|--ignore-extension) ignore_extension=true ;;
-        -r|--recursive) recursive=true ;;
-        --dry-run) dry_run=true ;;
-        -y|--yes) execute=true ;;
-        -h|--help) get_help 'rename'; exit 0 ;;
-        *) root_dir="$1" ;;
-      esac
-      shift
+        case $1 in
+            --as) naming_scheme="$2"; shift ;;
+            --sort) sort_rule="$2"; shift ;;
+            -i|--ignore-extension) ignore_extension=true ;;
+            -r|--recursive) recursive=true ;;
+            --mode)
+              case $2 in
+                dry-run) dry_run=true ;;
+                execute) execute=true ;;
+                interactive) dry_run=false; execute=false ;;
+                *) err "Invalid mode: $2"; show_help; exit 1 ;;
+              esac
+              shift ;;
+            -h|--help) get_help 'rename'; exit 0 ;;
+            *) root_dir="$1" ;;
+        esac
+        shift
     done
 
     # Validate input

@@ -1,14 +1,8 @@
 Renames all files in a specified directory using a naming scheme and an optional sort order.
 
-This command can be run in three primary modes:
-
-- Interactive (default): The command performs a dry run first, then prompts the user to either confirm or abort the operation
-- Dry run (--dry-run): Executes only a dry run to test naming schemes and sorting orders without making any actual changes
-- Execute (-y or --yes): Renames all files directly without performing a dry run as a preview
-
 Usage:
 
-  rename [path/to/dir] --as [naming_scheme] --sort [[sort_rule]] [[OPTIONS]]
+  rename [path/to/dir] --as [naming_scheme] [[OPTIONS]] [[FLAGS]
 
 Positional Parameter:
 
@@ -16,7 +10,7 @@ Positional Parameter:
 
 Options:
 
-  --as [naming_scheme]`: Defines the naming scheme for renaming files. Accepted values:
+  --as [naming_scheme]: Defines the naming scheme for renaming files. Accepted values:
     c (creation date)
     m (last modified date)
     t (current date)
@@ -28,22 +22,21 @@ Options:
         cmt  renames files using their creation date, followed by their last modified date, followed by the current date
         tmc  uses the same attributes as cmt, but in the reverse order
 
-  - --sort [sort_rule]: (Optional) Specifies how files are sorted before renaming. Accepted values:
+  --sort [sort_rule]: (Optional) Specifies how files are sorted before renaming. Accepted values:
     c (creation date)
     m (last modified date)
     n (file name)
     t (file type)
     s (file size)
 
-    These values can be combined to create complex sorting criteria.
-    for instance
-        cmt sorts the files using their creation date as the primary criterion, then by its last modified date, then by its type
-        tmc uses the same attributes as cmt, but in the reverse order. So t takes precedence over m and c in the sorting algorithm
+  --mode [mode]: This command can be run in three primary modes:
+    interactive (default)   Perform a dry run first, then prompts the user to either confirm or abort the operation
+    dry-run                 Execute only a dry run to test naming schemes and sorting orders without making any actual changes
+    execute                 Rename all files directly without performing a dry run as a preview
 
 Flags:
 
   -r, --recursive      Renames files recursively in all subdirectories starting from the directory specified by the first positional parameter
-  --dry-run            Displays how files in `data` and subdirectories would be renamed using auto-incremented integers without making changes.
   --ignore-extension   ...
 
 Examples
