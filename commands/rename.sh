@@ -103,7 +103,7 @@ parse_arguments() {
                 *) err "Invalid mode: $2"; show_help; exit 1 ;;
               esac
               shift ;;
-            -h|--help) get_help 'rename'; exit 0 ;;
+            -h|--help) show_help; exit 0 ;;
             *) root_dir="$1" ;;
         esac
         shift
