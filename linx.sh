@@ -583,16 +583,36 @@ alias gpl="git pull"
 # @description Count the number of commits in the current branch
 # @param $1 (optional) group commit count by author
 # @examples
-#   gcount
-#   gcount author
+#   gcount           # Total commit count
+#   gcount -a        # commit count pre author
+#   gcount --author  # commit count pre author
 gcount() {
+    if ! is_git_repo; then
+        err "$(pwd) is not a git repository"
+        return 1
+    fi
     local group_by="${1}"
-    if [[ "${group_by}" =~ ^authors?$ ]]; then
-        git shortlog -sn --all
+    if [[ "${group_by}" = '-a' || "${group_by}" =~ ^--authors?$ ]]; then
+        git shortlog -sn --all |
+        awk '{commits[$2] = $1; total += $1}
+             END {
+                 max_commits = 0;
+                 for (author in commits) {
+                     if (commits[author] > max_commits) max_commits = commits[author];
+                 }
+                 commit_width = length(max_commits);
+                 for (author in commits) {
+                     percentage = commits[author] / total * 100
+                     printf "%s\t%*d\t%5.1f%%\n", author, commit_width, commits[author], percentage
+                 }
+             }' |
+        sort -k2 -rn |
+        column -t -s $'\t'
     else
         git rev-list --count HEAD
     fi
 }
+
 
 # @description Traditional git log
 # @param $1 (optional) asc to sort the log by ascending order

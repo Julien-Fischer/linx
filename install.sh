@@ -598,6 +598,14 @@ trim_slash() {
     echo "${trimmed_string}"
 }
 
+is_git_repo() {
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 ##############################################################
 # Installation process
 ##############################################################
