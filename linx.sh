@@ -105,6 +105,24 @@ translate() {
     curl -s "https://api.mymemory.translated.net/get?q=${query}&langpair=${src}|${dest}" | jq '.responseData.translatedText'
 }
 
+# @description Copy to clipboard
+# @note: Only works on x11. Install xclip using: sudo apt-get install xclip
+# @example
+#   clc < filename           # copy the content of filename to clipboard
+#   cat filename | clc       # copy the content of filename to clipboard
+#   echo some_string | clc   # copy the literal string some_string to clipboard
+clc() {
+    xclip -selection clipboard
+}
+
+# @description Paste from clipboard
+# @note: Only works on x11. Install xclip using: sudo apt-get install xclip
+# @example
+#   clp > newfile.txt        # paste the clipboard to newfile.txt
+clp() {
+    xclip -selection clipboard -o
+}
+
 function rec() {
     if ! installed simplescreenrecorder -q; then
         err "simplescreenrecorder is not installed."
