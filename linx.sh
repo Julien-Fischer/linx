@@ -550,33 +550,37 @@ gcount() {
             }
             {
                 count = $1
-                sub(/^ *[0-9]+ /, "", $0)
+                sub(/^ *[0-9]+ /, "", $0)  # Remove leading count
                 name = $1
                 email = $2
-                commits[name] = count
-                emails[name] = email
-                names[NR] = name
+                key = name "|" email
+                commits[key] = count
+                emails[key] = email
+                names[NR] = key
                 total += count
                 if (count > max_commits) max_commits = count
             }
             END {
                 commit_width = length(max_commits)
                 for (i = 1; i <= NR; i++) {
-                    name = names[i]
-                    percentage = commits[name] / total * 100
+                    key = names[i]
+                    split(key, parts, "|")
+                    name = parts[1]
+                    email = parts[2]
+                    percentage = commits[key] / total * 100
 
                     # Get first commit date
-                    first_cmd = "git log --author=\"" name "\" --reverse --format=%ad --date=short | head -n 1"
+                    first_cmd = "git log --author=\"" name "\" --author=\"" email "\" --reverse --format=%ad --date=short | head -n 1"
                     first_cmd | getline first_date
                     close(first_cmd)
 
                     # Get last commit date
-                    last_cmd = "git log --author=\"" name "\" --format=%ad --date=short | head -n 1"
+                    last_cmd = "git log --author=\"" name "\" --author=\"" email "\" --format=%ad --date=short | head -n 1"
                     last_cmd | getline last_date
                     close(last_cmd)
 
                     printf "%-20s\t%*d\t%5.1f%%\t%-20s\t%-12s\t%-12s\n",
-                        name, commit_width, commits[name], percentage, first_date, last_date, emails[name]
+                        name, commit_width, commits[key], percentage, first_date, last_date, email
                 }
             }' | column -t -s $'\t'
     else
