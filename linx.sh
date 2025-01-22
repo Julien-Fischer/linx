@@ -528,12 +528,12 @@ alias gpl="git pull"
 
 # Log visualization
 
-# @description Count the number of commits in the current branch
+# @description Count the number of commits in a git project
 # @param $1 (optional) group commit count by author
 # @examples
 #   gcount           # Total commit count
-#   gcount -a        # commit count pre author
-#   gcount --author  # commit count pre author
+#   gcount -a        # aggregate per author
+#   gcount --author  # aggregate per author
 gcount() {
     if ! is_git_repo; then
         err "$(pwd) is not a git repository"
@@ -542,31 +542,43 @@ gcount() {
     local group_by="${1}"
     if [[ "${group_by}" = '-a' || "${group_by}" =~ ^--authors?$ ]]; then
         git log --format='%aN|%aE' | sort | uniq -c | sort -rn |
-        awk -F'|' '
-        BEGIN {
-            max_commits = 0
-            total = 0
-        }
-        {
-            count = $1
-            sub(/^ *[0-9]+ /, "", $0)
-            name = $1
-            email = $2
-            commits[name] = count
-            emails[name] = email
-            names[NR] = name
-            total += count
-            if (count > max_commits) max_commits = count
-        }
-        END {
-            commit_width = length(max_commits)
-            for (i = 1; i <= NR; i++) {
-                name = names[i]
-                percentage = commits[name] / total * 100
-                printf "%s\t%*d\t%5.1f%%\t%s\n", name, commit_width, commits[name], percentage, emails[name]
+            awk -F'|' '
+            BEGIN {
+                max_commits = 0
+                total = 0
+                print "Name\tCommits\tPercentage\tFirst Commit\tLast Commit\tEmail"
             }
-        }' |
-        column -t -s $'\t' -R 2,3
+            {
+                count = $1
+                sub(/^ *[0-9]+ /, "", $0)
+                name = $1
+                email = $2
+                commits[name] = count
+                emails[name] = email
+                names[NR] = name
+                total += count
+                if (count > max_commits) max_commits = count
+            }
+            END {
+                commit_width = length(max_commits)
+                for (i = 1; i <= NR; i++) {
+                    name = names[i]
+                    percentage = commits[name] / total * 100
+
+                    # Get first commit date
+                    first_cmd = "git log --author=\"" name "\" --reverse --format=%ad --date=short | head -n 1"
+                    first_cmd | getline first_date
+                    close(first_cmd)
+
+                    # Get last commit date
+                    last_cmd = "git log --author=\"" name "\" --format=%ad --date=short | head -n 1"
+                    last_cmd | getline last_date
+                    close(last_cmd)
+
+                    printf "%-20s\t%*d\t%5.1f%%\t%-20s\t%-12s\t%-12s\n",
+                        name, commit_width, commits[name], percentage, first_date, last_date, emails[name]
+                }
+            }' | column -t -s $'\t'
     else
         git rev-list --count HEAD
     fi
