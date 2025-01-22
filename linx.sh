@@ -593,26 +593,36 @@ gcount() {
     fi
     local group_by="${1}"
     if [[ "${group_by}" = '-a' || "${group_by}" =~ ^--authors?$ ]]; then
-        git shortlog -sn --all |
-        awk '{commits[$2] = $1; total += $1}
-             END {
-                 max_commits = 0;
-                 for (author in commits) {
-                     if (commits[author] > max_commits) max_commits = commits[author];
-                 }
-                 commit_width = length(max_commits);
-                 for (author in commits) {
-                     percentage = commits[author] / total * 100
-                     printf "%s\t%*d\t%5.1f%%\n", author, commit_width, commits[author], percentage
-                 }
-             }' |
-        sort -k2 -rn |
-        column -t -s $'\t'
+        git log --format='%aN|%aE' | sort | uniq -c | sort -rn |
+        awk -F'|' '
+        BEGIN {
+            max_commits = 0
+            total = 0
+        }
+        {
+            count = $1
+            sub(/^ *[0-9]+ /, "", $0)
+            name = $1
+            email = $2
+            commits[name] = count
+            emails[name] = email
+            names[NR] = name
+            total += count
+            if (count > max_commits) max_commits = count
+        }
+        END {
+            commit_width = length(max_commits)
+            for (i = 1; i <= NR; i++) {
+                name = names[i]
+                percentage = commits[name] / total * 100
+                printf "%s\t%*d\t%5.1f%%\t%s\n", name, commit_width, commits[name], percentage, emails[name]
+            }
+        }' |
+        column -t -s $'\t' -R 2,3
     else
         git rev-list --count HEAD
     fi
 }
-
 
 # @description Traditional git log
 # @param $1 (optional) asc to sort the log by ascending order
