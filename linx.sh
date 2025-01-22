@@ -580,6 +580,20 @@ alias gpl="git pull"
 
 # Log visualization
 
+# @description Count the number of commits in the current branch
+# @param $1 (optional) group commit count by author
+# @examples
+#   gcount
+#   gcount author
+gcount() {
+    local group_by="${1}"
+    if [[ "${group_by}" =~ ^authors?$ ]]; then
+        git shortlog -sn --all
+    else
+        git rev-list --count HEAD
+    fi
+}
+
 # @description Traditional git log
 # @param $1 (optional) asc to sort the log by ascending order
 gl() {
