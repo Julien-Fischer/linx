@@ -541,48 +541,47 @@ gcount() {
     fi
     local group_by="${1}"
     if [[ "${group_by}" = '-a' || "${group_by}" =~ ^--authors?$ ]]; then
-        git log --format='%aN|%aE' | sort | uniq -c | sort -rn |
-            awk -F'|' '
-            BEGIN {
-                max_commits = 0
-                total = 0
-                print "Name\tCommits\tPercentage\tFirst Commit\tLast Commit\tEmail"
+        total_commits=$(git rev-list --count HEAD)
+
+        printf "%-25s | %-8s | %-10s | %-10s | %-10s | %-40s\n" "Committer" "Commits" "Percentage" "First" "Last" "Email"
+        printf "%-25s-+-%-8s-+-%-10s-+-%-10s-+-%-10s-+-%-40s\n" "-------------------------" "--------" "----------" "----------" "----------" "----------------------------------------"
+
+        git log --format="%ae|%an|%at" |
+        awk -F'|' -v total="$total_commits" '
+        {
+            email = $1
+            name = $2
+            timestamp = $3
+
+            if (!(email in committers)) {
+                committers[email] = name
+                commits[email] = 0
+                first_commit[email] = timestamp
+                last_commit[email] = timestamp
             }
-            {
-                count = $1
-                sub(/^ *[0-9]+ /, "", $0)  # Remove leading count
-                name = $1
-                email = $2
-                key = name "|" email
-                commits[key] = count
-                emails[key] = email
-                names[NR] = key
-                total += count
-                if (count > max_commits) max_commits = count
+
+            commits[email]++
+            if (timestamp < first_commit[email]) first_commit[email] = timestamp
+            if (timestamp > last_commit[email]) last_commit[email] = timestamp
+        }
+        END {
+            for (email in committers) {
+                name = committers[email]
+                gsub(/[^[:print:]]/, "", name)
+                name = substr(name, 1, 25)
+
+                percentage = sprintf("%.2f%%", (commits[email] / total) * 100)
+
+                printf "%d|%-25s | %8d | %9.2f%% | %-10s | %-10s | %s\n",
+               commits[email],
+               name,
+               commits[email],
+               (commits[email] / total) * 100,
+               strftime("%Y-%m-%d", first_commit[email]),
+               strftime("%Y-%m-%d", last_commit[email]),
+               email
             }
-            END {
-                commit_width = length(max_commits)
-                for (i = 1; i <= NR; i++) {
-                    key = names[i]
-                    split(key, parts, "|")
-                    name = parts[1]
-                    email = parts[2]
-                    percentage = commits[key] / total * 100
-
-                    # Get first commit date
-                    first_cmd = "git log --author=\"" name "\" --author=\"" email "\" --reverse --format=%ad --date=short | head -n 1"
-                    first_cmd | getline first_date
-                    close(first_cmd)
-
-                    # Get last commit date
-                    last_cmd = "git log --author=\"" name "\" --author=\"" email "\" --format=%ad --date=short | head -n 1"
-                    last_cmd | getline last_date
-                    close(last_cmd)
-
-                    printf "%-20s\t%*d\t%5.1f%%\t%-20s\t%-12s\t%-12s\n",
-                        name, commit_width, commits[key], percentage, first_date, last_date, email
-                }
-            }' | column -t -s $'\t'
+        }' | sort -rn | cut -d'|' -f2-
     else
         git rev-list --count HEAD
     fi
