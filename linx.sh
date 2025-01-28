@@ -125,20 +125,40 @@ clp() {
 
 #@description anonymize the content of the clipboard by replacing substrings that match keys defined in $LINX_DIR/anonymize
 anonymize() {
+    local case_sensitive=false
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -e|--edit)
+                vim "${ANONYMIZE_FILE}"
+                return 0
+                ;;
+            -c|--case-sensitive)
+                case_sensitive=true
+                ;;
+            *)
+                echo "Usage: anonymize [[-e,--edit] [-s,--case-sensitive]]"
+                return 1
+                ;;
+        esac
+    done
+
     local properties_file="${ANONYMIZE_FILE}"
     local tmp_file="${HOME}/clc_tmp_file"
     local text
     text="$(xclip -selection clipboard -o)"
 
-    if [[ "${1}" == '-e' || "${1}" == '--edit' ]]; then
-        vim "${ANONYMIZE_FILE}"
-    fi
-
     [[ ! -f "${properties_file}" ]] && err "Properties file missing at ${properties_file}" && return 1
 
     while IFS='=' read -r key value; do
         if [[ ! "${key}" =~ ^[[:space:]]*# ]]; then
-          text="${text//$key/$value}"
+            if $case_sensitive; then
+                text="${text//$key/$value}"
+            else
+                lower_key="${key,,}"
+                text="${text,,}"
+                text="${text//$lower_key/$value}"
+            fi
         fi
     done < "${properties_file}"
 
