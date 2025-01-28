@@ -972,7 +972,7 @@ grestore() {
       err "git stash pop failed"
   fi
   git add . >/dev/null 2>&1
-  if git commit -m "'${msg}'" --quiet >/dev/null 2>&1; then
+  if git commit -m "${msg}" --quiet >/dev/null 2>&1; then
       echo "Commit restored on branch $(git branch --show-current) with message: $(glast -m)"
   else
       err "git commit failed"
