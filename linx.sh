@@ -680,6 +680,8 @@ gfirst() {
 #   glast -i     # print the hash of the last commit
 #   glast -i -s  # print the short hash of the last commit
 #   glast -m     # print the message of the last commit
+#   glast 10 -m  # print the message of the last 10 commit
+#   glast 10 -is # print the short hash of the last 10 commits
 glast() {
     IFS=$'\x1E' read -ra new_args < <(decluster "$@")
     set -- "${new_args[@]}"
@@ -690,9 +692,9 @@ glast() {
         case $1 in
             -i|--id)
                 if [[ "${2}" == "-s" || "${2}" == "--short" ]]; then
-                    git rev-parse --short HEAD
+                    git rev-list -n "${n}" --abbrev-commit HEAD
                 else
-                    git rev-parse HEAD
+                    git rev-list -n "${n}" HEAD
                 fi
                 return 0
                 ;;
