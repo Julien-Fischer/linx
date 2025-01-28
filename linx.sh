@@ -681,6 +681,9 @@ gfirst() {
 #   glast -i -s  # print the short hash of the last commit
 #   glast -m     # print the message of the last commit
 glast() {
+    IFS=$'\x1E' read -ra new_args < <(decluster "$@")
+    set -- "${new_args[@]}"
+
     local n=${1:-1}
     while [[ "$#" -gt 0 ]]; do
         case $1 in
