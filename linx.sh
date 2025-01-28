@@ -961,10 +961,11 @@ grevert() {
 
 # the opposite operation of grevert
 # apply the latest stash and commit it using the same message
+# Note: we're using sed here to remove the On <branch_name>: prefix from the stash message
 grestore() {
   local msg
   has_uncommitted_changes && err "Can not restore latest commit now: you have uncommitted changes" && return 1
-  msg="$(git stash list -1 --pretty=format:%s)"
+  msg="$(git stash list -1 --pretty=format:%s | sed 's/^[^:]*: //')"
   if git stash pop --quiet >/dev/null 2>&1; then
       echo "Popped latest stash"
   else
