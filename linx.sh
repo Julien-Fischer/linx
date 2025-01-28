@@ -123,9 +123,14 @@ clp() {
     xclip -selection clipboard -o
 }
 
-#@description anonymize the content of the clipboard by replacing substrings that match keys defined in $LINX_DIR/anonymize
+# @description anonymize the content of the clipboard by replacing substrings that match keys defined in $LINX_DIR/anonymize
+# @option -e, --edit  open anonymize.properties in vim
+# @option -s, --case-sensitive  use case-sensitive matching
+# @option -m, --message  specify an input string as the source to anonymize
+# @option -f, --file  specify the path of a file as the source to anonymize
 anonymize() {
     local case_sensitive=false
+    local text=
 
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -136,17 +141,28 @@ anonymize() {
             -c|--case-sensitive)
                 case_sensitive=true
                 ;;
+            -m|--message)
+                text="${2}"
+                shift
+                ;;
+            -f|--file)
+                text="$(cat "${2}")"
+                shift
+                ;;
             *)
-                echo "Usage: anonymize [[-e,--edit] [-s,--case-sensitive]]"
+                echo "Usage: anonymize [[-e,--edit] [-s,--case-sensitive] [-m|--message] [-f|--file]]"
                 return 1
                 ;;
         esac
+        shift
     done
+
+    if [[ -z "${text}" ]]; then
+        text="$(xclip -selection clipboard -o)"
+    fi
 
     local properties_file="${ANONYMIZE_FILE}"
     local tmp_file="${HOME}/clc_tmp_file"
-    local text
-    text="$(xclip -selection clipboard -o)"
 
     [[ ! -f "${properties_file}" ]] && err "Properties file missing at ${properties_file}" && return 1
 
