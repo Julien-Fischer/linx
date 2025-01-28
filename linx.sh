@@ -834,6 +834,28 @@ gsd() {
     fi
 }
 
+# Stash the current changes and apply them immediately, using the stash as a quick checkpoint
+gsave() {
+    local msg="${1:-latest state}"
+    git add . && git stash -m "${msg}" && git stash apply
+}
+
+# git reset --soft a commit and stash it with the same commit message
+# This is the opposite operation of gsave
+grevert() {
+  local msg
+  msg="$(git log -1 --pretty=format:%s)"
+  grs && gas "${msg}"
+}
+
+# the opposite operation of grevert
+# apply the latest stash and commit it using the same message
+grestore() {
+  local msg
+  msg="$(git stash list -1 --pretty=format:%s)"
+  gsa && gac "${msg}"
+}
+
 # Branch management
 
 alias gck="git checkout" # <branch_name>
