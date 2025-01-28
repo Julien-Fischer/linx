@@ -814,6 +814,14 @@ gapf() {
     gac "${1}" && gpf
 }
 
+# Add the current local changes to the latest remote commit
+# /!\ this function uses a reset --soft on HEAD, so careful when using it, especially on team projects
+gedit() {
+    local msg=
+    msg="$(glast -m)"
+    grs && gapf "${msg}"
+}
+
 # @description Stashes all changes
 # @param $1 (optional) an optional message
 # @example
