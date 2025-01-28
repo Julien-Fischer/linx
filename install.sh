@@ -207,7 +207,7 @@ confirm() {
 }
 
 has_uncommitted_changes() {
-    if git status --porcelain | grep -q "."; then
+    if ! git diff-index --quiet HEAD -- || ! git diff --quiet --exit-code; then
         return 0
     else
         return 1
