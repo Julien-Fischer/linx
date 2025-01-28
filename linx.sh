@@ -956,7 +956,7 @@ grestore() {
   local msg
   has_uncommitted_changes && echo "Can not restore latest commit now: you have uncommitted changes" && return 1
   msg="$(git stash list -1 --pretty=format:%s)"
-  gsa && gac "${msg}"
+  gsp && gac "${msg}"
 }
 
 # Branch management
