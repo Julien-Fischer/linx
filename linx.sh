@@ -857,6 +857,21 @@ gsd() {
     fi
 }
 
+# @description renames the latest stash entry
+# @param $1 the new message to apply to this entry
+# @example
+#   gsr "New message"
+gsr() {
+    local message="${1}"
+    if [[ -z "${message}" ]]; then
+        echo "Missing message. Usage: gsr [new_message]"
+        return 1
+    fi
+    git status --porcelain | grep -q "." && echo "Can not use gsr now: you have uncommitted changes" && return 1
+
+    gsp && gas "${message}"
+}
+
 # Stash the current changes and apply them immediately, using the stash as a quick checkpoint
 gsave() {
     local msg="${1:-latest state}"
