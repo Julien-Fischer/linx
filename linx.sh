@@ -931,21 +931,29 @@ gsr() {
     fi
     has_uncommitted_changes && echo "Can not use gsr now: you have uncommitted changes" && return 1
 
-    gsp && gas "${message}"
+    if git stash pop --quiet >/dev/null 2>&1 && git add . >/dev/null 2>&1 && git stash -m "${message}" --quiet >/dev/null 2>&1; then
+        echo "Renamed latest stash entry to ${message}"
+    else
+        err "Could not renamed latest stash entry"
+    fi
 }
 
 # Stash the current changes and apply them immediately, using the stash as a quick checkpoint
 gsave() {
     local msg="${1:-latest state}"
-    ! has_uncommitted_changes && echo "Nothing to save; branch is clean" && return 1
-    git add . && git stash -m "${msg}" && git stash apply
+    ! has_uncommitted_changes --quiet >/dev/null 2>&1 && err "Nothing to save; branch is clean" && return 1
+    if git add . --quiet >/dev/null 2>&1 && git stash -m "${msg}" --quiet >/dev/null 2>&1 && git stash apply --quiet >/dev/null 2>&1; then
+        echo "Changes saved"
+    else
+        err "Could not stash changes"
+    fi
 }
 
 # git reset --soft a commit and stash it with the same commit message
 # This is the opposite operation of grestore
 grevert() {
   local msg
-  has_uncommitted_changes && echo "Can not revert latest commit now: you have uncommitted changes" && return 1
+  has_uncommitted_changes && err "Can not revert latest commit now: you have uncommitted changes" && return 1
   msg="$(git log -1 --pretty=format:%s)"
   grs && gas "${msg}"
 }
@@ -954,16 +962,16 @@ grevert() {
 # apply the latest stash and commit it using the same message
 grestore() {
   local msg
-  has_uncommitted_changes && echo "Can not restore latest commit now: you have uncommitted changes" && return 1
+  has_uncommitted_changes && err "Can not restore latest commit now: you have uncommitted changes" && return 1
   msg="$(git stash list -1 --pretty=format:%s)"
-  if git stash pop > /dev/null; then
+  if git stash pop --quiet >/dev/null 2>&1; then
       echo "Popped latest stash"
   else
       err "git stash pop failed"
   fi
-  git add .
-  if git commit -m "${msg}"; then
-      echo "Commit restored on branch $(git branch --show-current)"
+  git add . --quiet >/dev/null 2>&1
+  if git commit -m "${msg}" --quiet >/dev/null 2>&1; then
+      echo "Commit restored on branch $(git branch --show-current) with message: $(glast -m)"
   else
       err "git commit failed"
   fi
