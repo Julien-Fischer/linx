@@ -887,7 +887,7 @@ alias gb="git branch" # <branch_name>
 
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
-alias gclear='git reflog expire --expire=now --all && git gc --prune=now'
+alias gpurge='git reflog expire --expire=now --all && git gc --prune=now'
 
 ##############################################################
 # Docker
