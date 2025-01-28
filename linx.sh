@@ -875,6 +875,7 @@ gsr() {
 # Stash the current changes and apply them immediately, using the stash as a quick checkpoint
 gsave() {
     local msg="${1:-latest state}"
+    ! has_uncommitted_changes && echo "Nothing to save; branch is clean" && return 1
     git add . && git stash -m "${msg}" && git stash apply
 }
 
