@@ -956,7 +956,17 @@ grestore() {
   local msg
   has_uncommitted_changes && echo "Can not restore latest commit now: you have uncommitted changes" && return 1
   msg="$(git stash list -1 --pretty=format:%s)"
-  gsp && gac "${msg}"
+  if git stash pop > /dev/null; then
+      echo "Popped latest stash"
+  else
+      err "git stash pop failed"
+  fi
+  git add .
+  if git commit -m "${msg}"; then
+      echo "Commit restored on branch $(git branch --show-current)"
+  else
+      err "git commit failed"
+  fi
 }
 
 # Branch management
