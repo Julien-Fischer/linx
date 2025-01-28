@@ -20,6 +20,7 @@ COMMANDS_DIR="/usr/local/bin"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 MKF_DIR="${LINX_DIR}/mkf"
+ANONYMIZE_FILE="${LINX_DIR}/anonymize.properties"
 MKF_CONFIG_FILE="${MKF_DIR}/config"
 MKF_TEMPLATE_DIR="${MKF_DIR}/templates"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -641,6 +642,9 @@ install_core() {
         cd "${PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
         cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
+        if [[ ! -f "${ANONYMIZE_FILE}" ]]; then
+            cp ./config/anonymize.properties "${ANONYMIZE_FILE}"
+        fi
         source "${HOME}/.bashrc"
         update_mkf_config
         install_commands

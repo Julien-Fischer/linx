@@ -123,6 +123,32 @@ clp() {
     xclip -selection clipboard -o
 }
 
+#@description anonymize the content of the clipboard by replacing substrings that match keys defined in $LINX_DIR/anonymize
+anonymize() {
+    local properties_file="${ANONYMIZE_FILE}"
+    local tmp_file="${HOME}/clc_tmp_file"
+    local text
+    text="$(xclip -selection clipboard -o)"
+
+    if [[ "${1}" == '-e' || "${1}" == '--edit' ]]; then
+        vim "${ANONYMIZE_FILE}"
+    fi
+
+    [[ ! -f "${properties_file}" ]] && err "Properties file missing at ${properties_file}" && return 1
+
+    while IFS='=' read -r key value; do
+        if [[ ! "${key}" =~ ^[[:space:]]*# ]]; then
+          text="${text//$key/$value}"
+        fi
+    done < "${properties_file}"
+
+    local tmp_file="${HOME}/clc_tmp_file"
+    echo "${text}" > "${tmp_file}"
+    xclip -selection clipboard < "${tmp_file}"
+    rm "${tmp_file}"
+    echo "Text anonymized."
+}
+
 function rec() {
     if ! installed simplescreenrecorder -q; then
         err "simplescreenrecorder is not installed."
