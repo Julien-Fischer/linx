@@ -902,6 +902,7 @@ grestore() {
 alias gck="git checkout" # <branch_name>
 alias gcb="git checkout -b" # <branch_name>
 alias gb="git branch" # <branch_name>
+alias gbd="git branch -D" # <branch_name>
 
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
