@@ -669,25 +669,31 @@ gfirst() {
     glot asc | head -$n
 }
 
-# @description Find the n latest commits in the log
+# @description Find the n latest local commits in the current branch
 # @param $1 (optional) the number of commits to find starting from the last one (1 by default)
 # @option -i, --id if the output should be the hash of the latest commit
 # @option -s, --short if the output should be the short hash of the latest commit
+# @option -m, --message if the output should be the message of the latest commit
 # @example
-#   glast
-#   glast 3
-#   glast -i
-#   glast --id
+#   glast        # print the last commit
+#   glast 3      # print the last 3 commits
+#   glast -i     # print the hash of the last commit
+#   glast -i -s  # print the short hash of the last commit
+#   glast -m     # print the message of the last commit
 glast() {
     local n=${1:-1}
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -i|--id)
-                git rev-parse HEAD
+                if [[ "${2}" == "-s" || "${2}" == "--short" ]]; then
+                    git rev-parse --short HEAD
+                else
+                    git rev-parse HEAD
+                fi
                 return 0
                 ;;
-            -s|--short)
-                git rev-parse --short HEAD
+            -m|--message)
+                git log -1 --pretty=format:%s
                 return 0
                 ;;
             *)
@@ -696,7 +702,7 @@ glast() {
 
                 else
                     echo "Unsupported parameter ${1}"
-                    echo "Usage: glast [count] [-i, --id]"
+                    echo "Usage: glast [count] [--id [--short]] [--message]"
                     return 1
                 fi
                 ;;
