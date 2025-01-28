@@ -867,7 +867,7 @@ gsr() {
         echo "Missing message. Usage: gsr [new_message]"
         return 1
     fi
-    git status --porcelain | grep -q "." && echo "Can not use gsr now: you have uncommitted changes" && return 1
+    has_uncommitted_changes && echo "Can not use gsr now: you have uncommitted changes" && return 1
 
     gsp && gas "${message}"
 }

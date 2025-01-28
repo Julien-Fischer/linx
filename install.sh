@@ -205,6 +205,14 @@ confirm() {
     esac
 }
 
+has_uncommitted_changes() {
+    if git status --porcelain | grep -q "."; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # @description Determines whether an array contains the specified element
 # @param $1 the element to look for
 # @param $2 the array to process
