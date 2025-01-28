@@ -903,11 +903,13 @@ alias gck="git checkout" # <branch_name>
 alias gcb="git checkout -b" # <branch_name>
 alias gb="git branch" # <branch_name>
 alias gbd="git branch -D" # <branch_name>
+# /!\ Be cautious when using this command, as it permanently removes the target local branch, even if it is not fully merged.
 
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
 alias gpurge='git reflog expire --expire=now --all && git gc --prune=now'
 # Discard ALL staged and unstaged changes
+# /!\ Be cautious when using this command, as it permanently removes uncommitted changes.
 alias gclear='git reset --hard HEAD'
 
 ##############################################################
