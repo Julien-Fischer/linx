@@ -883,14 +883,16 @@ gsave() {
 # This is the opposite operation of grestore
 grevert() {
   local msg
+  has_uncommitted_changes && echo "Can not revert latest commit now: you have uncommitted changes" && return 1
   msg="$(git log -1 --pretty=format:%s)"
   grs && gas "${msg}"
 }
 
-# apply the latest stash and commit it using the same message
 # the opposite operation of grevert
+# apply the latest stash and commit it using the same message
 grestore() {
   local msg
+  has_uncommitted_changes && echo "Can not restore latest commit now: you have uncommitted changes" && return 1
   msg="$(git stash list -1 --pretty=format:%s)"
   gsa && gac "${msg}"
 }
