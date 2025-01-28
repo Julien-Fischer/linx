@@ -942,7 +942,7 @@ gsr() {
 gsave() {
     local msg="${1:-latest state}"
     ! has_uncommitted_changes --quiet >/dev/null 2>&1 && err "Nothing to save; branch is clean" && return 1
-    if git add . --quiet >/dev/null 2>&1 && git stash -m "${msg}" --quiet >/dev/null 2>&1 && git stash apply --quiet >/dev/null 2>&1; then
+    if git add . >/dev/null 2>&1 && git stash -m "${msg}" --quiet >/dev/null 2>&1 && git stash apply --quiet >/dev/null 2>&1; then
         echo "Changes saved"
     else
         err "Could not stash changes"
@@ -969,8 +969,8 @@ grestore() {
   else
       err "git stash pop failed"
   fi
-  git add . --quiet >/dev/null 2>&1
-  if git commit -m "${msg}" --quiet >/dev/null 2>&1; then
+  git add . >/dev/null 2>&1
+  if git commit -m "'${msg}'" --quiet >/dev/null 2>&1; then
       echo "Commit restored on branch $(git branch --show-current) with message: $(glast -m)"
   else
       err "git commit failed"
