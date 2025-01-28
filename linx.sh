@@ -887,8 +887,8 @@ grevert() {
   grs && gas "${msg}"
 }
 
-# the opposite operation of grevert
 # apply the latest stash and commit it using the same message
+# the opposite operation of grevert
 grestore() {
   local msg
   msg="$(git stash list -1 --pretty=format:%s)"
