@@ -925,11 +925,12 @@ gsd() {
 #   gsr "New message"
 gsr() {
     local message="${1}"
-    if [[ -z "${message}" ]]; then
-        echo "Missing message. Usage: gsr [new_message]"
-        return 1
-    fi
+
     has_uncommitted_changes && echo "Can not use gsr now: you have uncommitted changes" && return 1
+
+    if [[ -z "${message}" ]]; then
+        read -r -p "Enter new stash message: " message
+    fi
 
     if git stash pop --quiet >/dev/null 2>&1 && git add . >/dev/null 2>&1 && git stash -m "${message}" --quiet >/dev/null 2>&1; then
         echo "Renamed latest stash entry to ${message}"
