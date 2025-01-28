@@ -880,7 +880,7 @@ gsave() {
 }
 
 # git reset --soft a commit and stash it with the same commit message
-# This is the opposite operation of gsave
+# This is the opposite operation of grestore
 grevert() {
   local msg
   msg="$(git log -1 --pretty=format:%s)"
