@@ -919,7 +919,7 @@ gsd() {
     fi
 }
 
-# @description renames the latest stash entry
+# @description (git stash rename) renames the latest stash entry
 # @param $1 the new message to apply to this entry
 # @example
 #   gsr "New message"
