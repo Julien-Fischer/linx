@@ -214,6 +214,10 @@ has_uncommitted_changes() {
     fi
 }
 
+get_latest_stash_message() {
+    git stash list -1 --pretty=format:%s | sed 's/^[^:]*: //'
+}
+
 # @description Determines whether an array contains the specified element
 # @param $1 the element to look for
 # @param $2 the array to process

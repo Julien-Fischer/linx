@@ -929,7 +929,7 @@ gsr() {
     has_uncommitted_changes && echo "Can not use gsr now: you have uncommitted changes" && return 1
 
     if [[ -z "${message}" ]]; then
-        read -r -p "Enter new stash message: " message
+        read -e -i "$(get_latest_stash_message)" -r -p "Enter new stash message: " message
     fi
 
     if git stash pop --quiet >/dev/null 2>&1 && git add . >/dev/null 2>&1 && git stash -m "${message}" --quiet >/dev/null 2>&1; then
@@ -965,7 +965,7 @@ grevert() {
 grestore() {
   local msg
   has_uncommitted_changes && err "Can not restore latest commit now: you have uncommitted changes" && return 1
-  msg="$(git stash list -1 --pretty=format:%s | sed 's/^[^:]*: //')"
+  msg="$(get_latest_stash_message)"
   if git stash pop --quiet >/dev/null 2>&1; then
       echo "Popped latest stash"
   else
