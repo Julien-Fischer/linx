@@ -590,6 +590,11 @@ alias gpl="git pull"
 
 # Log visualization
 
+# @description Print own commits on the current local branch
+gown() {
+  glot --author="$(git config user.email)"
+}
+
 # @description Count the number of commits in a git project
 # @param $1 (optional) group commit count by author
 # @examples
