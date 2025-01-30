@@ -592,7 +592,7 @@ alias gpl="git pull"
 
 # @description Print own commits on the current local branch
 gmine() {
-    glot "$(git config user.email)"
+    glot "$(git config user.name)"
 }
 
 # @description Count the number of commits in a git project
