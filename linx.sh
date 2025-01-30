@@ -591,7 +591,7 @@ alias gpl="git pull"
 # Log visualization
 
 # @description Print own commits on the current local branch
-gown() {
+gmine() {
     glot "$(git config user.email)"
 }
 
