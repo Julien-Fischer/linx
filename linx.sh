@@ -592,7 +592,7 @@ alias gpl="git pull"
 
 # @description Print own commits on the current local branch
 gown() {
-  glot --author="$(git config user.email)"
+    glot "$(git config user.email)"
 }
 
 # @description Count the number of commits in a git project
@@ -675,14 +675,60 @@ glo() {
     gl "$@" --oneline
 }
 
-# @description Git log (time)
-# @param $1 (optional) asc to sort the log by ascending order
+# @description Print commits where author name or email starts by the specified substring on the current local branch
+# @param $1 the substring that the committer name or email starts with
 # @example
-#   glot
-#   glot <branch_name>
+#   glot                # print the local branch history
+#   glot --asc          # print the local branch history, sorted by ascending order
+#   glot julien         # print the local branch history, filter by committer name or email starting with
+#   glot julien --asc   # filter and sort output by ascending order
 glot() {
-    gl "$@" --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit
+    local substring="${1}"
+    local ascending=false
+    local LIGHT_GRAY='\033[0;37m'
+
+    shift
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --asc)
+                ascending=true
+                ;;
+            *)
+                err "Unsupported option ${1}"
+                echo "Usage: glot [substring] [[--asc]]"
+                return 1
+                ;;
+        esac
+        shift
+    done
+
+    local temp_file
+    temp_file=$(mktemp)
+
+    git log --pretty=format:"%h|%ad|%an|%ae|%s" --date=format:"%Y-%m-%d %H:%M:%S" |
+    while IFS='|' read -r hash date name email message; do
+        if [[ "${name,,}" == "${substring,,}"* ]] || [[ "${email,,}" == "${substring,,}"* ]]; then
+            echo "${hash}|${date}|${name}|${email}|${message}" >> "${temp_file}"
+        fi
+    done
+
+    if $ascending; then
+        sort -t'|' -k2 "${temp_file}" |
+        while IFS='|' read -r hash date name email message; do
+            printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
+                   "${hash}" "${date}" "${name}" "${message}"
+        done
+    else
+        sort -t'|' -k2 -r "${temp_file}" |
+        while IFS='|' read -r hash date name email message; do
+            printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
+                   "${hash}" "${date}" "${name}" "${message}"
+        done
+    fi
+
+    rm "${temp_file}"
 }
+
 
 # @description Git log (releases)
 # @param $1 (optional) asc to sort the log by ascending order
