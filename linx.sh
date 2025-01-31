@@ -706,6 +706,7 @@ glot() {
     temp_file=$(mktemp)
 
     git log --pretty=format:"%h|%ad|%an|%ae|%s" --date=format:"%Y-%m-%d %H:%M:%S" |
+    sed '$a\' |
     while IFS='|' read -r hash date name email message; do
         if [[ "${name,,}" == "${substring,,}"* ]] || [[ "${email,,}" == "${substring,,}"* ]]; then
             echo "${hash}|${date}|${name}|${email}|${message}" >> "${temp_file}"
