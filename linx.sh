@@ -713,19 +713,15 @@ glot() {
         fi
     done
 
+    local sort_option="-r"
     if $ascending; then
-        sort -t'|' -k2 "${temp_file}" |
-        while IFS='|' read -r hash date name email message; do
-            printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
-                   "${hash}" "${date}" "${name}" "${message}"
-        done
-    else
-        sort -t'|' -k2 -r "${temp_file}" |
-        while IFS='|' read -r hash date name email message; do
-            printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
-                   "${hash}" "${date}" "${name}" "${message}"
-        done
+        sort_option=""
     fi
+    sort -t'|' -k2 $sort_option "${temp_file}" |
+    while IFS='|' read -r hash date name email message; do
+        printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
+               "${hash}" "${date}" "${name}" "${message}"
+    done
 
     rm "${temp_file}"
 }
