@@ -756,6 +756,9 @@ gtree_all() {
 #   gfirst -i
 #   gfirst --id
 gfirst() {
+    IFS=$'\x1E' read -ra new_args < <(decluster "$@")
+    set -- "${new_args[@]}"
+
     local n=${1:-1}
     while [[ "$#" -gt 0 ]]; do
         case $1 in
@@ -776,7 +779,7 @@ gfirst() {
                     n=$1
                 else
                     echo "Unsupported parameter ${1}"
-                    echo "Usage: gfirst [count] [-i, --id]"
+                    echo "Usage: gfirst [count] [--id [--short]] [--message]"
                     return 1
                 fi
                 ;;
