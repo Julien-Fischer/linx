@@ -746,7 +746,7 @@ gtree_all() {
     gtree --all
 }
 
-# @description Find the n latest commits in the log
+# @description Find the oldest n local commits in the current branch
 # @param $1 (optional) the number of commits to find starting from the first one (1 by default)
 # @option -i, --id if the output should be the hash of the initial commit
 # @option -s, --short if the output should be the short hash of the initial commit
@@ -760,11 +760,15 @@ gfirst() {
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -i|--id)
-                git rev-list --max-parents=0 HEAD
+                if [[ "${2}" == "-s" || "${2}" == "--short" ]]; then
+                    git log --format=%h --abbrev-commit | tail -n 3
+                else
+                    git log --format=%H | tail -n "${n}"
+                fi
                 return 0
                 ;;
-            -s|--short)
-                git rev-list --max-parents=0 HEAD --abbrev-commit
+            -m|--message)
+                git log --pretty=format:%s | tail -n "${n}"
                 return 0
                 ;;
             *)
@@ -779,10 +783,10 @@ gfirst() {
         esac
         shift
     done
-    glot asc | head -$n
+    glot | tail -$n
 }
 
-# @description Find the n latest local commits in the current branch
+# @description Find the latest n local commits in the current branch
 # @param $1 (optional) the number of commits to find starting from the last one (1 by default)
 # @option -i, --id if the output should be the hash of the latest commit
 # @option -s, --short if the output should be the short hash of the latest commit
