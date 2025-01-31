@@ -759,12 +759,13 @@ gfirst() {
     IFS=$'\x1E' read -ra new_args < <(decluster "$@")
     set -- "${new_args[@]}"
 
-    local n=${1:-1}
+    local n=${1//[^0-9]/}
+    n=${n:-1}
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -i|--id)
                 if [[ "${2}" == "-s" || "${2}" == "--short" ]]; then
-                    git log --format=%h --abbrev-commit | tail -n 3
+                    git log --format=%h --abbrev-commit | tail -n "${n}"
                 else
                     git log --format=%H | tail -n "${n}"
                 fi
