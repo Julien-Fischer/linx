@@ -1064,7 +1064,7 @@ alias gbd="git branch -D" # <branch_name>
 alias gpurge='git reflog expire --expire=now --all && git gc --prune=now'
 # Discard ALL staged and unstaged changes
 # /!\ Be cautious when using this command, as it permanently removes uncommitted changes.
-alias gclear='git reset --hard HEAD'
+alias gclear='git add . && git reset --hard HEAD'
 
 ##############################################################
 # Docker
