@@ -612,9 +612,16 @@ trim_slash() {
 }
 
 is_git_repo() {
+    local quiet=false
+    if [[ "${1}" == "-q" ]]; then
+        quiet=true
+    fi
     if git rev-parse --git-dir > /dev/null 2>&1; then
         return 0
     else
+        if ! $quiet; then
+            err "$(pwd) is not a git repository"
+        fi
         return 1
     fi
 }

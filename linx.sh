@@ -609,7 +609,6 @@ gmine() {
 #   gcount --author  # aggregate per author
 gcount() {
     if ! is_git_repo; then
-        err "$(pwd) is not a git repository"
         return 1
     fi
     local group_by="${1}"
@@ -884,7 +883,6 @@ glast() {
 # @param $1 (optional) the path of the file to write to (a timestamped _gdump.log file by default)
 gdump() {
     if ! is_git_repo; then
-        err "$(pwd) is not a git repository"
         return 1
     fi
 
@@ -895,7 +893,10 @@ gdump() {
         filepath="${prefix}_gdump.log"
     fi
 
-    gcount -a > "${filepath}"
+    if ! gcount -a > "${filepath}"; then
+        err "Could not write to ${filepath}"
+        return 1
+    fi
     echo "" >> "${filepath}"
     glot >> "${filepath}"
 
