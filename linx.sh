@@ -1033,7 +1033,9 @@ gsr() {
         read -e -i "$(get_latest_stash_message)" -r -p "Enter new stash message: " message
     fi
 
-    if git stash pop --quiet >/dev/null 2>&1 && git add . >/dev/null 2>&1 && git stash -m "${message}" --quiet >/dev/null 2>&1; then
+    if git stash pop --quiet >/dev/null 2>&1 && \
+       git add . >/dev/null 2>&1 && \
+       git stash -m "${message}" --quiet >/dev/null 2>&1; then
         echo "Renamed latest stash entry to ${message}"
     else
         err "Could not renamed latest stash entry"
