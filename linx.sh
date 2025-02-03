@@ -883,15 +883,22 @@ glast() {
 # @description Dump the git log of the current local branch in a file
 # @param $1 (optional) the path of the file to write to (a timestamped _gdump.log file by default)
 gdump() {
+    if ! is_git_repo; then
+        err "$(pwd) is not a git repository"
+        return 1
+    fi
+
     local filepath="${1}"
     if [[ -z "${filepath}" ]]; then
         local prefix=
         prefix="$(timestamp -b)"
         filepath="${prefix}_gdump.log"
     fi
+
     gcount -a > "${filepath}"
     echo "" >> "${filepath}"
     glot >> "${filepath}"
+
     local directory_path=
     directory_path="$(realpath "${filepath}")"
     echo -e "created: $(color "$(basename "${filepath}")" "${GREEN_BOLD}") in: $(color "${directory_path}" "${YELLOW_BOLD}")"
