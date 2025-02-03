@@ -677,21 +677,30 @@ glo() {
 
 # @description Print commits where author name or email starts by the specified substring on the current local branch
 # @param $1 the substring that the committer name or email starts with
+# @flag -t, --today show only today's commits
 # @example
 #   glot                # print the local branch history
 #   glot --asc          # print the local branch history, sorted by ascending order
 #   glot julien         # print the local branch history, filter by committer name or email starting with
 #   glot julien --asc   # filter and sort output by ascending order
+#   glot julien --today # filter output by committer name or email, showing only today's commits
 glot() {
-    local substring="${1}"
+    local substring=""
+    if [[ "${1}" != -* ]]; then
+        substring="${1}"
+        shift
+    fi
     local ascending=false
+    local today_only=false
     local LIGHT_GRAY='\033[0;37m'
 
-    shift
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --asc)
                 ascending=true
+                ;;
+            -t|--today)
+                today_only=true
                 ;;
             *)
                 err "Unsupported option ${1}"
@@ -705,7 +714,15 @@ glot() {
     local temp_file
     temp_file=$(mktemp)
 
-    git log --pretty=format:"%h|%ad|%an|%ae|%s" --date=format:"%Y-%m-%d %H:%M:%S" |
+    local params=(
+        --pretty=format:"%h|%ad|%an|%ae|%s"
+        --date=format:"%Y-%m-%d %H:%M:%S"
+    )
+    if $today_only; then
+        params+=(--since "00:00:00")
+    fi
+
+    git log "${params[@]}" |
     sed '$a\' |
     while IFS='|' read -r hash date name email message; do
         if [[ "${name,,}" == "${substring,,}"* ]] || [[ "${email,,}" == "${substring,,}"* ]]; then
