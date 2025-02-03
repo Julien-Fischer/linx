@@ -11,7 +11,12 @@ fi
 # Config
 ##############################################################
 
-export PROMPT_TO_BOTTOM=false
+PROMPT_TO_BOTTOM=false
+linx_prompt_to_bottom=
+linx_prompt_to_bottom=$(get_property "${CONFIG_FILE}" "prompt.to.bottom" -q)
+if [[ $? -eq 0 && "${linx_prompt_to_bottom}" == "true" ]]; then
+    PROMPT_TO_BOTTOM=true
+fi
 
 ##############################################################
 # Misc

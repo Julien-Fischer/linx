@@ -433,9 +433,13 @@ expand_path() {
 get_property() {
     local file="${1}"
     local key="${2}"
+    local quiet=false
+    if [[ "${3}" == -q ]]; then
+        quiet=true
+    fi
 
     if [[ -z "${file}" ]]; then
-        err "Could not find file ${file}"
+        ! $quiet && err "Could not find file ${file}"
         return 1
     fi
 
@@ -452,7 +456,7 @@ get_property() {
         fi
     done < "${file}"
 
-    err "Could not find key ${key} in file ${file}"
+    ! $quiet && err "Could not find key ${key} in file ${file}"
     return 1
 }
 
