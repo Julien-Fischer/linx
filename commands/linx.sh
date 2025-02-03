@@ -216,6 +216,15 @@ pull_setup() {
 linx() {
     while [[ $# -gt 0 ]]; do
         case $1 in
+            config)
+                if [[ -f "${CONFIG_FILE}" ]]; then
+                    vim "${CONFIG_FILE}"
+                    return 0
+                else
+                    err "Could not find linx config file at ${CONFIG_FILE}"
+                    return 1
+                fi
+                ;;
             c|cron)
                 shift
                 handle_crons "$@"
