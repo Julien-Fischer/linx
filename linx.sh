@@ -591,8 +591,14 @@ alias gpl="git pull"
 # Log visualization
 
 # @description Print own commits on the current local branch
+# @flag --asc sort output by ascending order (descending by default)
+# @flag -t, --today show only today's commits
+# @example
+#   gmine                # print the local branch history
+#   gmine --asc          # sort output by ascending order
+#   gmine --today        # filter output by committer name or email, showing only today's commits
 gmine() {
-    glot "$(git config user.name)"
+    glot "$(git config user.name)" "$@"
 }
 
 # @description Count the number of commits in a git project
