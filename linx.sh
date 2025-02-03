@@ -1068,6 +1068,14 @@ alias gpurge='git reflog expire --expire=now --all && git gc --prune=now'
 alias gclear='git add . && git reset --hard HEAD'
 
 ##############################################################
+# Maven
+##############################################################
+
+alias mct="mvn clean test"
+alias mci="mvn clean install"
+alias mcp="mvn clean package"
+
+##############################################################
 # Docker
 ##############################################################
 
