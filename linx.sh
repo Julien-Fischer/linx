@@ -11,7 +11,7 @@ fi
 # Config
 ##############################################################
 
-export PROMPT_TO_BOTTOM=1
+export PROMPT_TO_BOTTOM=false
 
 ##############################################################
 # Misc
@@ -1368,7 +1368,7 @@ EOF
 # Custom ENV variables
 ##############################################################
 
-if [[ $PROMPT_TO_BOTTOM -eq 0 ]]; then
+if $PROMPT_TO_BOTTOM; then
     prompt_to_bottom() {
         tput cup $LINES
     }
