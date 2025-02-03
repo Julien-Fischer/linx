@@ -1057,8 +1057,35 @@ alias gckb="git checkout -b" # <branch_name>
 alias gcb="git checkout -b" # <branch_name>
 alias gb="git branch" # <branch_name>
 alias gba="git branch -a"
-alias gbd="git branch -D" # <branch_name>
-# /!\ Be cautious when using this command, as it permanently removes the target local branch, even if it is not fully merged.
+
+# @description Delete the specified branch
+# /!\ Be cautious when using this command, as it permanently removes the target local branch (and the
+# remote if -a is specified), even if it is not fully merged.
+# @param $1 The name of the branch to delete
+# @flag -a, --all Also delete the remote branch
+# @example
+#   gbd branch-name
+#   gbd branch-name -a
+gbd() {
+    local branch_name="${1}"
+    local all="${2}"
+    if [[ -z "${branch_name}" ]]; then
+        err "A branch name is required. Usage: gbd [branch_name] [[-a,--all]]"
+        return 1
+    fi
+    if git branch -D "${branch_name}" > /dev/null 2>&1; then
+        echo "Deleted local branch ${branch_name}"
+    else
+        echo "No local branch ${branch_name}"
+    fi
+    if [[ "${all}" == "-a" || "${all}" == "--all" ]]; then
+        if git push --delete origin "${branch_name}" > /dev/null 2>&1; then
+            echo "Deleted remote branch ${branch_name}"
+        else
+            echo "No remote branch ${branch_name}"
+        fi
+    fi
+}
 
 # Permanently remove old, unreferenced commits
 # /!\ Be cautious when using this command, as it permanently removes commits from your repository.
