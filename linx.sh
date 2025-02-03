@@ -879,18 +879,31 @@ glast() {
     glot -m | head -$n
 }
 
-# @description Dump the git log of the current local branch in a file
-# @param $1 (optional) the path of the file to write to (a timestamped _gdump.log file by default)
+# @description Dump the git log of the current local branch in a file in the current directory. If
+#              git.log.dump.directory is defined in "${CONFIG_FILE}", the output will be generated
+#              in this directory instead.
+# @param $1 (optional) the path of the file to write to (a timestamped .gdump file by default)
 gdump() {
     if ! is_git_repo; then
         return 1
     fi
 
     local filepath="${1}"
+    local user_preferred_path=
+    local config_filepath=
+    local dirname=
+
+    user_preferred_path=$(get_property "${CONFIG_FILE}" "git.log.dump.directory")
+    config_filepath=$(expand_path "${user_preferred_path}")
+    dirname=$(basename "$(pwd)")
+
     if [[ -z "${filepath}" ]]; then
         local prefix=
         prefix="$(timestamp -b)"
-        filepath="${prefix}_gdump.log"
+        filepath="${dirname}_${prefix}.gdump"
+        if [[ -d "${config_filepath}" ]]; then
+            filepath="${config_filepath}/${filepath}"
+        fi
     fi
 
     if ! gcount -a > "${filepath}"; then

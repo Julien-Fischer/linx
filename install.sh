@@ -20,6 +20,7 @@ COMMANDS_DIR="/usr/local/bin"
 INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 MKF_DIR="${LINX_DIR}/mkf"
+CONFIG_FILE="${LINX_DIR}/config.properties"
 ANONYMIZE_FILE="${LINX_DIR}/anonymize.properties"
 MKF_CONFIG_FILE="${MKF_DIR}/config"
 MKF_TEMPLATE_DIR="${MKF_DIR}/templates"
@@ -417,6 +418,18 @@ print_info() {
     echo "For help, use linx --help or linx -h"
 }
 
+expand_path() {
+    local input="${1}"
+    input=${input//\"/}
+    while [[ "$input" =~ (\$\{[a-zA-Z_][a-zA-Z0-9_]*\}) ]]; do
+        local var=${BASH_REMATCH[1]}
+        local var_name=${var:2:-1}
+        local var_value=${!var_name}
+        input=${input//$var/$var_value}
+    done
+    echo "${input}"
+}
+
 get_property() {
     local file="${1}"
     local key="${2}"
@@ -655,6 +668,9 @@ install_core() {
         cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
         if [[ ! -f "${ANONYMIZE_FILE}" ]]; then
             cp ./config/anonymize.properties "${ANONYMIZE_FILE}"
+        fi
+        if [[ ! -f "${CONFIG_FILE}" ]]; then
+            cp ./config/config.properties "${CONFIG_FILE}"
         fi
         source "${HOME}/.bashrc"
         update_mkf_config
