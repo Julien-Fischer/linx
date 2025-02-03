@@ -214,60 +214,49 @@ pull_setup() {
 # @description Synchronize the local linx installation with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 linx() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            config)
-                if [[ -f "${CONFIG_FILE}" ]]; then
-                    vim "${CONFIG_FILE}"
-                    return 0
-                else
-                    err "Could not find linx config file at ${CONFIG_FILE}"
-                    return 1
-                fi
-                ;;
-            c|cron)
-                shift
-                handle_crons "$@"
-                return 0
-                ;;
-            b|backup)
-                shift
-                handle_backup "$@"
-                return 0
-                ;;
-            s|sync)
-                shift
-                handle_sync "$@"
-                return 0
-                ;;
-            -c|--commands)
-                shift
-                handle_commands "$@"
-                return 0
-                ;;
-            -d|--dir)
-                echo "${LINX_DIR}"
-                return 0
-                ;;
-            -h|--help)
-                get_help "linx"
-                return 0
-                ;;
-            -i|--info)
-                print_info
-                return 0
-                ;;
-            -v|--version)
-                echo "${VERSION}"
-                return 0
-                ;;
-            *)
-                err "Invalid parameter ${1}"
-                get_help "linx"
+    case $1 in
+        config)
+            if [[ -f "${CONFIG_FILE}" ]]; then
+                vim "${CONFIG_FILE}"
+            else
+                err "Could not find linx config file at ${CONFIG_FILE}"
                 return 1
-                ;;
-        esac
-    done
+            fi
+            ;;
+        c|cron)
+            shift
+            handle_crons "$@"
+            ;;
+        b|backup)
+            shift
+            handle_backup "$@"
+            ;;
+        s|sync)
+            shift
+            handle_sync "$@"
+            ;;
+        -c|--commands)
+            shift
+            handle_commands "$@"
+            ;;
+        -d|--dir)
+            echo "${LINX_DIR}"
+            ;;
+        -h|--help)
+            get_help "linx"
+            ;;
+        -i|--info)
+            print_info
+            ;;
+        -v|--version)
+            echo "${VERSION}"
+            ;;
+        *)
+            err "Invalid parameter ${1}"
+            get_help "linx"
+            return 1
+            ;;
+    esac
 }
 
 linx "$@"
