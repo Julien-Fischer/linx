@@ -885,13 +885,15 @@ glast() {
 gdump() {
     local filepath="${1}"
     if [[ -z "${filepath}" ]]; then
-        local prefix="$(timestamp -b)"
+        local prefix=
+        prefix="$(timestamp -b)"
         filepath="${prefix}_gdump.log"
     fi
-    echo "$(gcount -a)" > "${filepath}"
+    gcount -a > "${filepath}"
     echo "" >> "${filepath}"
-    echo "$(glot)" >> "${filepath}"
-    local directory_path="$(realpath "${filepath}")"
+    glot >> "${filepath}"
+    local directory_path=
+    directory_path="$(realpath "${filepath}")"
     echo -e "created: $(color "$(basename "${filepath}")" "${GREEN_BOLD}") in: $(color "${directory_path}" "${YELLOW_BOLD}")"
 }
 
