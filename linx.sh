@@ -1004,7 +1004,7 @@ alias gsp="git stash pop"
 alias gsa="git stash apply"
 
 gsl() {
-    git stash list --pretty=format:"%gd - %ci - %s" | sed 's/ [+-][0-9]\{4\}//g' && echo ''
+    git stash list --pretty=format:"%gd - %h - %ci - %s" | sed 's/ [+-][0-9]\{4\}//g' && echo ''
 }
 
 # @description (Git Stash Drop) Delete one or more Git stash entries.
