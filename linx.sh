@@ -1007,17 +1007,44 @@ gsl() {
     git stash list --pretty=format:"%gd - %ci - %s" | sed 's/ [+-][0-9]\{4\}//g' && echo ''
 }
 
-# @description drops a stash entry
+# @description (Git Stash Drop) Delete one or more Git stash entries.
 # @param $1 (optional) the zero-based index of the stash entry to drop, or the last one if no index is specified
+# @option -n COUNT    Specify the number of stash entries to delete (default: 1)
 # @example
-#   gsd
-#   gsd 1
-#   gsd 5
+#   gsd                 # Delete the latest stash entry
+#   gsd 2               # Delete the stash entry at index 2
+#   gsd -n 3            # Delete the 3 most recent stash entries
+#   gsd 1 -n 4          # Delete 4 stash entries, starting from index 1
+# /!\ Caution: this function permanently deletes stash entries. Use with care, as deleted stashes cannot be recovered.
 gsd() {
-    local index="${1:-0}"
-    if [[ -n $index ]]; then
-        git stash drop stash@\{"${index}"\}
+    local index=0
+    local count=1
+    if [[ -n "${1}" && "${1}" != -* ]]; then
+        index=$1
+        shift
     fi
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -n|--count)
+                count="${2}"
+                shift
+                ;;
+            *)
+                err "Invalid parameter ${1}"
+                echo "Usage: gsd [[index]] [[-n [quantity]]]"
+                return 1
+                ;;
+        esac
+        shift
+    done
+
+    for ((i=0; i<count; i++)); do
+        if ! git stash drop stash@\{$index\} 2>/dev/null; then
+            echo "No more stash entries to drop."
+            break
+        fi
+    done
 }
 
 # @description (git stash rename) renames the latest stash entry
