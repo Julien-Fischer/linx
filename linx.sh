@@ -1046,7 +1046,9 @@ gsr() {
 gsave() {
     local msg="${1:-latest state}"
     ! has_uncommitted_changes --quiet >/dev/null 2>&1 && err "Nothing to save; branch is clean" && return 1
-    if git add . >/dev/null 2>&1 && git stash -m "${msg}" --quiet >/dev/null 2>&1 && git stash apply --quiet >/dev/null 2>&1; then
+    if git add . >/dev/null 2>&1 && \
+       git stash -m "${msg}" --quiet >/dev/null 2>&1 && \
+       git stash apply --quiet >/dev/null 2>&1; then
         echo "Changes saved"
     else
         err "Could not stash changes"
