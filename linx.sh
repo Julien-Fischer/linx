@@ -1056,6 +1056,7 @@ alias gck="git checkout" # <branch_name>
 alias gckb="git checkout -b" # <branch_name>
 alias gcb="git checkout -b" # <branch_name>
 alias gb="git branch" # <branch_name>
+alias gba="git branch -a"
 alias gbd="git branch -D" # <branch_name>
 # /!\ Be cautious when using this command, as it permanently removes the target local branch, even if it is not fully merged.
 
