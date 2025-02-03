@@ -684,6 +684,7 @@ glo() {
 # @description Print commits where author name or email starts by the specified substring on the current local branch
 # @param $1 the substring that the committer name or email starts with
 # @flag -t, --today show only today's commits
+# @flag -m, --minimal hide commit count in output
 # @example
 #   glot                # print the local branch history
 #   glot --asc          # print the local branch history, sorted by ascending order
@@ -698,6 +699,7 @@ glot() {
     fi
     local ascending=false
     local today_only=false
+    local show_commit_count=true
     local LIGHT_GRAY='\033[0;37m'
 
     while [[ $# -gt 0 ]]; do
@@ -707,6 +709,9 @@ glot() {
                 ;;
             -t|--today)
                 today_only=true
+                ;;
+            -m|--minimal)
+                show_commit_count=false
                 ;;
             *)
                 err "Unsupported option ${1}"
@@ -740,6 +745,15 @@ glot() {
     if $ascending; then
         sort_option=""
     fi
+
+    local count=
+    count=$(wc -l < "${temp_file}")
+
+    if $show_commit_count; then
+        echo -e "$(color "$count" "${YELLOW_BOLD}") commits"
+        echo ""
+    fi
+
     sort -t'|' -k2 $sort_option "${temp_file}" |
     while IFS='|' read -r hash date name email message; do
         printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
@@ -814,7 +828,7 @@ gfirst() {
         esac
         shift
     done
-    glot | tail -$n
+    glot -m | tail -$n
 }
 
 # @description Find the latest n local commits in the current branch
@@ -863,7 +877,7 @@ glast() {
         esac
         shift
     done
-    glot | head -$n
+    glot -m | head -$n
 }
 
 # @description Dump the git log of the current local branch in a file
