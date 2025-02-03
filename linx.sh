@@ -753,7 +753,14 @@ glot() {
 # @description Git log (releases)
 # @param $1 (optional) asc to sort the log by ascending order
 glor() {
-    gl "$@" --no-walk --tags --pretty=format:"%C(yellow)%h%C(reset)|%C(red)%ad%C(reset)|%C(bold yellow)%d%C(reset)|%C(magenta)%an%C(reset)|%s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit | column -t -s '|'
+    local format="%C(yellow)%h%C(reset)|%C(red)%ad%C(reset)|%C(bold yellow)%d%C(reset)|%C(magenta)%an%C(reset)|%s"
+    gl "$@" \
+      --no-walk \
+      --tags \
+      --pretty=format:"${format}" \
+      --date=format:"%Y-%m-%d %H:%M" \
+      --abbrev-commit \
+      | column -t -s '|'
 }
 
 # @description Git log (tree)
