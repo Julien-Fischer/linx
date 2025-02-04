@@ -53,7 +53,7 @@ copy_file() {
         return 1
     fi
     cp "${source}" "${target}"
-    ! $quiet && echo "Copied [file] ${source} at ${target}"
+    ! $quiet && echo -e "Copied $(color [file] "${YELLOW}") $(color "${source}") to $(color "${target}" "${GREEN_BOLD}")"
     return 0
 }
 
@@ -62,7 +62,7 @@ copy_dir() {
         return 1
     fi
     rsync "${source}/" "${target}" -ah --info=progress2 --partial
-    ! $quiet && echo "Copied [dir] ${source} at ${target}"
+    ! $quiet && echo -e "Copied $(color [dir] "${YELLOW}") $(color "${source}") to $(color "${target}" "${GREEN_BOLD}")"
 }
 
 cpv() {
