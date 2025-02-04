@@ -2,6 +2,18 @@
 # See the LICENSE file in the project root for more information:
 # https://github.com/Julien-Fischer/linx/blob/master/LICENSE
 
+##############################################################
+# Helper
+##############################################################
+
+_list_tag_names() {
+    git for-each-ref --sort=creatordate --format='%(refname:short)' refs/tags | tr '\n' ' ' | sed 's/ $//'
+}
+
+##############################################################
+# Autocomplete
+##############################################################
+
 _linx_autocomplete() {
     local cur prev words cword
     _init_completion || return
@@ -38,5 +50,27 @@ _timestamp_autocomplete() {
     COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
 }
 
+_gtag_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    if [[ $cword -eq 1 ]]; then
+        local verbs="create delete"
+        local opts="--help"
+        COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
+    elif [[ ${words[1]} == "create" && $cword -eq 2 ]]; then
+        if [[ ! ${words[*]} =~ --* ]]; then
+            local opts="$(_list_tag_names) --help"
+            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+        fi
+    elif [[ ${words[1]} == "delete" && $cword -eq 2 ]]; then
+        if [[ ! ${words[*]} =~ --* ]]; then
+            local opts="$(_list_tag_names) --help"
+            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+        fi
+    fi
+}
+
+complete -F _gtag_autocomplete gtag
 complete -F _timestamp_autocomplete timestamp
 complete -F _linx_autocomplete linx
