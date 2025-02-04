@@ -29,4 +29,14 @@ _linx_autocomplete() {
     fi
 }
 
+_timestamp_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    local opts="--iso --basic --readable --separators --help"
+
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+}
+
+complete -F _timestamp_autocomplete timestamp
 complete -F _linx_autocomplete linx
