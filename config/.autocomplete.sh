@@ -103,6 +103,16 @@ _port_autocomplete() {
     COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
 }
 
+_cpv_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    local opts="--quiet --help"
+
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+}
+
+complete -F _cpv_autocomplete cpv
 complete -F _port_autocomplete port
 complete -F _mkf_autocomplete mkf
 complete -F _gtag_autocomplete gtag
