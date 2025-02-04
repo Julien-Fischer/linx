@@ -151,6 +151,31 @@ _backup_autocomplete() {
     COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
 }
 
+_term_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        p|profiles)
+            local values="--get --set"
+            COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+            return
+            ;;
+        l|layouts)
+            local values="--get --set"
+            COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+            return
+            ;;
+    esac
+
+    if [[ $cword -eq 1 ]]; then
+        local verbs="profiles layouts"
+        local opts="--help"
+        COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
+    fi
+}
+
+complete -F _term_autocomplete term
 complete -F _backup_autocomplete backup
 complete -F _rename_autocomplete rename
 complete -F _cpv_autocomplete cpv
