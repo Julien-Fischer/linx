@@ -112,6 +112,35 @@ _cpv_autocomplete() {
     COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
 }
 
+_rename_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    case $prev in
+        --mode)
+            local values="dry-run execute interactive"
+            COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+            return
+            ;;
+        --as)
+            local values="c m t i d"
+            COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+            return
+            ;;
+        --sort)
+            local values="c m n t s"
+            COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+            return
+            ;;
+    esac
+
+    if [[ $cword -eq 1 ]]; then
+        local opts="--as --sort --ignore-extension --recursive --mode --help"
+        COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    fi
+}
+
+complete -F _rename_autocomplete rename
 complete -F _cpv_autocomplete cpv
 complete -F _port_autocomplete port
 complete -F _mkf_autocomplete mkf
