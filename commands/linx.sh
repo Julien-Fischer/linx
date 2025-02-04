@@ -210,18 +210,24 @@ pull_setup() {
     fi
 }
 
+handle_config() {
+  if [[ -f "${CONFIG_FILE}" ]]; then
+      vim "${CONFIG_FILE}"
+  else
+      err "Could not find linx config file at ${CONFIG_FILE}"
+      echo "Generating a new one..."
+      echo '# linx configuration file' > "${CONFIG_FILE}"
+      vim "${CONFIG_FILE}"
+  fi
+}
+
 
 # @description Synchronize the local linx installation with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 linx() {
     case $1 in
         config)
-            if [[ -f "${CONFIG_FILE}" ]]; then
-                vim "${CONFIG_FILE}"
-            else
-                err "Could not find linx config file at ${CONFIG_FILE}"
-                return 1
-            fi
+            handle_config
             ;;
         c|cron)
             shift
