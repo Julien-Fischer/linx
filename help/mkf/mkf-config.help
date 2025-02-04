@@ -18,7 +18,8 @@ Options:
 
 Examples:
 
-  mkf config                              # List the available settings
+  mkf config                              # Open mkf configuration file in vim
+  mkf config --list                       # List the available settings
   mkf config read timezone                # Read the value of the 'timezone' setting
   mkf config --path                       # Print the path where the settings file is located, generally ${LINX_DIR}
   mkf config --help                       # Display this help message and exit

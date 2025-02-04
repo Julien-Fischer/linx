@@ -304,7 +304,7 @@ handle_template() {
 
 handle_settings() {
     if [[ $# -eq 0 ]]; then
-        read_settings
+        vim "${MKF_CONFIG_FILE}"
         return 0
     fi
     while [[ $# -gt 0 ]]; do
