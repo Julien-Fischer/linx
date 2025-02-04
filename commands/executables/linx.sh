@@ -203,9 +203,9 @@ read_crons() {
 
 pull_setup() {
     if install_core; then
-        echo "${PROJECT} successfully synced"
+        echo -e "$(color "${PROJECT}: successfully synced" "${GREEN_BOLD}")"
     else
-        echo "${PROJECT}: failed to sync"
+        echo -e "$(color "${PROJECT}: failed to sync" "${RED_BOLD}")"
         return 1
     fi
 }
