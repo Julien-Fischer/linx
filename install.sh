@@ -63,7 +63,6 @@ export MAGENTA_BOLD='\033[1;35m'
 export CYAN_BOLD='\033[1;36m'
 export NC='\033[0m'
 
-
 ##############################################################
 # Parameters
 ##############################################################
@@ -654,6 +653,7 @@ install_commands() {
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
     done
+    cp config/.autocomplete.sh "${LINX_DIR}"
 }
 
 update_mkf_config() {
@@ -742,7 +742,6 @@ setup_vim() {
 # @description Sync with the latest version of functions/aliases and Terminator profiles from the remote
 # @param $1 (optional) 0 if first install; 1 otherwise
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
-#
 install_linx() {
     while [[ $# -gt 0 ]]; do
         case $1 in

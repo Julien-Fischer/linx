@@ -5,6 +5,7 @@
 # Source linx
 if [ -f "${HOME}"/linx/.linx_lib.sh ]; then
     source "${HOME}"/linx/.linx_lib.sh
+    source "${HOME}"/linx/.autocomplete.sh
 fi
 
 ##############################################################
