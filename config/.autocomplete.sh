@@ -6,7 +6,7 @@ _linx_autocomplete() {
     local cur prev words cword
     _init_completion || return
 
-    local verbs="config cron backup sync"
+    local verbs="config cron backup sync --help"
 
     if [[ $cword -eq 1 ]]; then
         local opts="--commands --dir --info --version --help"
