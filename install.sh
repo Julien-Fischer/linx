@@ -522,8 +522,10 @@ install_dependency() {
 }
 
 install_command() {
-    local command_name=$(basename "${1}" .sh)
-    local filepath="commands/${command_name}.sh"
+    local filename="${1}"
+    local command_name filepath
+    command_name=$(basename "${filename}" .sh)
+    filepath="commands/executables/${command_name}.sh"
     chmod +x "${filepath}"
     sudo cp "${filepath}" "${COMMANDS_DIR}"/"${command_name}"
     echo "${command_name}" >> "${LINX_INSTALLED_COMMANDS}"
@@ -649,11 +651,11 @@ is_git_repo() {
 install_commands() {
     sudo mkdir -p "${COMMANDS_DIR}"
     printf '' > "${LINX_INSTALLED_COMMANDS}"
-    mapfile -t COMMANDS < <(ls -1 ./commands)
+    mapfile -t COMMANDS < <(ls -1 ./commands/executables)
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
     done
-    cp config/.autocomplete.sh "${LINX_DIR}"
+    cp commands/.autocomplete.sh "${LINX_DIR}"
 }
 
 update_mkf_config() {
