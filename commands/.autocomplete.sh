@@ -18,26 +18,28 @@ _linx_autocomplete() {
     local cur prev words cword
     _init_completion || return
 
-    local verbs="config cron backup sync --help"
-
-    if [[ $cword -eq 1 ]]; then
-        local opts="--commands --dir --info --version --help"
-        COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
-    elif [[ ${words[1]} == "cron" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --clear|--delete|--help ]]; then
+    case $prev in
+        cron)
             local opts="--clear --delete --help"
             COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
-        fi
-    elif [[ ${words[1]} == "sync" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --backup|--help ]]; then
+            return
+            ;;
+        sync)
             local opts="--backup --help"
             COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
-        fi
-    elif [[ ${words[1]} == "backup" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --help ]]; then
+            return
+            ;;
+        backup)
             local opts="--help"
             COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
-        fi
+            return
+            ;;
+    esac
+
+    if [[ $cword -eq 1 ]]; then
+        local verbs="config cron backup sync --help"
+        local opts="--commands --dir --info --version --help"
+        COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
     fi
 }
 
