@@ -94,6 +94,16 @@ _mkf_autocomplete() {
     fi
 }
 
+_port_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    local opts="kill --pid --pname --port --help"
+
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+}
+
+complete -F _port_autocomplete port
 complete -F _mkf_autocomplete mkf
 complete -F _gtag_autocomplete gtag
 complete -F _timestamp_autocomplete timestamp
