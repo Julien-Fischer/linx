@@ -54,20 +54,23 @@ _gtag_autocomplete() {
     local cur prev words cword
     _init_completion || return
 
+    case $prev in
+        create)
+            local opts="$(_list_tag_names) --help"
+            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+            return
+            ;;
+        delete)
+            local opts="$(_list_tag_names) --help"
+            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+            return
+            ;;
+    esac
+
     if [[ $cword -eq 1 ]]; then
         local verbs="create delete"
         local opts="--help"
         COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
-    elif [[ ${words[1]} == "create" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --* ]]; then
-            local opts="$(_list_tag_names) --help"
-            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
-        fi
-    elif [[ ${words[1]} == "delete" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --* ]]; then
-            local opts="$(_list_tag_names) --help"
-            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
-        fi
     fi
 }
 
