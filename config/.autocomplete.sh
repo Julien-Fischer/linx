@@ -140,6 +140,18 @@ _rename_autocomplete() {
     fi
 }
 
+_backup_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    local a="--destination --basic --reverse --time --only-compact --no-extension"
+    local b="--no-name --cron --verbose --erase --instantly --quiet --help"
+    local opts="${a} ${b}"
+
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+}
+
+complete -F _backup_autocomplete backup
 complete -F _rename_autocomplete rename
 complete -F _cpv_autocomplete cpv
 complete -F _port_autocomplete port
