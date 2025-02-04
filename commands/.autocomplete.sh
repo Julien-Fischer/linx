@@ -10,6 +10,11 @@ _list_tag_names() {
     git for-each-ref --sort=creatordate --format='%(refname:short)' refs/tags | tr '\n' ' ' | sed 's/ $//'
 }
 
+_linx_autocomplete_tags() {
+    local opts="$(_list_tag_names) --help"
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+}
+
 ##############################################################
 # Autocomplete
 ##############################################################
@@ -58,13 +63,11 @@ _gtag_autocomplete() {
 
     case $prev in
         create)
-            local opts="$(_list_tag_names) --help"
-            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+            _linx_autocomplete_tags
             return
             ;;
         delete)
-            local opts="$(_list_tag_names) --help"
-            COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+            _linx_autocomplete_tags
             return
             ;;
     esac
