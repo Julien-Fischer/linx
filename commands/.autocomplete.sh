@@ -157,6 +157,8 @@ _backup_autocomplete() {
 
     if [[ $cword -eq 1 ]]; then
         COMPREPLY=( $(compgen -f -- "$cur") )
+    elif [[ "${prev}" =~ "--destination" ]]; then
+        COMPREPLY=( $(compgen -d -- "$cur") )
     else
         local a="--destination --basic --reverse --time --only-compact --no-extension"
         local b="--no-name --cron --verbose --erase --instantly --quiet --help"
@@ -165,7 +167,6 @@ _backup_autocomplete() {
         COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
     fi
 }
-complete -F _backup_autocomplete backup
 
 _term_autocomplete() {
     local cur prev words cword
