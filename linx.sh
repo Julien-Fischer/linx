@@ -1370,6 +1370,24 @@ EOF
     echo -e "Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
+##############################################################
+# Autocomplete
+##############################################################
+
+_autocomplete_git_branches_all() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
+    COMPREPLY=($(compgen -W "$branches" -- "$cur"))
+}
+
+_autocomplete_git_branches_local() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=($(compgen -W "$(git branch --format='%(refname:short)')" -- "$cur"))
+}
+
+for cmd in gck gckb gbd gb gba; do
+    complete -F _autocomplete_git_branches_all "${cmd}"
+done
 
 ##############################################################
 # Custom ENV variables
