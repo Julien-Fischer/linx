@@ -900,7 +900,7 @@ gdump() {
     local config_filepath=
     local dirname=
 
-    user_preferred_path=$(get_property "${CONFIG_FILE}" "git.log.dump.directory")
+    user_preferred_path=$(get_property "${CONFIG_FILE}" "git.log.dump.directory" -q)
     config_filepath=$(expand_path "${user_preferred_path}")
     dirname=$(basename "$(pwd)")
 
