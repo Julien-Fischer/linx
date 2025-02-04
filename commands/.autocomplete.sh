@@ -75,22 +75,25 @@ _mkf_autocomplete() {
     local cur prev words cword
     _init_completion || return
 
+    case $prev in
+        config)
+            local verbs="read put"
+            local opts="--list --path --help"
+            COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
+            return
+            ;;
+        template)
+            local verbs="read put rm"
+            local opts="--list --path --help"
+            COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
+            return
+            ;;
+    esac
+
     if [[ $cword -eq 1 ]]; then
         local verbs="config template"
         local opts="--basic --content --extension --name --open --time --template --help"
         COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
-    elif [[ ${words[1]} == "config" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --* ]]; then
-            local verbs="read put"
-            local opts="--list --path --help"
-            COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
-        fi
-    elif [[ ${words[1]} == "template" && $cword -eq 2 ]]; then
-        if [[ ! ${words[*]} =~ --* ]]; then
-            local verbs="read put rm"
-            local opts="--list --path --help"
-            COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
-        fi
     fi
 }
 
