@@ -145,7 +145,7 @@ anonymize() {
     case $1 in
         c|config)
             vim "${ANONYMIZE_FILE}"
-            return 0
+            return
             ;;
         -c|--case-sensitive)
             case_sensitive=true
@@ -158,6 +158,7 @@ anonymize() {
             ;;
         -h|--help)
             echo "${USAGE}"
+            return
             ;;
         *)
             echo "${USAGE}"
