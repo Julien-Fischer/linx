@@ -688,18 +688,36 @@ glo() {
     gl "$@" --oneline
 }
 
-# @description Print commits where author name or email starts by the specified substring
-# @param $1 the substring that the committer name or email starts with
-# @flag -t, --today show only today's commits
-# @flag -m, --minimal hide commit count in output
-# @flag -b, --branch the name of the branch to print the log for
-# @example
-#   glot                # print the local branch history
-#   glot --asc          # print the local branch history, sorted by ascending order
-#   glot julien         # print the local branch history, filter by committer name or email starting with
-#   glot julien --asc   # filter and sort output by ascending order
-#   glot julien --today # filter output by committer name or email, showing only today's commits
 glot() {
+    read -r -d '' help_message << EOF
+Display the commit history in a human-readable format, with optional filtering and sorting capabilities.
+It allows you to filter the log based on the author's name or email, with additional options to limit
+the output to today's commits, hide commit counts, and specify a particular branch.
+
+Positional parameters:
+
+    \$1: (Optional) A string to filter commits by author name or email. Only commits where the author's name
+        or email starts with this substring will be displayed.
+
+Options:
+
+    -b, --branch <name>: Specify the name of the branch to print the log for.
+
+Flags:
+
+    -t, --today: Show only commits made today.
+    -m, --minimal: Hide commit count in the output.
+    --asc: Sort the output in ascending order (oldest commits first).
+
+Examples:
+
+    glot                    # print the local branch history
+    glot --asc              # print the local branch history, sorted by ascending order
+    glot julien             # print the local branch history, filter by committer name or email starting with
+    glot julien --asc       # filter and sort output by ascending order
+    glot julien --today     # filter output by committer name or email, showing only today's commits
+    glot -b branch_name -t  # print today's commits on the branch_name branch history
+EOF
     local substring=""
     if [[ "${1}" != -* ]]; then
         substring="${1}"
@@ -726,9 +744,14 @@ glot() {
                 branch_name="${2}"
                 shift
                 ;;
+            -h|--help)
+                echo "${help_message}"
+                return 0
+                ;;
             *)
                 err "Unsupported option ${1}"
-                echo "Usage: glot [substring] [[--asc]]"
+                echo "Usage: glot [substring] [[OPTIONS]]"
+                echo "${help_message}"
                 return 1
                 ;;
         esac
@@ -785,7 +808,7 @@ _glot_autocomplete() {
         local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
         COMPREPLY=($(compgen -W "$branches" -- "$cur"))
     else
-        local opts="--branch --asc --today --minimal"
+        local opts="--branch --asc --today --minimal --help"
         COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
     fi
 }
