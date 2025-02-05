@@ -136,7 +136,9 @@ clp() {
 # @option -s, --case-sensitive  use case-sensitive matching
 # @option -m, --message  specify an input string as the source to anonymize
 # @option -f, --file  specify the path of a file as the source to anonymize
+# @option -h, --help  print help and exit
 anonymize() {
+    local USAGE="Usage: anonymize [[c,config] [[-s,--case-sensitive] [-m|--message] [-f|--file]] [[--help]]]"
     local case_sensitive=false
     local text=
 
@@ -154,8 +156,11 @@ anonymize() {
         -f|--file)
             text="$(cat "${2}")"
             ;;
+        -h|--help)
+            echo "${USAGE}"
+            ;;
         *)
-            echo "Usage: anonymize [[c,config]] [[-s,--case-sensitive] [-m|--message] [-f|--file]]"
+            echo "${USAGE}"
             return 1
             ;;
     esac
@@ -1287,9 +1292,24 @@ EOF
 # Autocomplete
 ##############################################################
 
+_complete_files() {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local files=$(compgen -f -- "$cur")
+    COMPREPLY=( $(echo "$files" | while read -r f; do
+        [[ -f "$f" ]] && echo "$f"
+    done) )
+}
+
 _autocomplete_anonymize() {
+    local cur prev words cword
     _init_completion || return
-    local opts="config --case-sensitive --file --message"
+    case $prev in
+        --file)
+            _complete_files
+            return
+            ;;
+    esac
+    local opts="config --case-sensitive --file --message --help"
     COMPREPLY=($(compgen -W "$opts" -- "$cur"))
 }
 
