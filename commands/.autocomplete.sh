@@ -18,20 +18,28 @@ _linx_autocomplete_tags() {
 _git_contributors_matching() {
   local subject="${1}"
   git log --format='%aN <%aE>' | awk -F'[<>]' -v substring="${subject}" '
-BEGIN { IGNORECASE = 1 }
+BEGIN {
+    IGNORECASE = 1
+    substring_lower = tolower(substring)
+}
 {
-    name = $1; email = $2;
-    if (tolower(name) ~ "^" tolower(substring) || tolower(email) ~ "^" tolower(substring)) {
-        gsub(/^[[:space:]]+|[[:space:]]+$/, "", name);  # Trim whitespace
-        print name;
-    } else if (tolower(name) ~ "^" tolower(substring)) {
-        gsub(/^[[:space:]]+|[[:space:]]+$/, "", name);  # Trim whitespace
-        print name;
-    } else if (tolower(email) ~ "^" tolower(substring)) {
-        print email;
+    name = $1
+    email = $2
+    name_lower = tolower(name)
+    email_lower = tolower(email)
+
+    if (name_lower ~ "^" substring_lower || email_lower ~ "^" substring_lower) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+        print name
+    } else if (name_lower ~ "^" substring_lower) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+        print name
+    } else if (email_lower ~ "^" substring_lower) {
+        print email
     }
 }' | sort -u
 }
+
 
 _autocomplete_contributors() {
     local cur="${COMP_WORDS[COMP_CWORD]}"
