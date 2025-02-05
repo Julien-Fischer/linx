@@ -688,10 +688,11 @@ glo() {
     gl "$@" --oneline
 }
 
-# @description Print commits where author name or email starts by the specified substring on the current local branch
+# @description Print commits where author name or email starts by the specified substring
 # @param $1 the substring that the committer name or email starts with
 # @flag -t, --today show only today's commits
 # @flag -m, --minimal hide commit count in output
+# @flag -b, --branch the name of the branch to print the log for
 # @example
 #   glot                # print the local branch history
 #   glot --asc          # print the local branch history, sorted by ascending order
@@ -707,7 +708,8 @@ glot() {
     local ascending=false
     local today_only=false
     local show_commit_count=true
-    local LIGHT_GRAY='\033[0;37m'
+    local branch_name=
+    branch_name=$(git branch --show-current)
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -719,6 +721,10 @@ glot() {
                 ;;
             -m|--minimal)
                 show_commit_count=false
+                ;;
+            -b|--branch)
+                branch_name="${2}"
+                shift
                 ;;
             *)
                 err "Unsupported option ${1}"
@@ -740,7 +746,7 @@ glot() {
         params+=(--since "00:00:00")
     fi
 
-    git log "${params[@]}" |
+    git log "${branch_name}" "${params[@]}" |
     sed '$a\' |
     while IFS='|' read -r hash date name email message; do
         if [[ "${name,,}" == "${substring,,}"* ]] || [[ "${email,,}" == "${substring,,}"* ]]; then
@@ -757,10 +763,11 @@ glot() {
     count=$(wc -l < "${temp_file}")
 
     if $show_commit_count; then
-        echo -e "$(color "$count" "${YELLOW_BOLD}") commits"
+        echo -e "$(color "$count" "${YELLOW_BOLD}") commits | ${branch_name}"
         echo ""
     fi
 
+    local LIGHT_GRAY='\033[0;37m'
     sort -t'|' -k2 $sort_option "${temp_file}" |
     while IFS='|' read -r hash date name email message; do
         printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
@@ -769,6 +776,21 @@ glot() {
 
     rm "${temp_file}"
 }
+
+_glot_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    if [[ "${prev}" == --branch || "${prev}" == -b ]]; then
+        local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
+        COMPREPLY=($(compgen -W "$branches" -- "$cur"))
+    else
+        local opts="--branch --asc --today --minimal"
+        COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    fi
+}
+
+complete -F _glot_autocomplete glot
 
 
 # @description Git log (releases)
