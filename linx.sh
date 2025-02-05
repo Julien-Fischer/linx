@@ -742,6 +742,10 @@ EOF
                 ;;
             -b|--branch)
                 branch_name="${2}"
+                if [[ -z "${branch_name}" ]]; then
+                    err "--branch can not be blank"
+                    return 1
+                fi
                 shift
                 ;;
             -h|--help)
