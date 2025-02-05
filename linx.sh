@@ -140,30 +140,25 @@ anonymize() {
     local case_sensitive=false
     local text=
 
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -e|--edit)
-                vim "${ANONYMIZE_FILE}"
-                return 0
-                ;;
-            -c|--case-sensitive)
-                case_sensitive=true
-                ;;
-            -m|--message)
-                text="${2}"
-                shift
-                ;;
-            -f|--file)
-                text="$(cat "${2}")"
-                shift
-                ;;
-            *)
-                echo "Usage: anonymize [[-e,--edit] [-s,--case-sensitive] [-m|--message] [-f|--file]]"
-                return 1
-                ;;
-        esac
-        shift
-    done
+    case $1 in
+        c|config)
+            vim "${ANONYMIZE_FILE}"
+            return 0
+            ;;
+        -c|--case-sensitive)
+            case_sensitive=true
+            ;;
+        -m|--message)
+            text="${2}"
+            ;;
+        -f|--file)
+            text="$(cat "${2}")"
+            ;;
+        *)
+            echo "Usage: anonymize [[c,config]] [[-s,--case-sensitive] [-m|--message] [-f|--file]]"
+            return 1
+            ;;
+    esac
 
     if [[ -z "${text}" ]]; then
         text="$(xclip -selection clipboard -o)"
@@ -1292,6 +1287,12 @@ EOF
 # Autocomplete
 ##############################################################
 
+_autocomplete_anonymize() {
+    _init_completion || return
+    local opts="config --case-sensitive --file --message"
+    COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+}
+
 _autocomplete_git_branches_all() {
     local cur=${COMP_WORDS[COMP_CWORD]}
     local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
@@ -1306,6 +1307,8 @@ _autocomplete_git_branches_local() {
 for cmd in gck gckb gbd gb gba; do
     complete -F _autocomplete_git_branches_all "${cmd}"
 done
+
+complete -F _autocomplete_anonymize anonymize
 
 ##############################################################
 # Custom ENV variables
