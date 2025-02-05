@@ -161,6 +161,7 @@ anonymize() {
             return
             ;;
         *)
+            err "Invalid parameter: ${1}"
             echo "${USAGE}"
             return 1
             ;;
