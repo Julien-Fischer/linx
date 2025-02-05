@@ -1,22 +1,23 @@
 Display the commit history in a human-readable format, with optional filtering and sorting capabilities.
-It allows you to filter the log based on the author's name or email, with additional options to limit
-the output to today's commits, hide commit counts, and specify a particular branch.
+glot provides options to filter the log by branch name, and based on the author's name or email. It also
+lets you limit the output to today's commits, hide commit counts, and specify a particular branch.
 
 Positional parameters:
 
-    \$1: (Optional) A string to filter commits by author name or email. Only commits where the author's name
-        or email starts with this substring will be displayed.
+    (no options)             # Print the log of the current local branch, sorted by descending order
+    \$1                      # (Optional) A string to filter commits by author name or email. Only commits where
+                               the author's name or email starts with this substring will be displayed.
 
 Options:
 
-    -b, --branch <name>: Specify the name of the branch to print the log for.
-    -f, --filter <val>:  Filter the commits matching the specified username or email
+    -b, --branch <name>     # Specify the name of the branch to print the log for.
+    -f, --filter <val>      # Filter the commits matching the specified username or email
 
 Flags:
 
-    -t, --today: Show only commits made today.
-    -m, --minimal: Hide commit count in the output.
-    --asc: Sort the output in ascending order (oldest commits first).
+    -t, --today             # Show only commits made today.
+    -m, --minimal           # Hide commit count in the output.
+    --asc                   # Sort the output in ascending order (oldest commits first).
 
 Examples:
 
