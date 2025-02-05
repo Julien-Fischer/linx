@@ -15,6 +15,24 @@ _linx_autocomplete_tags() {
     COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
 }
 
+_git_contributors_matching() {
+  local subject="${1}"
+  git log --format='%aN <%aE>' | awk -F'[<>]' -v substring="${subject}" '
+BEGIN { IGNORECASE = 1 }
+{
+    name = $1; email = $2;
+    if (tolower(name) ~ "^" substring || tolower(email) ~ "^" substring) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", name);  # Trim whitespace
+        print name;
+    } else if (tolower(name) ~ "^" substring) {
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", name);  # Trim whitespace
+        print name;
+    } else if (tolower(email) ~ "^" substring) {
+        print email;
+    }
+}' | sort -u
+}
+
 ##############################################################
 # Autocomplete
 ##############################################################
@@ -192,6 +210,20 @@ _term_autocomplete() {
     fi
 }
 
+_glot_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    if [[ "${prev}" == --branch || "${prev}" == -b ]]; then
+        local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
+        COMPREPLY=($(compgen -W "$branches" -- "$cur"))
+    else
+        local opts="--branch --asc --today --minimal --help"
+        COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    fi
+}
+
+complete -F _glot_autocomplete glot
 complete -F _term_autocomplete term
 complete -F _backup_autocomplete backup
 complete -F _rename_autocomplete rename
