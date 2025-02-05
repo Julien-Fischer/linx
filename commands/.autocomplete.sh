@@ -33,6 +33,43 @@ BEGIN { IGNORECASE = 1 }
 }' | sort -u
 }
 
+_autocomplete_contributors() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local stripped_cur="${cur#\"}"
+    stripped_cur="${stripped_cur%\"}"
+
+    local values=()
+    mapfile -t values < <(_git_contributors_matching "${stripped_cur}")
+
+    if [[ ${#values[@]} -eq 0 ]]; then
+        COMPREPLY=()
+    else
+        local matches=()
+        local in_quotes=false
+        [[ "${cur:0:1}" == '"' ]] && in_quotes=true
+
+        for value in "${values[@]}"; do
+            if [[ "${value,,}" == "${stripped_cur,,}"* ]]; then
+                if $in_quotes; then
+                    matches+=("${value%\"}")
+                else
+                    matches+=("\"$value\"")
+                fi
+            fi
+        done
+
+        if [[ ${#matches[@]} -gt 0 ]]; then
+            COMPREPLY=("${matches[@]}")
+        else
+            COMPREPLY=("${values[@]}")
+        fi
+
+        if [[ ${#COMPREPLY[@]} -gt 1 ]]; then
+            compopt -o nospace
+        fi
+    fi
+}
+
 ##############################################################
 # Autocomplete
 ##############################################################
@@ -218,35 +255,7 @@ _glot_autocomplete() {
         local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
         COMPREPLY=($(compgen -W "$branches" -- "$cur"))
     elif [[ "${prev}" == --filter || "${prev}" == -f ]]; then
-        cur="${COMP_WORDS[COMP_CWORD]}"
-        local values=()
-        mapfile -t values < <(_git_contributors_matching "${cur}")
-
-        if [[ ${#values[@]} -eq 0 ]]; then
-            COMPREPLY=()
-        else
-            local matches=()
-            for value in "${values[@]}"; do
-                if [[ "${value,,}" == "${cur,,}"* ]]; then
-                    if [[ "$value" == *" "* ]]; then
-                        matches+=("\"$value\"")
-                    else
-                        matches+=("$value")
-                    fi
-                fi
-            done
-
-            if [[ ${#matches[@]} -gt 0 ]]; then
-                COMPREPLY=("${matches[@]}")
-            else
-                COMPREPLY=("${values[@]}")
-            fi
-
-            if [[ ${#COMPREPLY[@]} -gt 1 ]]; then
-                compopt -o nospace
-                COMPREPLY=("${COMPREPLY[@]/%/ }")
-            fi
-        fi
+        _autocomplete_contributors
     else
         local opts="--filter --branch --asc --today --minimal --help"
         COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
