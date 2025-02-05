@@ -10,6 +10,7 @@ Positional parameters:
 Options:
 
     -b, --branch <name>: Specify the name of the branch to print the log for.
+    -f, --filter <val>:  Filter the commits matching the specified username or email
 
 Flags:
 
@@ -25,3 +26,4 @@ Examples:
     glot julien --asc       # filter and sort output by ascending order
     glot julien --today     # filter output by committer name or email, showing only today's commits
     glot -b branch_name -t  # print today's commits on the branch_name branch history
+    glot -f substring       # filter commits associated to usernames or email addresses starting with "substring"

@@ -21,13 +21,13 @@ _git_contributors_matching() {
 BEGIN { IGNORECASE = 1 }
 {
     name = $1; email = $2;
-    if (tolower(name) ~ "^" substring || tolower(email) ~ "^" substring) {
+    if (tolower(name) ~ "^" tolower(substring) || tolower(email) ~ "^" tolower(substring)) {
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", name);  # Trim whitespace
         print name;
-    } else if (tolower(name) ~ "^" substring) {
+    } else if (tolower(name) ~ "^" tolower(substring)) {
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", name);  # Trim whitespace
         print name;
-    } else if (tolower(email) ~ "^" substring) {
+    } else if (tolower(email) ~ "^" tolower(substring)) {
         print email;
     }
 }' | sort -u
@@ -217,8 +217,38 @@ _glot_autocomplete() {
     if [[ "${prev}" == --branch || "${prev}" == -b ]]; then
         local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
         COMPREPLY=($(compgen -W "$branches" -- "$cur"))
+    elif [[ "${prev}" == --filter || "${prev}" == -f ]]; then
+        cur="${COMP_WORDS[COMP_CWORD]}"
+        local values=()
+        mapfile -t values < <(_git_contributors_matching "${cur}")
+
+        if [[ ${#values[@]} -eq 0 ]]; then
+            COMPREPLY=()
+        else
+            local matches=()
+            for value in "${values[@]}"; do
+                if [[ "${value,,}" == "${cur,,}"* ]]; then
+                    if [[ "$value" == *" "* ]]; then
+                        matches+=("\"$value\"")
+                    else
+                        matches+=("$value")
+                    fi
+                fi
+            done
+
+            if [[ ${#matches[@]} -gt 0 ]]; then
+                COMPREPLY=("${matches[@]}")
+            else
+                COMPREPLY=("${values[@]}")
+            fi
+
+            if [[ ${#COMPREPLY[@]} -gt 1 ]]; then
+                compopt -o nospace
+                COMPREPLY=("${COMPREPLY[@]/%/ }")
+            fi
+        fi
     else
-        local opts="--branch --asc --today --minimal --help"
+        local opts="--filter --branch --asc --today --minimal --help"
         COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
     fi
 }

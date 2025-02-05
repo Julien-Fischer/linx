@@ -32,6 +32,10 @@ glot() {
             -m|--minimal)
                 show_commit_count=false
                 ;;
+            -f|--filter)
+                substring="${2}"
+                shift
+                ;;
             -b|--branch)
                 branch_name="${2}"
                 if [[ -z "${branch_name}" ]]; then
@@ -46,7 +50,6 @@ glot() {
                 ;;
             *)
                 err "Unsupported option ${1}"
-                echo "Usage: glot [substring] [[OPTIONS]]"
                 get_help "glot"
                 return 1
                 ;;
