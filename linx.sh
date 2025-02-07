@@ -15,7 +15,7 @@ fi
 PROMPT_TO_BOTTOM=false
 if [[ -f "${CONFIG_FILE}" ]]; then
     linx_prompt_to_bottom=
-    linx_prompt_to_bottom=$(get_property "${CONFIG_FILE}" "prompt.to.bottom" -q)
+    linx_prompt_to_bottom=$(get_linx_property "prompt.to.bottom" -q)
     if [[ $? -eq 0 && "${linx_prompt_to_bottom}" == "true" ]]; then
         PROMPT_TO_BOTTOM=true
     fi
@@ -791,7 +791,7 @@ gdump() {
     local config_filepath=
     local dirname=
 
-    user_preferred_path=$(get_property "${CONFIG_FILE}" "git.log.dump.directory" -q)
+    user_preferred_path=$(get_linx_property "git.log.dump.directory" -q)
     config_filepath=$(expand_path "${user_preferred_path}")
     dirname=$(basename "$(pwd)")
 
