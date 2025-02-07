@@ -80,16 +80,6 @@ typeof() {
     fi
 }
 
-# @description Ask a question to perplexity.ai
-# @param $1 the question to be answered
-# @example
-#   ask "What time is it in London right now?"
-ask() {
-    local input="$1"
-    local query="${input// /%20}"
-    firefox "https://www.perplexity.ai/search?q=${query}" &
-}
-
 # @description Search keywords with Firefox default search engine
 # @param $1 the keywords to lookup
 # @example
@@ -142,56 +132,37 @@ anonymize() {
     local case_sensitive=false
     local text=
 
-    case $1 in
-        c|config)
-            vim "${ANONYMIZE_FILE}"
-            return
-            ;;
-        -c|--case-sensitive)
-            case_sensitive=true
-            ;;
-        -m|--message)
-            text="${2}"
-            ;;
-        -f|--file)
-            text="$(cat "${2}")"
-            ;;
-        -h|--help)
-            echo "${USAGE}"
-            return
-            ;;
-        *)
-            err "Invalid parameter: ${1}"
-            echo "${USAGE}"
-            return 1
-            ;;
-    esac
+    if [[ "$#" -gt 0 ]]; then
+        case $1 in
+            c|config)
+                vim "${ANONYMIZE_FILE}"
+                return
+                ;;
+            -m|--message)
+                text="${2}"
+                ;;
+            -f|--file)
+                text="$(cat "${2}")"
+                ;;
+            -h|--help)
+                echo "${USAGE}"
+                return
+                ;;
+            *)
+                err "Invalid parameter: ${1}"
+                echo "${USAGE}"
+                return 1
+                ;;
+        esac
+    fi
 
     if [[ -z "${text}" ]]; then
         text="$(xclip -selection clipboard -o)"
     fi
 
-    local properties_file="${ANONYMIZE_FILE}"
-    local tmp_file="${HOME}/clc_tmp_file"
-
-    [[ ! -f "${properties_file}" ]] && err "Properties file missing at ${properties_file}" && return 1
-
-    while IFS='=' read -r key value; do
-        if [[ ! "${key}" =~ ^[[:space:]]*# ]]; then
-            if $case_sensitive; then
-                text="${text//$key/$value}"
-            else
-                lower_key="${key,,}"
-                text="${text,,}"
-                text="${text//$lower_key/$value}"
-            fi
-        fi
-    done < "${properties_file}"
-
-    local tmp_file="${HOME}/clc_tmp_file"
-    echo "${text}" > "${tmp_file}"
-    xclip -selection clipboard < "${tmp_file}"
-    rm "${tmp_file}"
+    local anonymized
+    anonymized=$(anonymize_plain_text "${text}")
+    echo -e "${anonymized}" | xclip -selection clipboard
     echo "Text anonymized."
 }
 

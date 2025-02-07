@@ -128,7 +128,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 - Neofetch
 - simplescreenrecorder
 - rsync
-- mkf (Make File)
+- nodejs (when / if using the `ask` command)
 
 ## Requirements
 

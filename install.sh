@@ -42,6 +42,7 @@ TERMINATOR_THEMES_REPOSITORY="${GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
+LINX_SPINNER_PID=""
 
 ########################################################################
 # Constants
@@ -169,6 +170,17 @@ prompt() {
     local msg="${1}"
     read -p "${msg} " user_input
     echo "${user_input}"
+}
+
+prompt_multiline() {
+    echo "Please enter your input (type 'END' to finish):"
+    input=""
+    while IFS= read -r line; do
+        if [[ "${line}" == "END" ]]; then
+            break
+        fi
+        input="${input}${line}"$'\n'
+    done
 }
 
 # @description Prompt the user for approval
@@ -496,8 +508,64 @@ put_property() {
     mv "${temp_file}" "$file"
 }
 
+get_linx_property() {
+    local key="${1}"
+    get_property "${CONFIG_FILE}" "${key}"
+}
+
 get_help() {
     cat "${HELP_DIR}/${1}.help"
+}
+
+anonymize_plain_text() {
+    local input="${1}"
+    local case_sensitive=false
+    if [[ "${2}" == -c || "${2}" == --case-sensitive ]]; then
+        case_sensitive=true
+    fi
+
+    local properties_file="${ANONYMIZE_FILE}"
+    [[ ! -f "${properties_file}" ]] && err "Properties file missing at ${properties_file}" && return 1
+
+    while IFS='=' read -r key value; do
+        if [[ ! "${key}" =~ ^[[:space:]]*# ]]; then
+            if $case_sensitive; then
+                input="${input//$key/$value}"
+            else
+                lower_key="${key,,}"
+                input="${input,,}"
+                input="${input//$lower_key/$value}"
+            fi
+        fi
+    done < "${properties_file}"
+    echo "${input}"
+}
+
+linx_spinner() {
+    echo -n ' '; while true; do for X in '-' '/' '|' '\'; do echo -en "\b$X"; sleep 0.1; done; done
+}
+
+linx_spinner_start() {
+    linx_spinner &
+    LINX_SPINNER_PID=$!
+}
+
+linx_spinner_stop() {
+    if [ -n "${LINX_SPINNER_PID}" ]; then
+        kill "${LINX_SPINNER_PID}"
+        wait "${LINX_SPINNER_PID}" 2>/dev/null
+        LINX_SPINNER_PID=""
+        echo -en "\b \b"
+    fi
+}
+
+require_sudo() {
+    local action="${1}"
+    echo "This will ${action}"
+    if ! sudo -v; then
+        err "This action requires sudo privileges. Please provide valid credentials."
+        exit 1
+    fi
 }
 
 request_dir() {
@@ -651,11 +719,12 @@ is_git_repo() {
 install_commands() {
     sudo mkdir -p "${COMMANDS_DIR}"
     printf '' > "${LINX_INSTALLED_COMMANDS}"
-    mapfile -t COMMANDS < <(ls -1 ./commands/executables)
+    mapfile -t COMMANDS < <(find ./commands/executables -maxdepth 1 -type f -printf "%f\n")
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
     done
-    cp commands/.autocomplete.sh "${LINX_DIR}"
+    cp "commands/.autocomplete.sh" "${LINX_DIR}"
+    sudo cp -rf "commands/executables/ask.server" "${COMMANDS_DIR}"
 }
 
 update_mkf_config() {
@@ -730,6 +799,8 @@ install_dependencies() {
         install_dependency zip 'as a file compression utility'
         install_dependency simplescreenrecorder 'as a screen recorder'
         install_dependency rsync 'for copying / transferring files'
+        install_dependency nodejs 'for using ChatGPT in your terminal'
+        install_dependency npm 'for using ChatGPT in your terminal'
     fi
 }
 

@@ -1,0 +1,24 @@
+Usage: ask [PROMPT] [OPTIONS]
+
+Send a prompt to an AI provider.
+Supported providers: OpenAI, Perplexity
+
+Positional parameters
+
+  $1 prompt             (Optional) The question or prompt to be answered by the AI provider
+
+Options
+
+  -p, --provider      Specify a model provider. Supports: gpt, perplexity
+  -r, --raw           Do not anonymize input
+  -x, --debug         Start the embedded node server in debug mode
+  -h, --help          Print a help message and exit
+
+Examples
+
+  ask                                       # Prompt the user for multiline input
+  ask "What time is it?"                    # Send "What time is it?" to GPT-4
+  ask "What time is it?" -p perplexity      # Send "What time is it?" to Perplexity
+  ask "What time is it?" -p perplexity -x   # Send "What time is it?" to Perplexity in debug mode
+  ask -p perplexity -r -x                   # Prompt the user for multiline input and send it to Perplexity in debug mode
+  ask -h                                    # Print this help message and exit
