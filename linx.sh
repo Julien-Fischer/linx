@@ -920,6 +920,14 @@ gedit() {
     grs && gapf "${msg}"
 }
 
+# @description (Git Cherry Pick)
+# @params a list of commit hashes
+# @example
+#   gcp f42289b beac2af 57f4547
+gcp() {
+    git cherry-pick "$@"
+}
+
 # @description Stashes all changes
 # @param $1 (optional) an optional message
 # @example
