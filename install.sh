@@ -173,7 +173,8 @@ prompt() {
 }
 
 prompt_multiline() {
-    echo "Please enter your input (type 'END' to finish):"
+    local input_type="${1:-'your input'}"
+    echo "Please enter ${input_type} (type 'END' to finish):"
     input=""
     while IFS= read -r line; do
         if [[ "${line}" == "END" ]]; then
@@ -509,8 +510,13 @@ put_property() {
 }
 
 get_linx_property() {
+    get_property "${CONFIG_FILE}" "$@"
+}
+
+put_linx_property() {
     local key="${1}"
-    get_property "${CONFIG_FILE}" "${key}"
+    local value="${2}"
+    put_property "${CONFIG_FILE}" "${key}" "${value}"
 }
 
 get_help() {

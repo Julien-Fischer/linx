@@ -28,11 +28,21 @@ init_server() {
     cd "${SERVER_DIR}" || return 1
     echo "Adding API key to local server..."
     local api_key
-    api_key="$(get_linx_property "${GPT_API_PROPERTY_KEY}")"
+    api_key="$(get_linx_property "${GPT_API_PROPERTY_KEY}" -q)"
+
     if [[ -z "${api_key}" ]]; then
-        err "${GPT_API_PROPERTY_KEY} is not defined in ${CONFIG_FILE}"
+        echo "${GPT_API_PROPERTY_KEY} is not defined in ${CONFIG_FILE}"
+        local input
+        prompt_multiline "your OpenAI API key"
+        api_key="${input}"
+        put_linx_property "${GPT_API_PROPERTY_KEY}" "${api_key}"
+    fi
+
+    if [[ -z "${api_key}" ]]; then
+        err "ask requires a valid API key to connect to OpenAI API."
         return 1
     fi
+
     local tmp_file="${LINX_DIR}/.env"
     echo "OPENAI_API_KEY=\"${api_key}\"" > "${tmp_file}"
     if ! sudo mv "${tmp_file}" "${SERVER_DIR}/.env"; then
