@@ -855,6 +855,7 @@ install_linx() {
     local goal=$(get_goal $linx_already_installed)
     if [[ $success -eq 0 ]]; then
         echo "${PROJECT} was ${goal} successfully."
+        echo "Current version: $(linx -v)"
     else
         echo "Failed to install ${PROJECT}"
         return 1
