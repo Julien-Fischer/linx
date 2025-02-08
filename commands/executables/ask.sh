@@ -115,8 +115,7 @@ is_server_running() {
 get_current_log_path() {
     local today dir current_file
     today=$(date +%Y-%m-%d)
-    dir_template=$(get_linx_property "gpt.logs.directory")
-    dir=$(expand_path "${dir_template}")
+    dir=$(get_linx_property "gpt.logs.directory")
     echo "${dir}/${today}.log"
 }
 

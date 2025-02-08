@@ -787,12 +787,9 @@ gdump() {
     fi
 
     local filepath="${1}"
-    local user_preferred_path=
-    local config_filepath=
-    local dirname=
+    local config_filepath dirname directory_path
 
-    user_preferred_path=$(get_linx_property "git.log.dump.directory" -q)
-    config_filepath=$(expand_path "${user_preferred_path}")
+    config_filepath=$(get_linx_property "git.log.dump.directory" -q)
     dirname=$(basename "$(pwd)")
 
     if [[ -z "${filepath}" ]]; then
@@ -811,7 +808,6 @@ gdump() {
     echo "" >> "${filepath}"
     glot >> "${filepath}"
 
-    local directory_path=
     directory_path="$(realpath "${filepath}")"
     echo -e "created: $(color "$(basename "${filepath}")" "${GREEN_BOLD}") in: $(color "${directory_path}" "${YELLOW_BOLD}")"
 }
