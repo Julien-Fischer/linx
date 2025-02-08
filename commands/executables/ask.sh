@@ -80,7 +80,6 @@ start_server() {
         npm start "${SERVER_ENTRYPOINT}" &> /dev/null &
     fi
     local pid=$!
-    $debug && disown
     linx_spinner_stop
     echo "done."
 
