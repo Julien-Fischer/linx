@@ -27,12 +27,11 @@ init_server() {
     sudo mkdir -p "${SERVER_DIR}"
     cd "${SERVER_DIR}" || return 1
     echo "Adding API key to local server..."
-    local api_key
+    local api_key input
     api_key="$(get_linx_property "${GPT_API_PROPERTY_KEY}" -q)"
 
     if [[ -z "${api_key}" ]]; then
         echo "${GPT_API_PROPERTY_KEY} is not defined in ${CONFIG_FILE}"
-        local input
         prompt_multiline "your OpenAI API key"
         api_key="${input}"
         put_linx_property "${GPT_API_PROPERTY_KEY}" "${api_key}"
@@ -129,15 +128,13 @@ rotate_log_file() {
 http_post() {
     local url="${1}"
     local payload="${2}"
-    local output_file
+    local now response answer json output_file
     output_file="$(get_current_log_path)"
-    local now response answer
     now=$(timestamp)
 
     echo "[${now}] [question] ${payload}"
     echo "[${now}] [question] ${payload}" >> "${output_file}"
 
-    local json
     json=$(jq -R -s . <<< "${payload}")
 
     response=$(curl -X POST "${url}" \
