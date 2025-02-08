@@ -23,6 +23,13 @@ require_source ".bashrc"
 # Process
 ##############################################################
 
+print_info() {
+    echo "linx $(linx --version)"
+    echo "Author: Julien Fischer <julien.fischer@agiledeveloper.net>"
+    echo "Repository: ${REPOSITORY}"
+    echo "For help, use linx --help or linx -h"
+}
+
 backup_local_config() {
     set -e  # Exit immediately if a command exits with a non-zero status
     trap 'err "Backup failed."; return 1' ERR

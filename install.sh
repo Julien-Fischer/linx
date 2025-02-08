@@ -423,13 +423,6 @@ err() {
     echo -e "$(color "E:") ${message}" >&2
 }
 
-print_info() {
-    echo "linx $(linx --version)"
-    echo "Author: Julien Fischer <julien.fischer@agiledeveloper.net>"
-    echo "Repository: ${REPOSITORY}"
-    echo "For help, use linx --help or linx -h"
-}
-
 expand_path() {
     local input="${1}"
     input=${input//\"/}
