@@ -57,7 +57,8 @@ glot() {
         shift
     done
 
-    local temp_file
+    local temp_file temp_output_file
+
     temp_file=$(mktemp)
 
     local params=(
@@ -81,22 +82,23 @@ glot() {
         sort_option=""
     fi
 
-    local count=
-    count=$(wc -l < "${temp_file}")
-
-    if $show_commit_count; then
-        echo -e "$(color "$count" "${YELLOW_BOLD}") commits | ${branch_name}"
-        echo ""
-    fi
-
-    local LIGHT_GRAY='\033[0;37m'
+    temp_output_file=$(mktemp)
     sort -t'|' -k2 $sort_option "${temp_file}" |
     while IFS='|' read -r hash date name email message; do
         printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
-               "${hash}" "${date}" "${name}" "${message}"
+               "${hash}" "${date}" "${name}" "${message}" >> "${temp_output_file}"
     done
 
+    commit_count=$(wc -l < "${temp_output_file}")
+
+    if $show_commit_count; then
+        echo -e "$(color "${commit_count}" "${YELLOW_BOLD}") commits | ${branch_name}"
+        echo ""
+    fi
+
+    cat "${temp_output_file}"
     rm "${temp_file}"
+    rm "${temp_output_file}"
 }
 
 glot "$@"
