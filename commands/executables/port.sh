@@ -81,45 +81,120 @@ list_ports() {
     }'
 }
 
+kill_process_by_pid() {
+    local pid="${1}"
+    local temp_file file_descriptor_count stripped_pid trimmed_pid
 
-kill_all() {
-    local subject="${1}"
-    local pids=($(lsof -i | grep -i "${subject}" | awk '{print $2}' | sort -u))
+    trap 'rm -f "$temp_file"' EXIT
+    temp_file=$(mktemp)
 
-    if [[ ${#pids[@]} -eq 0 ]]; then
-        err "No processes found for ${subject}"
+    stripped_pid=$(echo "${pid}" | sed 's/\x1b\[[0-9;]*m//g')
+    trimmed_pid="$(trim "${stripped_pid}")"
+    port | awk -v pid="${trimmed_pid}" '$2 ~ pid {print $0}' > "${temp_file}"
+
+    file_descriptor_count=$(wc -l < "${temp_file}" | sort -u)
+
+    if [[ $file_descriptor_count -eq 0 ]]; then
+        err "Could not find any process with pid ${pid}"
         return 1
+    elif [[ $file_descriptor_count -gt 1 ]]; then
+        echo ""
+        echo -e "Process ${pid} is bound to $(color "${file_descriptor_count}" "${YELLOW_BOLD}") file descriptors:"
+        cat "${temp_file}"
+        confirm "Operation" "Proceed?" --abort
+    fi
+
+    do_kill_by_pid "${pid}"
+    rm "${temp_file}"
+}
+
+do_kill_by_pid() {
+    local pid="${1}"
+    local stripped trimmed
+    stripped=$(echo "${pid}" | sed 's/\x1b\[[0-9;]*m//g')
+    trimmed="$(trim "${stripped}")"
+
+    if ! kill "${trimmed}"; then
+        if ! kill -9 "${trimmed}"; then
+            err "Could not kill process ${pid} by any means."
+        else
+            echo "Killed process ${pid} wth a SIGTERM"
+        fi
+    else
+        echo "Killed process ${pid}"
+    fi
+}
+
+kill_process_by_name() {
+    local name="${1}"
+    local pid_count
+
+    echo "Attempting to kill processes named ${name}"
+
+    trap 'rm -f "$temp_file"' EXIT
+    temp_file=$(mktemp)
+
+    port | awk -v name="${name}" '$1 ~ name {print $0}' > "${temp_file}"
+    mapfile -t pids < <(awk '{print $2}' "${temp_file}" | sort -u)
+    pid_count="${#pids[@]}"
+
+    if [[ $pid_count -eq 0 ]]; then
+        echo "Could not find any process named ${name}"
+        return 0
+    elif [[ $pid_count -gt 1 ]]; then
+        echo -e "$(color "${pid_count}" "${YELLOW_BOLD}") file descriptors match this name:"
+        echo ""
+        cat "${temp_file}"
+        confirm "Operation" "Proceed?" --abort
     fi
 
     for pid in "${pids[@]}"; do
-        echo "Attempting to kill process ${pid} for ${subject}"
-        kill "${pid}"
-        if [ $? -eq 0 ]; then
-            echo "Killed all ${subject} processes"
-        else
-            err "Failed to kill all ${subject} processes"
-        fi
+        kill_process_by_pid "${pid}"
     done
-}
-
-kill_process_by_pid() {
-    local pid="${1}"
-    kill_all "${pid}"
-}
-
-kill_process_by_pname() {
-    local process_name="${1}"
-    if [[ -z "${process_name}" ]]; then
-        get_help "port"
-        return 1
-    fi
-    kill_all "${process_name}"
 }
 
 kill_process_by_port() {
     local port="${1}"
+    local pid_count
+
     echo "Attempting to kill processes at port ${port}"
-    kill_all "${port}"
+
+    mapfile -t pids < <(lsof -ti :"${port}")
+    mapfile -t names < <(lsof -ti :"${port}" | xargs -r ps -p | awk 'NR>1 {print $NF}' | sort -u)
+    count=${#names[@]}
+    echo "pid count: ${count}"
+
+    if [[ $count -eq 0 ]]; then
+        echo "No processes found listening on port ${port}"
+        return 0
+    elif [[ $count -gt 1 ]]; then
+        echo -e "This port is bound to $(color "${count}" "${YELLOW_BOLD}") processes:"
+        echo ""
+        local pid_array=("${pids[@]}")
+        pids_string=$(IFS=,; echo "${pid_array[*]}")
+        port | awk -v pids="$pids_string" '
+            BEGIN {
+                split(pids, pid_array, ",")
+                for (i in pid_array) {
+                    pid_set[pid_array[i]] = 1
+                    print "Added PID to set: " pid_array[i]
+                }
+            }
+            {
+                for (pid in pid_set) {
+                    if ($0 ~ pid) {
+                        print "Match found: " $0
+                        next
+                    }
+                }
+            }
+        '
+        confirm "Operation" "Proceed?" --abort
+    fi
+
+    for pid in "${pids[@]}"; do
+        kill_process_by_pid "${pid}"
+    done
 }
 
 kill_process() {
@@ -138,7 +213,7 @@ kill_process() {
                 return 0
                 ;;
             --pname)
-                kill_process_by_pname "${2}"
+                kill_process_by_name "${2}"
                 return 0
                 ;;
             *)
