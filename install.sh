@@ -17,7 +17,6 @@ export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
 export CRON_LOG_FILE="${CRON_DIR}/jobs.log"
 export LINX_BACKUPS_DIR="/var/backups"
 COMMANDS_DIR="/usr/local/bin"
-INSTALL_DIR="tmp-linx-install"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 MKF_DIR="${LINX_DIR}/mkf"
 CONFIG_FILE="${LINX_DIR}/config.properties"
@@ -737,8 +736,9 @@ update_mkf_config() {
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
     require_sudo "synchronize your local ${PROJECT} installation with the remote."
-    mkdir -p "${INSTALL_DIR}"
-    cd "${INSTALL_DIR}" || rm -rf "${INSTALL_DIR}"
+    local install_dir
+    install_dir=$(mktemp -d)
+    cd "${install_dir}" || rm -rf "${install_dir}"
     if git clone "${REPOSITORY}"; then
         cd "${PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
@@ -763,8 +763,8 @@ install_core() {
         # Clean up temp files & refresh shell session
         cd ../..
         echo "${PROJECT}: Removing temporary files..."
-        if ! rm -rf "${INSTALL_DIR}"; then
-            err "Could not remove ${INSTALL_DIR} directory"
+        if ! rm -rf "${install_dir}"; then
+            err "Could not remove ${install_dir} directory"
         fi
         return 0
     else
