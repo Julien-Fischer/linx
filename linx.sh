@@ -1301,7 +1301,7 @@ _autocomplete_git_branches_local() {
     COMPREPLY=($(compgen -W "$(git branch --format='%(refname:short)')" -- "$cur"))
 }
 
-for cmd in gck gckb gbd gb gba; do
+for cmd in gcp gck gckb gbd gb gba; do
     complete -F _autocomplete_git_branches_all "${cmd}"
 done
 
