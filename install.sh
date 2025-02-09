@@ -636,7 +636,7 @@ should_install_third_party_themes() {
 }
 
 install_terminator_config() {
-    local third_party_themes_enabled=1
+    local third_party_themes_enabled=false
     local default_theme=
     local default_layout="grid"
 
@@ -649,7 +649,7 @@ install_terminator_config() {
         echo "Downloading third-party themes..."
         if git clone "${TERMINATOR_THEMES_REPOSITORY}"; then
             default_theme="${TERMINATOR_DEFAULT_THEME_THIRD_PARTY}"
-            third_party_themes_enabled=0
+            third_party_themes_enabled=true
         else
             err "Could not clone repository ${TERMINATOR_THEMES_REPOSITORY}"
             return 1
@@ -675,7 +675,7 @@ install_terminator_config() {
     echo "[profiles]" >> "${TERMINATOR_CONFIG_FILE}"
     echo "  [[default]]" >> "${TERMINATOR_CONFIG_FILE}"
     add_fragment "themes"
-    if [[ $third_party_themes_enabled -eq 0 ]]; then
+    if $third_party_themes_enabled; then
         echo "Installing third-party themes..."
         cat "${TERMINATOR_THEMES_PROJECT}/terminator.conf" >> "${TERMINATOR_CONFIG_FILE}"
         echo "${THIRD_PARTY_ENABLED_KEY}=true" > "${THEME_POLICY_FILE}"
