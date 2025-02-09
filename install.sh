@@ -736,6 +736,7 @@ update_mkf_config() {
 # @description Sync with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
+    require_sudo "synchronize your local ${PROJECT} installation with the remote."
     mkdir -p "${INSTALL_DIR}"
     cd "${INSTALL_DIR}" || rm -rf "${INSTALL_DIR}"
     if git clone "${REPOSITORY}"; then
@@ -829,8 +830,7 @@ install_linx() {
                 ;;
         esac
     done
-    echo "this will install ${PROJECT} on your system."
-    [[ $auto_approve -ne 0 ]] && confirm "Installation" "Proceed?" --abort
+    require_sudo "install ${PROJECT} on your system."
 
     mkdir -p "${LINX_DIR}"
     mkdir -p "${HELP_DIR}"
