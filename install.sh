@@ -628,7 +628,12 @@ third_party_themes_installed() {
 
 should_install_third_party_themes() {
     local msg="${PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
-    if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || ([[ $linx_already_installed -ne 0 ]] && ([[ $auto_approve -eq 0 ]] || confirm "Third-party themes installation" "${msg}")); then
+    if (! is_sourced && [[ $auto_approve -ne 0 ]] && confirm "Third-party themes installation" "${msg}"); then
+        return 0
+    fi
+    if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || \
+       ([[ $linx_already_installed -ne 0 ]] && \
+       ([[ $auto_approve -eq 0 ]] || confirm "Third-party themes installation" "${msg}")); then
         return 0
     else
         return 1
