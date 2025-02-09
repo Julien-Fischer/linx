@@ -54,6 +54,7 @@ export YELLOW='\033[0;33m'
 export BLUE='\033[0;34m'
 export MAGENTA='\033[0;35m'
 export CYAN='\033[0;36m'
+export GRAY='\033[0;90m'
 # Bold ANSI colors
 export RED_BOLD='\033[1;31m'
 export GREEN_BOLD='\033[1;32m'
