@@ -43,6 +43,8 @@ TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 LINX_SPINNER_PID=""
 
+trap 'linx_spinner_stop' EXIT
+
 ########################################################################
 # Constants
 ########################################################################
@@ -543,7 +545,7 @@ anonymize_plain_text() {
 }
 
 linx_spinner() {
-    echo -n ' '; while true; do for X in '-' '/' '|' '\'; do echo -en "\b$X"; sleep 0.1; done; done
+    echo -n ' '; while true; do for X in '-' '/' '|' '\'; do echo -en "\r$X"; sleep 0.1; done; done
 }
 
 linx_spinner_start() {
@@ -553,10 +555,10 @@ linx_spinner_start() {
 
 linx_spinner_stop() {
     if [ -n "${LINX_SPINNER_PID}" ]; then
-        kill "${LINX_SPINNER_PID}"
-        wait "${LINX_SPINNER_PID}" 2>/dev/null
+        kill "${LINX_SPINNER_PID}" 2>/dev/null
+        wait "${LINX_SPINNER_PID}" 2>/dev/null || true
         LINX_SPINNER_PID=""
-        echo -en "\b \b"
+        echo -en "\r \r"
     fi
 }
 
@@ -652,7 +654,9 @@ install_terminator_config() {
 
     if should_install_third_party_themes; then
         echo "Downloading third-party themes..."
-        if git clone "${TERMINATOR_THEMES_REPOSITORY}"; then
+        linx_spinner_start
+        if git clone "${TERMINATOR_THEMES_REPOSITORY}" -q; then
+            linx_spinner_stop
             default_theme="${TERMINATOR_DEFAULT_THEME_THIRD_PARTY}"
             third_party_themes_enabled=true
         else
@@ -745,7 +749,10 @@ install_core() {
     local install_dir
     install_dir=$(mktemp -d)
     cd "${install_dir}" || rm -rf "${install_dir}"
-    if git clone "${REPOSITORY}"; then
+    echo "${PROJECT}: Cloning remote..."
+    linx_spinner_start
+    if git clone "${REPOSITORY}" -q; then
+        linx_spinner_stop
         cd "${PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
         cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
@@ -772,6 +779,7 @@ install_core() {
         if ! rm -rf "${install_dir}"; then
             err "Could not remove ${install_dir} directory"
         fi
+        echo "${PROJECT}: Remote cloned"
         return 0
     else
         echo "E: Could not clone repository ${REPOSITORY}"
