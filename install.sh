@@ -8,7 +8,7 @@
 # Constants
 ##############################################################
 
-export VERSION="1.0.0-alpha8"
+export VERSION="1.0.0-alpha9"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
 export HELP_DIR="${LINX_DIR}/help"
@@ -870,7 +870,7 @@ install_linx() {
     goal=$(get_goal $linx_already_installed)
     if [[ $success -eq 0 ]]; then
         echo "${PROJECT} was ${goal} successfully."
-        echo "Current version: $(linx -v)"
+        echo -e "Current version: $(color "$(linx -v)" "${GREEN_BOLD}")"
     else
         echo "Failed to install ${PROJECT}"
         return 1
