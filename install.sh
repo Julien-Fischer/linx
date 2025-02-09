@@ -637,7 +637,7 @@ should_install_third_party_themes() {
 
 install_terminator_config() {
     local third_party_themes_enabled=false
-    local default_theme=
+    local default_theme user_theme user_layout
     local default_layout="grid"
 
     mkdir -p "${TERMINATOR_DIR}"
@@ -664,8 +664,8 @@ install_terminator_config() {
     if [[ ! -f "${CURRENT_LAYOUT_FILE}" ]]; then
         echo "${default_layout}" > "${CURRENT_LAYOUT_FILE}"
     fi
-    local user_theme=$(cat "${CURRENT_THEME_FILE}")
-    local user_layout=$(cat "${CURRENT_LAYOUT_FILE}")
+    user_theme=$(cat "${CURRENT_THEME_FILE}")
+    user_layout=$(cat "${CURRENT_LAYOUT_FILE}")
 
     # generate the new configuration file
     echo '' > "${TERMINATOR_CONFIG_FILE}"
