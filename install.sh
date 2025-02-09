@@ -852,8 +852,9 @@ install_linx() {
     if ! setup_vim; then
         return 1
     fi
-    local success=$(is_linx_installed)
-    local goal=$(get_goal $linx_already_installed)
+    local success goal
+    success=$(is_linx_installed)
+    goal=$(get_goal $linx_already_installed)
     if [[ $success -eq 0 ]]; then
         echo "${PROJECT} was ${goal} successfully."
         echo "Current version: $(linx -v)"
