@@ -1,1 +1,16 @@
-Usage: port [[kill <pid>]] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]
+Usage: port [[kill [OPTIONS]] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]
+
+Manage processes running on specific ports or retrieve information about processes and ports.
+
+Arguments:
+  k, kill                         Terminate a process
+  --pid <process_id>              Specify a process ID to get information about
+  --pname <process_name>          Specify a process name to search for
+  --port <port_number>            Specify a port number to get information about processes using it
+  -h, --help                      Print this message and exit
+
+Examples:
+  port --port 3000                # List all processes using port 3000
+  port --pname node               # List all processes with the name "node"
+  port --pid 1234                 # Print information about the process with PID 1234
+  port --help                     # Print this help message and exit

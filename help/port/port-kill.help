@@ -1,0 +1,19 @@
+Usage: port [[kill <port>] | [[--pid <process_id>] [--pname <process_name>] [--port <port_number>]]
+
+Kill processes given specified criteria.
+
+Positional parameters:
+
+  $1 port                         The port to free
+
+Arguments:
+  --pid <process_id>              Kill a process given its PID
+  --pname <process_name>          Kill all processes having specified name
+  --port <port_number>            Kill all processes listening to the specified port number
+  -h, --help                      Print this message and exit
+
+Examples:
+  port kill 3000                  # Terminate all processes listening to port 3000
+  port kill --pname node          # Terminate all node processes
+  port kill --pid 5678            # Terminate the process with PID 5678
+  port --help                     # Print this help message and exit

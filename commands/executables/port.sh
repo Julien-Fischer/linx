@@ -199,7 +199,7 @@ kill_process_by_port() {
 
 kill_process() {
     if [[ $# -eq 0 || ("${1}" == "-"* && -z "${2}") ]]; then
-        get_help "port"
+        get_help "port-kill"
         return 1
     elif [[ $# -eq 1 ]]; then
         kill_process_by_port "${1}"
@@ -217,7 +217,7 @@ kill_process() {
                 return 0
                 ;;
             *)
-                get_help "port"
+                get_help "port-kill"
                 return 1
                 ;;
         esac
@@ -243,7 +243,7 @@ main() {
         return 0
     fi
     case "${1}" in
-        kill)
+        k|kill)
             shift
             kill_process "$@"
             ;;
