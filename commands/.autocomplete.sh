@@ -78,6 +78,12 @@ _autocomplete_contributors() {
     fi
 }
 
+_aucomplete_profiles() {
+    local values
+    values="$(term profiles --list)"
+    COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+}
+
 ##############################################################
 # Autocomplete
 ##############################################################
@@ -236,6 +242,12 @@ _term_autocomplete() {
     _init_completion || return
 
     case $prev in
+        --get)
+            _aucomplete_profiles
+            ;;
+        --set)
+            _aucomplete_profiles
+            ;;
         p|profiles)
             local values="--get --set"
             COMPREPLY=($(compgen -W "${values}" -- "${cur}"))

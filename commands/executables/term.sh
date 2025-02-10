@@ -22,7 +22,7 @@ SHELL="bash"
 ##############################################################
 
 fail() {
-    echo "Unsupported parameter ${1}"
+    err "Unsupported parameter ${1}"
     get_help "term"
     exit 1
 }
@@ -51,8 +51,8 @@ read_command() {
 set_profile() {
     local profile_name="${1}"
     if [[ -z "${profile_name}" ]]; then
-        echo "Profile name is required"
-        echo ""
+        err "Profile name is required"
+        err ""
         get_help "term"
         return 1
     fi
@@ -108,14 +108,15 @@ set_profile() {
 
 print_profile() {
     local profile_name="${1}"
+    shift
     if [[ -z "${profile_name}" ]]; then
-        echo "Profile name is required"
-        echo ""
+        err "Profile name is required"
+        err ""
         get_help "term"
         return 1
     fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
+        err "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
     local reading_profiles=false
@@ -160,11 +161,18 @@ print_profile() {
 #  print_profile
 list_profiles() {
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
+        err "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
+    fi
+
+    local raw=false
+    if [[ "${1}" == --list ]]; then
+        raw=true
     fi
     local reading_profiles=false
     local profiles=()
+    local current_profile
+
     while IFS= read -r line; do
         if is_comment "${line}"; then
             continue;
@@ -180,16 +188,22 @@ list_profiles() {
             profiles+=("${BASH_REMATCH[1]}")
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
-    echo "${#profiles[@]} available profiles:"
-    local current_layout=
+
+    if ! $raw; then
+        echo "${#profiles[@]} available profiles:"
+    fi
     if [[ -f "${CURRENT_THEME_FILE}" ]]; then
-        current_layout=$(cat "${CURRENT_THEME_FILE}")
+        current_profile=$(cat "${CURRENT_THEME_FILE}")
     fi
     for profile in "${profiles[@]}"; do
-        if [[ -n "${current_layout}" && "${profile}" == "${current_layout}" ]]; then
-            echo -e "> $(color "${profile}")"
+        if $raw; then
+            echo "${profile}"
         else
-            echo "- ${profile}"
+            if [[ -n "${current_profile}" && "${profile}" == "${current_profile}" ]]; then
+                echo -e "> $(color "${profile}")"
+            else
+                echo "- ${profile}"
+            fi
         fi
     done
 }
@@ -202,11 +216,11 @@ list_profiles() {
 #   # Switch to the specified profile
 #   profiles profile_name
 profiles() {
-    local profile_name="${1}"
-    if [[ -z "${profile_name}" ]]; then
-        list_profiles
+    if [[ -z "${1}" || "${1}" == -* ]]; then
+        list_profiles "$@"
         return 0
     fi
+    local profile_name="${1}"
     if set_profile "${profile_name}"; then
         echo "Switched to ${profile_name} profile. Restart Terminator to apply the theme."
         return 0
@@ -243,15 +257,15 @@ layouts() {
 set_layout() {
     local layout_name="${1}"
     if [[ -z "${layout_name}" ]]; then
-        echo "Profile name is required"
-        echo ""
+        err "Profile name is required"
+        err ""
         get_help "term"
         return 1
     fi
     local styles temp_file
     styles=$(print_layout "${layout_name}")
     if [[ -z "${styles}" ]]; then
-        echo "${layout_name} layout not found."
+        err "${layout_name} layout not found."
         return 1
     fi
 
@@ -298,13 +312,13 @@ set_layout() {
 print_layout() {
     local layout_name="${1}"
     if [[ -z "${layout_name}" ]]; then
-        echo "Profile name is required"
-        echo ""
+        err "Profile name is required"
+        err ""
         get_help "term"
         return 1
     fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
+        err "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
     local reading_layouts=false
@@ -362,7 +376,7 @@ print_layout() {
 #  print_layout
 list_layouts() {
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        echo "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
+        err "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
     local reading_layouts=false
@@ -411,6 +425,10 @@ handle_profiles() {
                 ;;
             -s|--set)
                 profiles "${2}"
+                return 0
+                ;;
+            --list)
+                profiles "$@"
                 return 0
                 ;;
             *)
