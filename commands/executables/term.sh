@@ -35,7 +35,7 @@ is_comment() {
 }
 
 read_command() {
-    get_linx_property "terminator.global.command" -q
+    get_linx_property "terminator.global.command" -q --raw
 }
 
 ##############################################################

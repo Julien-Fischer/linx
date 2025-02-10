@@ -505,10 +505,23 @@ put_property() {
 }
 
 get_linx_property() {
+    local args=("$@")
+    local raw=false
+    while [[ ${#args[@]} -gt 0 ]]; do
+        case "${args[0]}" in
+            -r|--raw)
+                raw=true
+                ;;
+        esac
+        args=("${args[@]:1}")
+    done
+
     local value
     value="$(get_property "${CONFIG_FILE}" "$@")"
-    if [[ "${value}" ]]; then
+    if ! $raw && [[ -n "${value}" ]]; then
         expand_path "${value}"
+    else
+        echo "${value}"
     fi
 }
 
