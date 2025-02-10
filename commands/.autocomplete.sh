@@ -92,10 +92,10 @@ _aucomplete_layouts() {
 
 _autocomplete_term_accessor() {
     case "${1}" in
-        profiles)
+        p|profiles)
             _aucomplete_profiles
             ;;
-        layouts)
+        l|layouts)
             _aucomplete_layouts
             ;;
     esac
