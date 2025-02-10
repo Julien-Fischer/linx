@@ -34,6 +34,10 @@ is_comment() {
     fi
 }
 
+read_command() {
+    get_linx_property "terminator.global.command" -q
+}
+
 ##############################################################
 # Profiles
 ##############################################################
@@ -71,6 +75,16 @@ set_profile() {
             reading_target_profile=true
             echo "${line}" >> "${temp_file}"
             echo "${styles}" >> "${temp_file}"
+
+            local command
+            command="$(read_command)"
+            if [[ -n "${command}" ]]; then
+                {
+                  echo '    exit_action = hold'
+                  echo '    use_custom_command = True'
+                  echo "    custom_command = '${command}'"
+                } >> "${temp_file}"
+            fi
         elif $reading_target_profile && [[ "${line}" =~ ^[[:space:]]*\[\[ ]]; then
             reading_target_profile=false
             echo "${line}" >> "${temp_file}"

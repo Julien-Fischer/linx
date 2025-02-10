@@ -507,7 +507,9 @@ put_property() {
 get_linx_property() {
     local value
     value="$(get_property "${CONFIG_FILE}" "$@")"
-    expand_path "${value}"
+    if [[ "${value}" ]]; then
+        expand_path "${value}"
+    fi
 }
 
 put_linx_property() {
