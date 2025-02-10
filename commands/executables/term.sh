@@ -56,13 +56,14 @@ set_profile() {
         get_help "term"
         return 1
     fi
-    local styles=$(print_profile "${profile_name}")
+    local styles temp_file
+    styles=$(print_profile "${profile_name}")
     if [[ -z "${styles}" ]]; then
         echo "${profile_name} profile not found."
         return 1
     fi
 
-    local temp_file=$(mktemp)
+    temp_file=$(mktemp)
     local reading_target_profile=false
     local reading_profiles=false
 
