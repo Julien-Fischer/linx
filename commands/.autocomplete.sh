@@ -84,6 +84,23 @@ _aucomplete_profiles() {
     COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
 }
 
+_aucomplete_layouts() {
+    local values
+    values="$(term layouts --list)"
+    COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
+}
+
+_autocomplete_term_accessor() {
+    case "${1}" in
+        profiles)
+            _aucomplete_profiles
+            ;;
+        layouts)
+            _aucomplete_layouts
+            ;;
+    esac
+}
+
 ##############################################################
 # Autocomplete
 ##############################################################
@@ -242,11 +259,9 @@ _term_autocomplete() {
     _init_completion || return
 
     case $prev in
-        --get)
-            _aucomplete_profiles
-            ;;
-        --set)
-            _aucomplete_profiles
+        --get|--set)
+            _autocomplete_term_accessor "${words[cword-2]}"
+            return 0
             ;;
         p|profiles)
             local values="--get --set"

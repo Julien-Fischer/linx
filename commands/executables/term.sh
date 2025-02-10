@@ -243,8 +243,8 @@ profiles() {
 #   layouts layout_name
 layouts() {
     local layout_name="${1}"
-    if [[ -z "${layout_name}" ]]; then
-        list_layouts
+    if [[ -z "${layout_name}" || "${1}" == -* ]]; then
+        list_layouts "$@"
         return 0
     fi
     if set_layout "$@"; then
@@ -380,8 +380,15 @@ list_layouts() {
         err "Configuration file not found at ${TERMINATOR_CONFIG_FILE}"
         return 1
     fi
+
+    local raw=false
+    if [[ "${1}" == --list ]]; then
+        raw=true
+    fi
     local reading_layouts=false
     local layouts=()
+    local current_layout
+
     while IFS= read -r line; do
         if is_comment "${line}"; then
             continue;
@@ -399,16 +406,21 @@ list_layouts() {
     fi
     done < "${TERMINATOR_CONFIG_FILE}"
 
-    echo "${#layouts[@]} available layouts:"
-    local current_layout=
+    if ! $raw; then
+        echo "${#layouts[@]} available layouts:"
+    fi
     if [[ -f "${CURRENT_LAYOUT_FILE}" ]]; then
         current_layout=$(cat "${CURRENT_LAYOUT_FILE}")
     fi
     for layout in "${layouts[@]}"; do
-        if [[ -n "${current_layout}" && "${layout}" == "${current_layout}" ]]; then
-            echo -e "> $(color "${layout}")"
+        if $raw; then
+            echo "${layout}"
         else
-            echo "- ${layout}"
+            if [[ -n "${current_layout}" && "${layout}" == "${current_layout}" ]]; then
+                echo -e "> $(color "${layout}")"
+            else
+                echo "- ${layout}"
+            fi
         fi
     done
 }
@@ -449,6 +461,10 @@ handle_layouts() {
                 ;;
             -s|--set)
                 layouts "${2}"
+                return 0
+                ;;
+            --list)
+                layouts "$@"
                 return 0
                 ;;
             *)
