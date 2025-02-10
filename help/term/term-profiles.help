@@ -1,0 +1,19 @@
+Usage: term profiles [OPTIONS]
+
+Manages Terminator profiles
+
+(No option)               List the available profiles
+
+Options:
+  --set [name]            Set the specified profile
+  --get [name]            Print the properties of the specified profile
+  --list                  List the available profiles as plain text
+  -h, --help              Print this help message and exit
+
+Example:
+  term profiles
+  term profiles --set contrast
+  term p
+  term p -s contrast
+  term p --list
+  term p --help

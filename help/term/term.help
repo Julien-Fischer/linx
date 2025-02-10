@@ -1,18 +1,15 @@
-Usage: term [OPTIONS]
+Usage: term [[COMMAND] | [OPTIONS]]
+
+Manages Terminator configuration
+
+Commands:
+  p, profiles [OPTIONS]   List the available profiles, or switch to the specified profile
+  l, layouts [OPTIONS]    List the available layouts, or switch to the specified layout
 
 Options:
-  p, profiles [OPTIONS]   Lists the available profiles, or switch to the specified profile
-  l, layouts [OPTIONS]   Lists the available layouts, or switch to the specified layout
-
-Description:
-  Manages Terminator configuration directly in the command-line
+  -h, --help              Print this help message and exit
 
 Example:
-  # themes
-  term profiles
-  term profiles --set contrast
-  term p -s contrast
-  # layouts
-  term layouts
-  term layouts --get grid
-  term l -g grid
+  term --help
+  term profiles --help
+  term layouts --help

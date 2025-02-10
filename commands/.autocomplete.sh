@@ -264,12 +264,12 @@ _term_autocomplete() {
             return 0
             ;;
         p|profiles)
-            local values="--get --set"
+            local values="--get --set --help"
             COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
             return
             ;;
         l|layouts)
-            local values="--get --set"
+            local values="--get --set --help"
             COMPREPLY=($(compgen -W "${values}" -- "${cur}"))
             return
             ;;

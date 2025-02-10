@@ -22,8 +22,12 @@ SHELL="bash"
 ##############################################################
 
 fail() {
+    local suffix=''
+    if [[ -n "${2}" ]]; then
+        suffix="${2}"
+    fi
     err "Unsupported parameter ${1}"
-    get_help "term"
+    get_help "term-${suffix}"
     exit 1
 }
 
@@ -53,7 +57,7 @@ set_profile() {
     if [[ -z "${profile_name}" ]]; then
         err "Profile name is required"
         err ""
-        get_help "term"
+        get_help "term-profiles"
         return 1
     fi
     local styles temp_file
@@ -113,7 +117,7 @@ print_profile() {
     if [[ -z "${profile_name}" ]]; then
         err "Profile name is required"
         err ""
-        get_help "term"
+        get_help "term-profiles"
         return 1
     fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
@@ -260,7 +264,7 @@ set_layout() {
     if [[ -z "${layout_name}" ]]; then
         err "Profile name is required"
         err ""
-        get_help "term"
+        get_help "term-layouts"
         return 1
     fi
     local styles temp_file
@@ -315,7 +319,7 @@ print_layout() {
     if [[ -z "${layout_name}" ]]; then
         err "Profile name is required"
         err ""
-        get_help "term"
+        get_help "term-layouts"
         return 1
     fi
     if [[ ! -f "${TERMINATOR_CONFIG_FILE}" ]]; then
@@ -444,8 +448,12 @@ handle_profiles() {
                 profiles "$@"
                 return 0
                 ;;
+            -h|--help)
+                get_help "term-profiles"
+                return 0
+                ;;
             *)
-                fail "${1}"
+                fail "${1}" "profiles"
                 ;;
         esac
     done
@@ -467,8 +475,12 @@ handle_layouts() {
                 layouts "$@"
                 return 0
                 ;;
+            -h|--help)
+                get_help "term-layouts"
+                return 0
+                ;;
             *)
-                fail "${1}"
+                fail "${1}" "layouts"
                 ;;
         esac
     done

@@ -1,0 +1,19 @@
+Usage: term layouts [OPTIONS]
+
+Manages Terminator layouts
+
+(No option)               List the available layouts
+
+Options:
+  --set [name]            Set the specified layout
+  --get [name]            Print the properties of the specified layout
+  --list                  List the available layouts as plain text
+  -h, --help              Print this help message and exit
+
+Example:
+  term layouts
+  term layouts --set contrast
+  term l
+  term l -s contrast
+  term l --list
+  term l --help
