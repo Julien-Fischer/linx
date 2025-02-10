@@ -909,10 +909,13 @@ gapf() {
 }
 
 # Add the current local changes to the latest remote commit
+# @param $1 (Optional) The new commit message
 # /!\ this function uses a reset --soft on HEAD, so careful when using it, especially on team projects
 gedit() {
-    local msg=
-    msg="$(glast -m)"
+    local msg="${1}"
+    if [[ -z "${msg}" ]]; then
+        msg="$(glast -m)"
+    fi
     grs && gapf "${msg}"
 }
 
