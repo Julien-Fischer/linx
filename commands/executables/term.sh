@@ -12,6 +12,12 @@ fi
 source "${HOME}"/.bashrc
 
 ##############################################################
+# Constants
+##############################################################
+
+SHELL="bash"
+
+##############################################################
 # Documentation
 ##############################################################
 
@@ -35,7 +41,7 @@ is_comment() {
 }
 
 read_command() {
-    get_linx_property "terminator.global.command" -q --raw
+    get_linx_property "terminator.override.command" -q --raw
 }
 
 ##############################################################
@@ -82,7 +88,7 @@ set_profile() {
                 {
                   echo '    exit_action = hold'
                   echo '    use_custom_command = True'
-                  echo "    custom_command = '${command}'"
+                  echo "    custom_command = '${command}; ${SHELL}'"
                 } >> "${temp_file}"
             fi
         elif $reading_target_profile && [[ "${line}" =~ ^[[:space:]]*\[\[ ]]; then
@@ -242,13 +248,14 @@ set_layout() {
         get_help "term"
         return 1
     fi
-    local styles=$(print_layout "${layout_name}")
+    local styles temp_file
+    styles=$(print_layout "${layout_name}")
     if [[ -z "${styles}" ]]; then
         echo "${layout_name} layout not found."
         return 1
     fi
 
-    local temp_file=$(mktemp)
+    temp_file=$(mktemp)
     local reading_target_layout=false
     local reading_layouts=false
 
@@ -325,9 +332,17 @@ print_layout() {
             styles+=("${line}")
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
+
+    local global_command regex
+    global_command=$(get_linx_property "terminator.global.command" -q --raw)
+    regex="^[[:space:]]*command[[:space:]]*=[[:space:]]*.*"
     if [[ "${#styles[@]}" -gt 0 ]]; then
         for i in "${!styles[@]}"; do
-            if [ $i -eq $((${#styles[@]} - 1)) ]; then
+            if [[ "${styles[i]}" =~ $regex ]]; then
+                styles[i]+=" && ${global_command}; ${SHELL}"
+            fi
+
+            if [[ $i -eq $((${#styles[@]} - 1)) ]]; then
                 style_string+="${styles[i]}"
             else
                 style_string+="${styles[i]}"$'\n'
