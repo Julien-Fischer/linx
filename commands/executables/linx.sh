@@ -67,6 +67,7 @@ backup_local_config() {
 }
 
 handle_sync() {
+    require_sudo "synchronize your local ${PROJECT} installation with the remote."
     local branch_name
     if [[ -n "${1}" && "${1}" != -* ]]; then
         branch_name="${1}"

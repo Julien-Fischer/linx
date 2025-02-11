@@ -761,7 +761,6 @@ update_mkf_config() {
 # @param $1 (Optional) the name of the branch to clone
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
-    require_sudo "synchronize your local ${PROJECT} installation with the remote."
     local branch_name install_dir
     branch_name="${1:-main}"
     install_dir=$(mktemp -d)
