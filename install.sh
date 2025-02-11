@@ -670,7 +670,7 @@ install_terminator_config() {
     if should_install_third_party_themes; then
         echo "Downloading third-party themes..."
         linx_spinner_start
-        if git clone "${TERMINATOR_THEMES_REPOSITORY}" -q; then
+        if git clone "${TERMINATOR_THEMES_REPOSITORY}" --single-branch -q; then
             linx_spinner_stop
             default_theme="${TERMINATOR_DEFAULT_THEME_THIRD_PARTY}"
             third_party_themes_enabled=true
@@ -766,7 +766,7 @@ install_core() {
     cd "${install_dir}" || rm -rf "${install_dir}"
     echo "${PROJECT}: Cloning remote..."
     linx_spinner_start
-    if git clone "${REPOSITORY}" -q; then
+    if git clone "${REPOSITORY}" --single-branch -q; then
         linx_spinner_stop
         cd "${PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
