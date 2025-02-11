@@ -21,7 +21,7 @@ glot() {
     local ascending=false
     local today_only=false
     local show_commit_count=true
-    local branch_name=
+    local branch_name
     branch_name=$(git branch --show-current)
 
     while [[ $# -gt 0 ]]; do
@@ -60,8 +60,7 @@ glot() {
         shift
     done
 
-    local temp_file temp_output_file
-
+    local temp_file
     temp_file=$(mktemp)
 
     local params=(
@@ -71,8 +70,6 @@ glot() {
     if $today_only; then
         params+=(--since "00:00:00")
     fi
-
-    temp_file=$(mktemp)
 
     git log "${branch_name}" "${params[@]}" |
     sed '$a\' |
