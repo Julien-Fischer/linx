@@ -41,6 +41,7 @@ TERMINATOR_THEMES_REPOSITORY="${GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
+LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
 LINX_SPINNER_PID=""
 
 trap 'linx_spinner_stop' EXIT
