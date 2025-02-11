@@ -35,12 +35,10 @@ backup() {
     local verbose=false
     local erase=false
     local instantly=false
-    local cron_expression=
-    local name=$(basename "${source}")
-    local source_dir=$(dirname "${source}")
+    local cron_expression name source_dir complete_name
+    name=$(basename "${source}")
+    source_dir=$(dirname "${source}")
     local target_dir="${source_dir}"
-    local complete_name=
-    local target=
 
     if [[ -z "${source}" ]]; then
         err "No source specified."
@@ -112,8 +110,9 @@ backup() {
 
     # if cron job, just schedule backup and return
 
-    local absolute_source_dir=$(realpath "${source_dir}")
-    local absolute_target_dir=$(realpath "${target_dir}")
+    local absolute_source_dir absolute_target_dir
+    absolute_source_dir=$(realpath "${source_dir}")
+    absolute_target_dir=$(realpath "${target_dir}")
     src="${absolute_source_dir}/${name}"
 
     if [[ -n "${cron_expression}" ]]; then
