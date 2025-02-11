@@ -304,6 +304,13 @@ remove_first_line_containing() {
     fi
 }
 
+is_numeric() {
+    if [[ $1 =~ ^[+-]?[0-9]+([.][0-9]+)?$ ]]; then
+        return 0
+    fi
+    return 1
+}
+
 # @description Print an array with line numbers
 # @param $1  the reference of the array to print
 # @example
