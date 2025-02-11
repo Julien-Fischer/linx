@@ -66,8 +66,12 @@ backup_local_config() {
     set +e  # Reset the exit-on-error option
 }
 
-
 handle_sync() {
+    local branch_name
+    if [[ -n "${1}" && "${1}" != -* ]]; then
+        branch_name="${1}"
+        shift
+    fi
     while [[ $# -gt 0 ]]; do
         case $1 in
             -b|--backup)
@@ -86,7 +90,7 @@ handle_sync() {
         shift
     done
 
-    pull_setup
+    pull_setup "${branch_name}"
     return $?
 }
 
@@ -209,7 +213,8 @@ read_crons() {
 }
 
 pull_setup() {
-    if install_core; then
+    local branch_name="${1}"
+    if install_core "${branch_name}"; then
         echo -e "$(color "${PROJECT}: successfully synced [$(linx -v)]" "${GREEN_BOLD}")"
     else
         echo -e "$(color "${PROJECT}: failed to sync" "${RED_BOLD}")"

@@ -758,15 +758,17 @@ update_mkf_config() {
 }
 
 # @description Sync with the latest version from the remote
+# @param $1 (Optional) the name of the branch to clone
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 install_core() {
     require_sudo "synchronize your local ${PROJECT} installation with the remote."
-    local install_dir
+    local branch_name install_dir
+    branch_name="${1:-main}"
     install_dir=$(mktemp -d)
     cd "${install_dir}" || rm -rf "${install_dir}"
-    echo "${PROJECT}: Cloning remote..."
+    echo "${PROJECT}: Cloning remote... [${branch_name}]"
     linx_spinner_start
-    if git clone "${REPOSITORY}" --single-branch -q; then
+    if git clone "${REPOSITORY}" --branch "${branch_name}" --single-branch -q; then
         linx_spinner_stop
         cd "${PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"

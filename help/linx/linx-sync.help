@@ -2,6 +2,10 @@ Usage: linx sync [OPTIONS]
 
 Synchronize the local configuration with the remote.
 
+Positional parameters:
+
+  $1 branch             (Optional The name of the branch to clone
+
 Options:
   -b, --backup          Create a timestamped backup as a zip file before synchronizing the local version of linx
                         This is equivalent of executing linx b && linx s
