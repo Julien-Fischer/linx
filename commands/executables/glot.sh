@@ -10,6 +10,9 @@ fi
 source "${HOME}"/.bashrc
 
 glot() {
+    if ! is_git_repo; then
+        return 1
+    fi
     local substring=""
     if [[ "${1}" != -* ]]; then
         substring="${1}"
