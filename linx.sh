@@ -469,7 +469,29 @@ upgrade_only() {
 
 alias ginit="git init"
 alias gin="git init"
-alias gcl="git clone"
+
+# @description Generates a new git project with a .gitignore file
+# @param $1 the url of the repository to clone
+# @param $2 (optional) the name of the branch to checkout
+# @options $@ (optional) any other git clone options
+# @example
+#   gcl "https://github.com/Julien-Fischer/linx.git"
+#   gcl "https://github.com/Julien-Fischer/linx.git" main
+#   gcl "https://github.com/Julien-Fischer/linx.git" main --origin remote_name
+gcl() {
+    local repository="${1}"
+    local branch_name="${2}"
+    shift 2
+    if [[ -z "${repository}" ]]; then
+        err "No repository specified"
+        return 1
+    fi
+    if [[ -n "${branch_name}" ]]; then
+        git clone "${repository}" --branch "${branch_name}" "$@"
+    else
+        git clone "${repository}"
+    fi
+}
 
 # @description Generates a new git project with a .gitignore file
 # @param $1 (optional) the name of the project to generate
