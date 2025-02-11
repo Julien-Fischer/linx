@@ -34,10 +34,10 @@ backup_local_config() {
     set -e  # Exit immediately if a command exits with a non-zero status
     trap 'err "Backup failed."; return 1' ERR
 
-    local filename="linx_$(timestamp -s - _ -)"
+    local filename temp_dir
+    filename="linx_$(timestamp -s - _ -)"
+    temp_dir=$(mktemp -d)
     local absolute_path="${LINX_BACKUPS_DIR}/${filename}"
-
-    local temp_dir=$(mktemp -d)
     local command_dir_backup="${temp_dir}/commands"
 
     echo "${VERSION}" > "${temp_dir}/VERSION"
@@ -166,7 +166,8 @@ delete_job() {
     echo 'Type the index of the job you wish to delete:'
     mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
     print_array linx_jobs
-    local index=$(prompt "Which job do you wish to delete?")
+    local index
+    index=$(prompt "Which job do you wish to delete?")
     remove_job $((index-1))
 }
 
