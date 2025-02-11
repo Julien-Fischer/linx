@@ -295,7 +295,8 @@ remove_first_line_containing() {
         return 1
     fi
     if grep -q "${substring}" "${file}"; then
-        local temp_file=$(mktemp)
+        local temp_file
+        temp_file=$(mktemp)
         grep -v "$substring" "${file}" > "${temp_file}"
         mv "${temp_file}" "${file}"
         return 0
@@ -339,7 +340,8 @@ installed() {
         quiet=true
     fi
     if dpkg -s "${software}" &> /dev/null || compgen -G "${COMMANDS_DIR}/*${software}*" > /dev/null; then
-        local location=$(which "${software}")
+        local location
+        location=$(which "${software}")
         if ! $quiet; then
             echo "${software} is installed at ${location}"
         fi
@@ -373,8 +375,9 @@ cron_exists() {
 #   del projects          # delete projects
 #   del projects -q dirA  # delete projects, quietly
 del() {
-    local path=$(trim_slash "${1}")
     local quiet=false
+    local path
+    path=$(trim_slash "${1}")
     if [[ "${2}" == "-q" || "${2}" == "--quiet" ]]; then
         quiet=true
     fi
@@ -417,7 +420,8 @@ current_dir() {
     if is_sourced; then
         pwd
     else
-        local script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+        local script_dir
+        script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
         echo "${script_dir}"
     fi
 }
@@ -479,8 +483,9 @@ put_property() {
     local file="${1}"
     local key="${2}"
     local value="${3}"
-    local temp_file=$(mktemp)
     local found=false
+    local temp_file
+    temp_file=$(mktemp)
 
     if [[ -z "${file}" ]]; then
         err "Could not find file ${file}"
