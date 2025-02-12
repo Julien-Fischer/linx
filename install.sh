@@ -41,6 +41,8 @@ TERMINATOR_THEMES_REPOSITORY="${GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
+MAX_TERMINATOR_BACKUPS=30
+# shellcheck disable=SC2034
 LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
 LINX_SPINNER_PID=""
 
@@ -572,6 +574,32 @@ anonymize_plain_text() {
     echo "${input}"
 }
 
+backup_and_rotate() {
+    local target="${1}"
+    local quiet=''
+    local max_backups=$MAX_TERMINATOR_BACKUPS
+    local backup_suffix=".bak"
+    local timestamp dir_path file_name
+    timestamp=$(date +"%Y%m%d%H%M%S")
+    if [[ "${2}" == --quiet || "${2}" == -q ]]; then
+        quiet="-q"
+    fi
+
+    dir_path=$(dirname "${target}")
+    file_name=$(basename "${target}")
+    local backup_prefix="${file_name}_"
+    mapfile -t backups < <(find "${dir_path}" -maxdepth 1 -name "${backup_prefix}*${backup_suffix}" -printf '%T@ %p\n' | sort -n | cut -d' ' -f2-)
+
+    if (( ${#backups[@]} >= max_backups )); then
+        local to_delete=$(( ${#backups[@]} - max_backups + 1 ))
+        for ((i=0; i<to_delete; i++)); do
+            rm -f "${backups[$i]}"
+        done
+    fi
+
+    cpv "${target}" "${dir_path}/${backup_prefix}${timestamp}${backup_suffix}"
+}
+
 linx_spinner() {
     echo -n ' '; while true; do for X in '-' '/' '|' '\'; do echo -en "\r$X"; sleep 0.1; done; done
 }
@@ -677,7 +705,7 @@ install_terminator_config() {
 
     mkdir -p "${TERMINATOR_DIR}"
     if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        backup "${TERMINATOR_CONFIG_FILE}" -q
+        backup_and_rotate "${TERMINATOR_CONFIG_FILE}" -q
     fi
 
     if should_install_third_party_themes; then
