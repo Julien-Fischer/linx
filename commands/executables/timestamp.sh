@@ -9,22 +9,6 @@ if [ -f "${HOME}"/linx/.linx_lib.sh ]; then
     source "${HOME}"/linx/.linx_lib.sh
 fi
 
-# @description Outputs the current datetime, with desired format (if specified).
-#              Default format: YYYY-MM-DD hh:mm:s
-# @option -i, --iso
-# @option -b, --basic
-# @option -r, --readable
-# @option -s, --separators '/' '_' ':'
-# @example
-#   # assuming the current datetime is 2024-11-03 09:34:56
-#   timestamp                # 2024-11-03 09:34:56
-#   timestamp -b,            # 20241103093456
-#   timestamp -i,            # 2024-11-03T09:34:56
-#   timestamp -r,            # 2024-11-03_09:34:56
-#   timestamp -s '/'         # 2024/11/03 09:34:56
-#   timestamp -s '/' '_'     # 2024/11/03_09:34:56
-#   timestamp -s '/' '_' '-' # 2024/11/03_09-34-56
-# shellcheck disable=SC2120
 timestamp() {
     local format="%Y-%m-%d %H:%M:%S"
     local date_sep="-"
