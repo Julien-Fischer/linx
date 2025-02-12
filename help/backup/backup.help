@@ -8,10 +8,11 @@ Arguments:
   [prefix]                (Optional) An arbitrary string to use as a prefix for the backup name
 
 Options:
+  -b, --basic             Use compact date format without separators (requires -t)
   -d, --destination       The absolute path of the directory where the backup must be created
   -h, --help              Show this message and exit
   -q, --quiet             Mute outputs
-  -b, --basic             Use compact date format without separators (requires -t)
+  -s, --spin              Hide copy progress with a spinner
 
 Naming options:
   -r, --reverse           Use the prefix as a suffix, and the timestamp as a prefix

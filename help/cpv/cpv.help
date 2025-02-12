@@ -4,18 +4,20 @@ Description:
   Copy files and directories from SOURCE to DESTINATION with a visual progress bar.
 
 Positional parameters:
-  \$1            (Source) The file or directory to copy. This can be a single file, a directory, or a wildcard pattern.
-  \$2            (Target) The destination where the files or directories will be copied. This should be a valid path.
+  \$1               (Source) The file or directory to copy. This can be a single file, a directory, or a wildcard pattern.
+  \$2               (Target) The destination where the files or directories will be copied. This should be a valid path.
 
 Options:
-  -h, --help    Display this help message and exit
-  -q, --quiet   Mute outputs
+  -C, --code        Include target and node_modules directories
+  -h, --help        Display this help message and exit
+  -q, --quiet       Mute outputs
+  -s, --spin        Hide detailed output with a simple spinner
 
 Return Values:
-  0             If the operation completed successfully.
-  1+            If an error occurred during the operation.
+  0                 If the operation completed successfully.
+  1+                If an error occurred during the operation.
 
 Examples:
-  cpv myfile dirA            # Copies myfile into 'dirA'.
-  cpv projects dirA          # Copies the 'projects' directory into 'dirA'.
-  cpv projects/ dirA         # Copies all files and directories from 'projects' into 'dirA'.
+  cpv my_dir backup_dir            # Copies my_dir into 'backup_dir'.
+  cpv projects backup_dir          # Copies the 'projects' directory into 'backup_dir'.
+  cpv projects/ backup_dir         # Copies all files and directories from 'projects' into 'backup_dir'.

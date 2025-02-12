@@ -33,9 +33,11 @@ backup() {
     local compact=false
     local drop_extension=false
     local verbose=false
+    local stat=false
     local erase=false
     local instantly=false
-    local cron_expression name source_dir complete_name
+    local cron_expression name source_dir complete_name code
+    local options=()
     name=$(basename "${source}")
     source_dir=$(dirname "${source}")
     local target_dir="${source_dir}"
@@ -65,6 +67,9 @@ backup() {
                 use_time=true
                 shift
                 ;;
+            -C|--code)
+                options+=(--code)
+                ;;
             -d|--destination)
                 target_dir="${2}"
                 shift
@@ -86,6 +91,9 @@ backup() {
                 ;;
             -r|--reverse)
                 reverse=true
+                ;;
+            -s|--spin)
+                options+=(--spin)
                 ;;
             -t|--time)
                 use_time=true
@@ -117,7 +125,7 @@ backup() {
 
     if [[ -n "${cron_expression}" ]]; then
         if [[ ! -f "${src}" && ! -d "${src}" ]]; then
-            ! $quiet && err "Could not find any file or directory at ${src}"
+            ! $quiet && err "Could not find any source file or directory at ${src}"
             return 1
         fi
         local command="${COMMANDS_DIR}/backup '${src}' -t -d ${absolute_target_dir}"
@@ -187,7 +195,8 @@ backup() {
     fi
 
     local target_path="${absolute_target_dir}/${complete_name}"
-    if ! cpv "${src}" "${target_path}"; then
+
+    if ! cpv "${src}" "${target_path}" "${options[@]}"; then
         err "Could not copy ${src} to ${target_path}"
         return 1
     fi
@@ -205,3 +214,4 @@ backup() {
 }
 
 backup "$@"
+
