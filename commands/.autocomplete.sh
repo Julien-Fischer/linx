@@ -204,9 +204,12 @@ _cpv_autocomplete() {
     local cur prev words cword
     _init_completion || return
 
-    local opts="--quiet --help"
-
-    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+    if [[ $cword -eq 1 || $cword -eq 2 ]]; then
+        _filedir
+    else
+        local opts="--code --spin --quiet --help"
+        COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+    fi
 }
 
 _rename_autocomplete() {
