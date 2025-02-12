@@ -33,10 +33,9 @@ backup() {
     local compact=false
     local drop_extension=false
     local verbose=false
-    local stat=false
     local erase=false
     local instantly=false
-    local cron_expression name source_dir complete_name code
+    local cron_expression name source_dir complete_name
     local options=()
     name=$(basename "${source}")
     source_dir=$(dirname "${source}")
