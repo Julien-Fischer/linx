@@ -118,6 +118,14 @@ git clone https://github.com/Julien-Fischer/linx && linx/install.sh
 Note: You may need to restart your terminal for some changes to be applied, especially for Terminator 
 configurations.
 
+## Configuration
+
+To customize linx to meet your specific needs, use
+
+```
+linx config
+```
+
 ## Upgrades
 
 If you already installed this project and wish to upgrade, simply type `linx sync` and let Linx synchronize
