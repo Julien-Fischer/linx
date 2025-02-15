@@ -377,6 +377,7 @@ cron_exists() {
 #   del projects          # delete projects
 #   del projects -q dirA  # delete projects, quietly
 del() {
+    require_sudo "delete the specified element."
     local quiet=false
     local path
     path=$(trim_slash "${1}")
