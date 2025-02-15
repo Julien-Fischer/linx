@@ -93,17 +93,20 @@ pls
 
 ## Installation instructions
 
-#### 1. Download `install.sh` or clone this repository
-```
-git clone https://github.com/Julien-Fischer/linx
+Install linx using **curl**:
+
+```bash
+curl -o install.sh https://raw.githubusercontent.com/Julien-Fischer/linx/main/install.sh && chmod +x install.sh && ./install.sh && rm install.sh
 ```
 
-#### 2. Run the installation wizard
-```
-linx/install.sh
+Or **git**:
+
+```bash
+git clone https://github.com/Julien-Fischer/linx && linx/install.sh
 ```
 
-#### 3. Restart your terminal
+Note: You may need to restart your terminal for some changes to be applied, especially Terminator 
+configurations (if you're using it).
 
 
 ## Upgrades
