@@ -941,6 +941,19 @@ gedit() {
     grs && gapf "${msg}"
 }
 
+backup_current_branch() {
+    local current_branch backup_branch
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    backup_branch="${current_branch}-backup-$(date +%Y%m%d%H%M%S)"
+
+    if git branch "${backup_branch}"; then
+        echo -e "Created backup branch: $(color "${backup_branch}" "${YELLOW_BOLD}")"
+    else
+        err "Could not create local backup branch ${backup_branch}"
+        return 1
+    fi
+}
+
 # @description (Git Cherry Pick)
 # @params a list of commit hashes
 # @example
