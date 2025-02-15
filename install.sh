@@ -178,7 +178,7 @@ prompt() {
 }
 
 prompt_multiline() {
-    local input_type="${1:-'your input'}"
+    local input_type="${1:-your input}"
     echo "Please enter ${input_type} (type 'END' to finish):"
     input=""
     while IFS= read -r line; do
