@@ -500,7 +500,8 @@ gcl() {
 # @option -d, --demo if this function should generate a demo project with multiple branches
 #                    This option can't be used with --no-commit
 gproj() {
-    local USAGE=$(cat <<EOF
+    local USAGE
+    USAGE=$(cat <<EOF
 Usage: gproj [PROJECT_NAME] [OPTIONS]
 
 Generates a new git project with a .gitignore file.
@@ -525,12 +526,14 @@ EOF
     local name
     local no_commit=false
     local demo=false
+
     if [[ $# -eq 0 || $1 == -* ]]; then
         name="my_project"
     else
         name="${1}"
         shift
     fi
+
     if ! mkdir -p "${name}"; then
         err "Could not create directory ${name}"
         return 1
@@ -543,7 +546,9 @@ EOF
         err "Could not initialize git repository in $(pwd)"
         return 1
     fi
+
     echo ".idea" > .gitignore
+
     while [[ "$#" -gt 0 ]]; do
         case $1 in
             -n|--no-commit)
@@ -564,25 +569,47 @@ EOF
         esac
         shift
     done
+
     if ! $no_commit; then
         git add . && git commit -m "chore: Initial commit" -q
     fi
+
     if $demo; then
         local original_branch
         original_branch=$(git rev-parse --abbrev-ref HEAD)
-        for branch in master branch-1 branch-2 branch-3; do
-            if git rev-parse --verify "${branch}" >/dev/null 2>&1; then
-                git checkout "${branch}" -q
+        for branch in "${original_branch}" branch-1 branch-2 branch-3; do
+            if git rev-parse --verify "${branch}" > /dev/null 2>&1; then
+                echo -e "\nswitch to $(color "${branch}" "${YELLOW_BOLD}")"
+                if ! git switch "${branch}" -q; then
+                    err "Failed to checkout ${branch} branch"
+                fi
             else
-                git checkout -b "${branch}" -q
+                echo -e "\ncreate $(color "${branch}" "${YELLOW_BOLD}")"
+                if ! git switch -c "${branch}" -q; then
+                    err "Failed to create and checkout ${branch} branch"
+                fi
             fi
-            for letter in {a..o}; do
-                echo "${letter}" >> "${letter}.txt" && git add . && git commit -m "${letter}" -q
+            for letter in {a..z}; do
+                local filename="${letter}.txt"
+                if ! echo "${letter}" >> "${filename}"; then
+                    err "Failed to create file ${filename}"
+                fi
+                if ! git add . > /dev/null; then
+                    err "Failed to stage files"
+                fi
+                if ! git commit -m "${letter}" -q; then
+                    err "Failed to commit with message: '${letter}'"
+                fi
             done
-            git checkout "${original_branch}" -q
         done
     fi
-    echo -e "Created $(color "${name}") at $(pwd)"
+    if ! git switch "${original_branch}" -q; then
+        err "Failed to checkout original branch: '${original_branch}'"
+    fi
+
+    echo -e "\nCreated $(color "${name}") at $(pwd)"
+    echo -e "\nCurrent on branch $(color "$(git branch --show-current)")"
+
     if git rev-parse --verify HEAD >/dev/null 2>&1; then
         echo -e "\nHistory:"
         glo
