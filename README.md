@@ -1,11 +1,11 @@
 # Linx (Link for Linux)
 
-Linx provides an opinionated set of commands and configurations designed for power users who prioritize speed 
+Linx provides an opinionated set of commands and configurations designed for power users who prioritize speed
 and efficiency over graphical user interfaces.
-Among other things, linx aims to make navigation easier, automate grunt tasks such as managing git repositories, 
+Among other things, linx aims to make navigation easier, automate grunt tasks such as managing git repositories,
 backups, files and directories, docker processes, text anonymization, and much more.
 
-It also enhances Terminator with additional features, integrates AI tools like GPT-4 for in-terminal prompts, and 
+It also enhances Terminator with additional features, integrates AI tools like GPT-4 for in-terminal prompts, and
 provides commands to configure and sync your local Linx setup with a remote environment.
 
 To sync your configuration, simply type `linx sync`, and Linx will handle the rest.
@@ -52,9 +52,25 @@ Version `1.0.0-alpha` of Linx offers the following features:
 ### Linx-specific features
 
 - **(AI) Prompt an AI provider from your terminal**
+
+Quick one-line prompt:
 ```
-ask "my single-line prompt"
-ask # for multi-line prompts
+ask "Generate a funny Java-related ASCII art"
+```
+Multiline prompt:
+```
+john@Doe:~/foss$ ask
+Please enter your input (type 'END' to finish):
+Describe the following ASCII art:
+   ( (
+    ) )
+  ........
+  |      |]
+  |      |
+  `------'
+END
+Thinking...
+The ASCII art depicts a simple representation of a cup or mug.
 ```
 
 - **(Terminator) List themes and profiles**
@@ -69,11 +85,7 @@ term p --set contrast
 
 - **(Linx) Securely backup your files and directories**
 ```
-backup <filepath|dirpath> [prefix] [-nqrtz]
-# example:
-backup mydir -t -r
-# result:
-2022-10-22_19-35-54_mydir.bak
+backup mydir -t -r   # Produces: 2022-10-22_19-35-54_mydir.bak
 ```
 
 - **(Linx) Synchronize your setup on this device**
@@ -107,7 +119,6 @@ git clone https://github.com/Julien-Fischer/linx && linx/install.sh
 
 Note: You may need to restart your terminal for some changes to be applied, especially Terminator 
 configurations (if you're using it).
-
 
 ## Upgrades
 
@@ -163,7 +174,7 @@ more details.
 We would like to extend our gratitude to Eliver Lara and their contributors for their outstanding work
 on Terminator themes.
 
-While the `contrast`, `dark_gold`, `fiddle`, and `playful` themes are native to Linx, all third-party themes 
+While the `contrast`, `dark_gold`, `fiddle`, and `playful` themes are native to Linx, all third-party themes
 are credited to [Eliver Lara's Terminator Themes](https://github.com/EliverLara/terminator-themes)
 
 The `native` theme is the default theme for Terminator.
