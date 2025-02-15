@@ -568,7 +568,8 @@ EOF
         git add . && git commit -m "chore: Initial commit" -q
     fi
     if $demo; then
-        local original_branch=$(git rev-parse --abbrev-ref HEAD)
+        local original_branch
+        original_branch=$(git rev-parse --abbrev-ref HEAD)
         for branch in master branch-1 branch-2 branch-3; do
             if git rev-parse --verify "${branch}" >/dev/null 2>&1; then
                 git checkout "${branch}" -q
