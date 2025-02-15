@@ -8,8 +8,6 @@ backups, files and directories, docker processes, text anonymization, and much m
 It also enhances Terminator with additional features, integrates AI tools like GPT-4 for in-terminal prompts, and
 provides commands to configure and sync your local Linx setup with a remote environment.
 
-To sync your configuration, simply type `linx sync`, and Linx will handle the rest.
-
 ## Features
 
 Version `1.0.0-alpha` of Linx offers the following features:
@@ -46,7 +44,7 @@ Version `1.0.0-alpha` of Linx offers the following features:
 | Git           | View releases                                     | glor                | git log --no-walk --tags --pretty=format:"%h %ad %d% %an% %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit                                                            |
 | Git           | Pretty print git log in ascending order           | glot asc            | git log --reverse --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit                    |
 | Git           | Print today's commits                             | glot -t             | git log --reverse --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit --since "00:00:00" |
-| Git           | List all contributors with their stats            | gcount              | N/A                                                                                                                                                                     |
+| Git           | List all contributors with their stats            | gcount -a           | N/A                                                                                                                                                                     |
 
 
 ### Linx-specific features
@@ -117,8 +115,8 @@ Or **git**:
 git clone https://github.com/Julien-Fischer/linx && linx/install.sh
 ```
 
-Note: You may need to restart your terminal for some changes to be applied, especially Terminator 
-configurations (if you're using it).
+Note: You may need to restart your terminal for some changes to be applied, especially for Terminator 
+configurations.
 
 ## Upgrades
 
@@ -141,16 +139,13 @@ Note that you may need to restart your terminal for all changes to be applied.
 - Neofetch
 - simplescreenrecorder
 - rsync
-- nodejs (when / if using the `ask` command)
+- Node.js (when / if using the `ask` command)
 
 ## Requirements
 
 This project is designed to run on Debian-based distributions, including (but not limited to) Debian, Ubuntu,
 and Kubuntu.
 Primary testing has been conducted on Kubuntu 24 and Debian 12.
-
-While the majority of functions and aliases in this project should work out-of-the box for Debian-based systems,
-some features may require additional work to achieve full cross-platform compatibility.
 
 If you encounter any issues or have suggestions for improving Linx, feel free to open an issue or
 submit a pull request.
@@ -181,9 +176,8 @@ The `native` theme is the default theme for Terminator.
 
 ## License
 
-Linx entire source code is released under the
-[MIT License](https://opensource.org/licenses/MIT).
+Linx is released under the [MIT License](https://opensource.org/licenses/MIT).
 
-During installation, Linx will ask you if you wish to install additional, third-party themes for Terminator.
+During installation, Linx will ask if you wish to install additional, third-party themes for Terminator.
 These themes are open-source and licensed under
 [GPL 3](https://www.gnu.org/licenses/gpl-3.0.fr.html#license-text).
