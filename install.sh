@@ -8,7 +8,7 @@
 # Constants
 ##############################################################
 
-export VERSION="1.0.0-alpha9"
+export VERSION="1.0.0-alpha10"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
 export HELP_DIR="${LINX_DIR}/help"

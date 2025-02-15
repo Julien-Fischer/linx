@@ -1,11 +1,12 @@
 # Linx (Link for Linux)
 
-Linx is a streamlined and opinionated Bash configuration developped for power users who prioritize
-speed and efficiency over graphical user interfaces. It provides a curated set of functions, aliases, and terminal configurations aimed at maximizing
-efficiency and minimizing keystrokes.
+Linx provides an opinionated set of commands and configurations designed for power users who prioritize speed 
+and efficiency over graphical user interfaces.
+Among other things, linx aims to make navigation easier, automate grunt tasks such as managing git repositories, 
+backups, files and directories, docker processes, text anonymization, and much more.
 
-Once installed, Linx offers seamless synchronization of your setup across multiple devices, effectively
-creating a unified environment across your Linux systems.
+It also enhances Terminator with additional features, integrates AI tools like GPT-4 for in-terminal prompts, and 
+provides commands to configure and sync your local Linx setup with a remote environment.
 
 To sync your configuration, simply type `linx sync`, and Linx will handle the rest.
 
@@ -16,7 +17,8 @@ Version `1.0.0-alpha` of Linx offers the following features:
 - A comprehensive set of functions and aliases that minimize the time and effort required for directory navigation, file management, and common task execution
 - Shortcuts for frequently accessed directories such as home, desktop, and dev, allowing users to quickly jump to desired locations
 - Functions that streamline version control tasks and enhance log viewing capabilities
-- For Terminator users, Linx offers preconfigured shortcuts, layouts, and the ability to install multiple native and third-party themes. Users can list and switch Terminator themes at runtime directly from the command line without additional Python installations or plugins
+- For Terminator users, Linx offers preconfigured shortcuts, themes, and layouts (no python required)
+- GPT 4 integration so you can prompt it directly from your terminal
 
 ![Live Demo](./demo.gif)
 
@@ -25,42 +27,44 @@ Version `1.0.0-alpha` of Linx offers the following features:
 
 ### Vanilla Bash VS Linx
 
-- **(Navigation) Navigate to the home directory and pretty print its content**
-
-
-| Scope         | Task                                              | :rocket: Using Linx | :sleepy: Without Linx                                                                                                                                |
-|:--------------|:--------------------------------------------------|:--------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Navigation    | Go to Desktop                                     | desk                | cd $(xdg-user-dir DESKTOP) && pwd && ls -AF --group-directories-first --color                                                                        |
-| Navigation    | Go to development projects directory              | dev                 | cd "${DEV}" && pwd && ls -AF --group-directories-first --color                                                                                       |
-| Navigation    | Go to root directory                              | ,                   | cd / && pwd && ls -AF --group-directories-first --color                                                                                              |
-| Navigation    | Go to home directory                              | ~                   | cd ~ && pwd && ls -AF --group-directories-first --color                                                                                              |
-| Navigation    | Go to previous directory                          | -                   | cd - && pwd && ls -AF --group-directories-first --color                                                                                              |
-| Navigation    | Go one directory up                               | ..                  | cd ..                                                                                                                                                |
-| Navigation    | Go two directories up                             | ...                 | cd ../..                                                                                                                                             |
-| Navigation    | Go six directories up                             | .......             | cd ../../../../../../                                                                                                                                |
-| Navigation    | Go six directories up                             | u6                  | cd ../../../../../../                                                                                                                                |
-| Visualization | Inspect current dir, sorted by alphabetical order | ll                  | ls -lhAF                                                                                                                                             |
-| Visualization | Inspect current dir, sorted by modification date  | lt                  | ls -lhAFt -1                                                                                                                                         |
-| Visualization | Inspect current dir, grouping directories first   | ld                  | ls -lhAF --group-directories-first                                                                                                                   |
-| Visualization | Inspect current dir, in short format              | la                  | ls -AF --group-directories-first                                                                                                                     |
-| Git           | Commit & push                                     | gap "msg"           | git add . && git commit -m "msg" && git push                                                                                                         |
-| Git           | View releases                                     | glor                | git log --no-walk --tags --pretty=format:"%h %ad %d% %an% %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit                                         |
-| Git           | Pretty print log in ascending order               | glot asc            | git log --reverse --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit |
-| Git           | Stash all changes                                 | gas                 | git add . && git stash                                                                                                                               |
-| Git           | Force push all changes                            | gapf "msg"          | git add . && git commit -m "msg" && git push --force origin                                                                                          |
-| System        | Fully upgrade your packages                       | sup                 | sudo apt update && sudo apt full-upgrade -y                                                                                                          |
+| Scope         | Task                                              | :rocket: Using Linx | :sleepy: Without Linx                                                                                                                                                   |
+|:--------------|:--------------------------------------------------|:--------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Navigation    | Go to Desktop                                     | desk                | cd $(xdg-user-dir DESKTOP) && pwd && ls -AF --group-directories-first --color                                                                                           |
+| Navigation    | Go to root directory                              | ,                   | cd / && pwd && ls -AF --group-directories-first --color                                                                                                                 |
+| Navigation    | Go to home directory                              | ~                   | cd ~ && pwd && ls -AF --group-directories-first --color                                                                                                                 |
+| Navigation    | Toggle the current and previous directories       | -                   | cd - && pwd && ls -AF --group-directories-first --color                                                                                                                 |
+| Navigation    | Cycle through your navigation history             | --                  | N/A                                                                                                                                                                     |
+| Navigation    | Go one directory up                               | ..                  | cd ..                                                                                                                                                                   |
+| Navigation    | Go two directories up                             | ...                 | cd ../..                                                                                                                                                                |
+| Navigation    | Go six directories up                             | up 6                | cd ../../../../../../                                                                                                                                                   |
+| Visualization | Inspect current dir, sorted by alphabetical order | ll                  | ls -lhAF                                                                                                                                                                |
+| Visualization | Inspect current dir, sorted by modification date  | lt                  | ls -lhAFt -1                                                                                                                                                            |
+| Visualization | Inspect current dir, grouping directories first   | ld                  | ls -lhAF --group-directories-first                                                                                                                                      |
+| Visualization | Inspect current dir, in short format              | la                  | ls -AF --group-directories-first                                                                                                                                        |
+| Git           | Commit & push                                     | gap "msg"           | git add . && git commit -m "msg" && git push                                                                                                                            |
+| Git           | Force push all changes                            | gapf "msg"          | git add . && git commit -m "msg" && git push --force origin                                                                                                             |
+| Git           | View releases                                     | glor                | git log --no-walk --tags --pretty=format:"%h %ad %d% %an% %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit                                                            |
+| Git           | Pretty print git log in ascending order           | glot asc            | git log --reverse --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit                    |
+| Git           | Print today's commits                             | glot -t             | git log --reverse --pretty=format:"%C(yellow)%h%C(reset) %C(red)%ad%C(reset) %C(cyan)%an%C(reset) %s" --date=format:"%Y-%m-%d %H:%M" --abbrev-commit --since "00:00:00" |
+| Git           | List all contributors with their stats            | gcount              | N/A                                                                                                                                                                     |
 
 
 ### Linx-specific features
 
+- **(AI) Prompt an AI provider from your terminal**
+```
+ask "my single-line prompt"
+ask # for multi-line prompts
+```
+
 - **(Terminator) List themes and profiles**
 ```
-profiles
+term p
 ```
 
 - **(Terminator) Apply and persist the `contrast` theme to Terminator**
 ```
-profiles contrast
+term p --set contrast
 ```
 
 - **(Linx) Securely backup your files and directories**
@@ -77,19 +81,14 @@ backup mydir -t -r
 linx sync
 ```
 
-### Wrap up
-
-Linx provides many more features. But here's the real kicker: you can finally bid your terminal a proper farewell
-when shutting down your system. Who said tech can't have manners?
-
-- **(System) Lock session**
+- **(Linx) Configure linx locally**
 ```
-bye
+linx config
 ```
 
-- **(System) Shutdown**
+- **(System) Execute your last command with sudo**
 ```
-byebye
+pls
 ```
 
 ## Installation instructions
