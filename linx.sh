@@ -941,6 +941,137 @@ gedit() {
     grs && gapf "${msg}"
 }
 
+# @description Backup the current branch then replays all commits from HEAD to the specified commit hash (excluded)
+# @param $1 (Optional) The hash of the commit before the ones you wish to replay
+# @option i, --instant don't wait between each commit replay
+# @option p, --push automatically push once commits has been replayed
+# @example
+#   Given the following commits: a b c d e f
+#   replay_commits d  # replays a, b, and c
+replay_commits() {
+    if ! is_git_repo; then
+        return 1
+    fi
+
+    local MAX_WAIT=6
+    local instant=false
+    local push=false
+    local start_commit_hash_excluded="${1}"
+    shift
+
+    if [[ -z "${start_commit_hash_excluded}" ]]; then
+        err "A start commit is required"
+        return 1
+    fi
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -i|--instant)
+                instant=true
+                ;;
+            -p|--push)
+                push=true
+                ;;
+            *)
+                echo "Usage: replay_commits [[-i,--instant]] [[-p,--push]]"
+                return 1
+                ;;
+        esac
+        shift
+    done
+
+    local count
+    count=$(count_commits_since "${start_commit_hash_excluded}")
+
+    if [[ $count -eq 0 ]]; then
+        err "0 commits to republish"
+        return 1
+    fi
+
+    if ! backup_current_branch; then
+        return 1
+    fi
+
+    echo -e "Undoing $(color "${count}" "${YELLOW_BOLD}") commits"
+
+    local undone_commits=()
+
+    for (( i = 0; i < count; i++ )); do
+        local current_hash current_message
+        current_hash="$(glast -is)"
+        current_message="$(glast -m)"
+        undone_commits+=("${current_hash} ${current_message}")
+
+        if ! grevert > /dev/null; then
+            err "Could not undo commit ${current_hash}"
+            return 1
+        fi
+    done
+
+    echo ""
+    echo "Undone commits:"
+    for commit in "${undone_commits[@]}"; do
+        echo "  $commit"
+    done
+
+    echo ""
+    linx_spinner_start
+    echo -e "Restoring $(color "${#undone_commits[@]}" "${YELLOW_BOLD}") commits"
+
+    local redone_commits=()
+
+    for (( i = 0; i < count; i++ )); do
+        local duration=0
+        if ! $instant; then
+            duration=$(rand 1 MAX_WAIT)
+        fi
+
+        if ! grestore > /dev/null; then
+            err "Could not replay commit"
+            return 1
+        fi
+
+        local new_hash new_message
+
+        new_hash="$(glast -is)"
+        new_message="$(glast -m)"
+        echo -e "\r   \r  Replaying: ${new_hash} ${new_message}"
+
+        if [[ $i -lt $((count - 1)) ]]; then
+            sleep "$duration"
+        fi
+
+        redone_commits+=("${new_hash} ${new_message}")
+    done
+
+    linx_spinner_stop
+
+    echo ""
+    echo "Restored commits:"
+    for commit in "${redone_commits[@]}"; do
+        echo "  $commit"
+    done
+
+    echo ""
+    echo -e "$(color "${#redone_commits[@]}" "${YELLOW_BOLD}") Commits replayed"
+
+    if ! $push; then
+        return 0
+    fi
+
+    if git push; then
+        echo "Pushed $(color "${count}" "${GREEN_BOLD}") commits to the remote"
+    else
+        err "Failed to push $(color "${count}" "${GREEN_BOLD}") commits to the remote"
+        return 1
+    fi
+}
+
+count_commits_since() {
+    local commit="${1}"
+    git rev-list "${commit}"..HEAD --count
+}
+
 backup_current_branch() {
     local current_branch backup_branch
     current_branch=$(git rev-parse --abbrev-ref HEAD)
