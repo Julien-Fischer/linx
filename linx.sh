@@ -552,6 +552,10 @@ EOF
             -d|--demo)
                 demo=true
                 ;;
+            -h|--help)
+                echo "${USAGE}"
+                return 0
+                ;;
             *)
                 err "Invalid parameter: ${1}"
                 echo "${USAGE}"
