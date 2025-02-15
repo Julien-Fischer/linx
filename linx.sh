@@ -259,18 +259,28 @@ foss() {
 
 alias ,="cs /"
 alias ~="cs ~"
-alias u1="cs .."
-alias u2="cs ../.."
-alias u3="cs ../../.."
-alias u4="cs ../../../.."
-alias u5="cs ../../../../.."
-alias u6="cs ../../../../../.."
-alias ..='u1'
-alias ...='u2'
-alias ....='u3'
-alias .....='u4'
-alias ......='u5'
-alias .......='u6'
+alias ..='up 1'
+alias ...='up 2'
+alias ....='up 3'
+alias .....='up 4'
+alias ......='up 5'
+alias .......='up 6'
+
+up() {
+    local count=${1:-1}
+    if ! is_numeric "${count}" || [[ $count -lt 1 ]]; then
+        err "Count must be a non-negative integer"
+        return 1
+    fi
+    local target_dir
+    target_dir=$(printf '../%.0s' $(seq 1 "${count}"))
+    if cs "${target_dir}" > /dev/null; then
+        la
+    else
+        err "Could not cd into ${target_dir}"
+        return 1
+    fi
+}
 
 pp() {
     local depth="${1:-1}"
