@@ -300,6 +300,15 @@ _glot_autocomplete() {
     fi
 }
 
+_gproj_autocomplete() {
+    local cur prev words cword
+    _init_completion || return
+
+    local opts="--demo --help --no-commit"
+    COMPREPLY=($(compgen -W "${opts}" -- "${cur}"))
+}
+
+complete -F _gproj_autocomplete gproj
 complete -F _glot_autocomplete glot
 complete -F _term_autocomplete term
 complete -F _backup_autocomplete backup
