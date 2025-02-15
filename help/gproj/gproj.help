@@ -1,0 +1,22 @@
+Usage: gproj [PROJECT_NAME] [OPTIONS]
+
+Generates a git project.
+
+Positional parameters:
+
+    (no options)        Generate an empty git project with a .gitignore file.
+    \$1 project_name    (Optional) The name of the project to generate. If not specified, defaults to "my_project".
+
+Options:
+
+  -n, --no-commit  Do not automatically create an initial commit.
+                   This option cannot be used with --demo.
+  -d, --demo       Generate a demo project with multiple branches and commits.
+                   This option cannot be used with --no-commit.
+  -h, --help       Print this help message and exit
+
+Examples:
+
+  gproj my_new_project
+  gproj my_demo_project --demo
+  gproj --no-commit
