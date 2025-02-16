@@ -886,8 +886,15 @@ is_git_repo() {
     fi
 }
 
+# @description  Get the name of the current branch
+# @option --remote  If set, get the name of the remote branch; otherwise get the name of the local branch
 git_current_branch() {
-    git rev-parse --abbrev-ref HEAD
+    if [[ "${1}" == --remote ]]; then
+        symbolic_reference=$(git symbolic-ref -q HEAD)
+        git for-each-ref --format='%(upstream:short)' "${symbolic_reference}"
+    else
+        git rev-parse --abbrev-ref HEAD
+    fi
 }
 
 ##############################################################
