@@ -31,7 +31,7 @@ init_server() {
     api_key="$(get_linx_property "${GPT_API_PROPERTY_KEY}" -q)"
 
     if [[ -z "${api_key}" ]]; then
-        echo "${GPT_API_PROPERTY_KEY} is not defined in ${CONFIG_FILE}"
+        echo "${GPT_API_PROPERTY_KEY} is not defined in ${LINX_CONFIG_FILE}"
         prompt_multiline "your OpenAI API key"
         api_key="${input}"
         put_linx_property "${GPT_API_PROPERTY_KEY}" "${api_key}"

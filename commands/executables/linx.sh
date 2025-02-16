@@ -226,13 +226,13 @@ pull_setup() {
 }
 
 handle_config() {
-  if [[ -f "${CONFIG_FILE}" ]]; then
-      vim "${CONFIG_FILE}"
+  if [[ -f "${LINX_CONFIG_FILE}" ]]; then
+      vim "${LINX_CONFIG_FILE}"
   else
-      err "Could not find linx config file at ${CONFIG_FILE}"
+      err "Could not find linx config file at ${LINX_CONFIG_FILE}"
       echo "Generating a new one..."
-      echo '# linx configuration file' > "${CONFIG_FILE}"
-      vim "${CONFIG_FILE}"
+      echo '# linx configuration file' > "${LINX_CONFIG_FILE}"
+      vim "${LINX_CONFIG_FILE}"
   fi
 }
 

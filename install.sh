@@ -19,7 +19,7 @@ export LINX_BACKUPS_DIR="/var/backups"
 LINX_COMMANDS_DIR="/usr/local/bin"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 LINX_MKF_DIR="${LINX_DIR}/mkf"
-CONFIG_FILE="${LINX_DIR}/config.properties"
+LINX_CONFIG_FILE="${LINX_DIR}/config.properties"
 ANONYMIZE_FILE="${LINX_DIR}/anonymize.properties"
 MKF_CONFIG_FILE="${LINX_MKF_DIR}/config"
 MKF_TEMPLATE_DIR="${LINX_MKF_DIR}/templates"
@@ -532,7 +532,7 @@ get_linx_property() {
     done
 
     local value
-    value="$(get_property "${CONFIG_FILE}" "$@")"
+    value="$(get_property "${LINX_CONFIG_FILE}" "$@")"
     if ! $raw && [[ -n "${value}" ]]; then
         expand_path "${value}"
     else
@@ -543,7 +543,7 @@ get_linx_property() {
 put_linx_property() {
     local key="${1}"
     local value="${2}"
-    put_property "${CONFIG_FILE}" "${key}" "${value}"
+    put_property "${LINX_CONFIG_FILE}" "${key}" "${value}"
 }
 
 get_help() {
@@ -816,8 +816,8 @@ install_core() {
         if [[ ! -f "${ANONYMIZE_FILE}" ]]; then
             cp ./config/anonymize.properties "${ANONYMIZE_FILE}"
         fi
-        if [[ ! -f "${CONFIG_FILE}" ]]; then
-            cp ./config/config.properties "${CONFIG_FILE}"
+        if [[ ! -f "${LINX_CONFIG_FILE}" ]]; then
+            cp ./config/config.properties "${LINX_CONFIG_FILE}"
         fi
         source "${HOME}/.bashrc"
         update_mkf_config

@@ -13,7 +13,7 @@ fi
 ##############################################################
 
 PROMPT_TO_BOTTOM=false
-if [[ -f "${CONFIG_FILE}" ]]; then
+if [[ -f "${LINX_CONFIG_FILE}" ]]; then
     linx_prompt_to_bottom=
     linx_prompt_to_bottom=$(get_linx_property "prompt.to.bottom" -q)
     if [[ $? -eq 0 && "${linx_prompt_to_bottom}" == "true" ]]; then
@@ -717,7 +717,7 @@ glast() {
 }
 
 # @description Dump the git log of the current local branch in a file in the current directory. If
-#              git.log.dump.directory is defined in "${CONFIG_FILE}", the output will be generated
+#              git.log.dump.directory is defined in "${LINX_CONFIG_FILE}", the output will be generated
 #              in this directory instead.
 # @param $1 (optional) the path of the file to write to (a timestamped .gdump file by default)
 gdump() {
