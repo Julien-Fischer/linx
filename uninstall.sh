@@ -53,10 +53,11 @@ uninstall_commands() {
 }
 
 uninstall_cron_jobs() {
-    local crons=$(linx cron)
-    local n=$(echo "$crons" | grep -c .)
-    if [[ $n -gt 0 ]]; then
-        echo "${n} cron jobs were installed using linx."
+    local linx_cron_jobs job_count
+    linx_cron_jobs=$(linx cron)
+    job_count=$(echo "$linx_cron_jobs" | grep -c .)
+    if [[ $job_count -gt 0 ]]; then
+        echo "${job_count} cron jobs were installed using linx."
         if $auto_approve || confirm "Removal" "Remove them?"; then
             linx cron --clear -y
         fi
