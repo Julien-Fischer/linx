@@ -875,7 +875,13 @@ replay_commits() {
         return 1
     fi
 
-    local max_wait_seconds=6
+    local DEFAULT_MAX_WAIT_SECONDS=6
+    local max_wait_seconds
+    max_wait_seconds="$(get_linx_property "git.replay.max-wait" -q)"
+    if [[ -z "${max_wait_seconds}" ]]; then
+        max_wait_seconds="${DEFAULT_MAX_WAIT_SECONDS}"
+    fi
+
     local instant=false
     local push=false
     local start_commit_hash_excluded="${1}"
