@@ -875,7 +875,7 @@ replay_commits() {
         return 1
     fi
 
-    local MAX_WAIT=6
+    local max_wait_seconds=6
     local instant=false
     local push=false
     local start_commit_hash_excluded="${1}"
@@ -945,7 +945,7 @@ replay_commits() {
     for (( i = 0; i < count; i++ )); do
         local duration=0
         if ! $instant; then
-            duration=$(rand 1 MAX_WAIT)
+            duration=$(rand 1 max_wait_seconds)
         fi
 
         if ! grestore > /dev/null; then
