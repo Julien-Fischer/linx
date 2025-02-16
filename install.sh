@@ -493,15 +493,15 @@ add_missing_properties() {
     tmp_target_keys=$(mktemp)
 
     awk -F= '{print $1}' "${target_file}" | while IFS= read -r key; do
-      normalize_key "$key"
+        normalize_key "$key"
     done > "${tmp_target_keys}"
 
     while IFS= read -r line; do
-      key=$(echo "${line}" | awk -F= '{print $1}')
-      normalized_key=$(normalize_key "$key")
-      if ! grep -q "^$normalized_key$" "${tmp_target_keys}"; then
-        echo "${line}" >> "${tmp_new_properties}"
-      fi
+        key=$(echo "${line}" | awk -F= '{print $1}')
+        normalized_key=$(normalize_key "$key")
+        if ! grep -q "^$normalized_key$" "${tmp_target_keys}"; then
+          echo "${line}" >> "${tmp_new_properties}"
+        fi
     done < "$source_file"
 
     cat "${target_file}" > "${tmp_new_file}"
