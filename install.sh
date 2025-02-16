@@ -41,7 +41,7 @@ TERMINATOR_THEMES_REPOSITORY="${LINX_GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
-MAX_TERMINATOR_BACKUPS=30
+TERMINATOR_BACKUPS_CAPACITY=30
 # shellcheck disable=SC2034
 LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
 LINX_SPINNER_PID=""
@@ -577,7 +577,7 @@ anonymize_plain_text() {
 backup_and_rotate() {
     local target="${1}"
     local quiet=''
-    local max_backups=$MAX_TERMINATOR_BACKUPS
+    local max_backups=$TERMINATOR_BACKUPS_CAPACITY
     local backup_suffix=".bak"
     local timestamp dir_path file_name
     timestamp=$(date +"%Y%m%d%H%M%S")
