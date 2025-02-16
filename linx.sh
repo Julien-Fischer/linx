@@ -758,11 +758,7 @@ gdump() {
 
 # @description  List all unpushed commits in the current branch
 git_unpushed() {
-    local symbolic_reference remote_branch
-    symbolic_reference=$(git symbolic-ref -q HEAD)
-    remote_branch=$(git for-each-ref --format='%(upstream:short)' "${symbolic_reference}")
-
-    if [[ -n "${remote_branch}" ]]; then
+    if [[ -n "$(git_current_branch --remote)" ]]; then
         git log --oneline "@{push}.."
     else
         git log --oneline
