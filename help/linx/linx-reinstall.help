@@ -1,0 +1,6 @@
+Usage: linx reinstall [OPTIONS]
+
+Reinstall linx
+
+Options:
+  -h, --help            Show this message and exit

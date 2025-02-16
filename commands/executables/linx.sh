@@ -95,6 +95,23 @@ handle_sync() {
     return $?
 }
 
+handle_reinstall() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                get_help "linx-reinstall"
+                return 0
+                ;;
+            *)
+                err "Invalid parameter ${1}"
+                get_help "linx-reinstall"
+                return 1
+                ;;
+        esac
+    done
+    install_linx --fresh "$@"
+}
+
 handle_commands() {
     read_commands
 }
@@ -256,6 +273,10 @@ linx() {
             shift
             handle_sync "$@"
             ;;
+        r|reinstall)
+            shift
+            handle_reinstall "$@"
+            ;;
         -c|--commands)
             shift
             handle_commands "$@"
@@ -278,6 +299,7 @@ linx() {
             return 1
             ;;
     esac
+    return $?
 }
 
 linx "$@"

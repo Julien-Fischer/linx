@@ -74,6 +74,7 @@ export NC='\033[0m'
 ##############################################################
 
 auto_approve=1
+fresh_install=false
 
 ##############################################################
 # Utils
@@ -708,7 +709,7 @@ third_party_themes_installed() {
 
 should_install_third_party_themes() {
     local msg="${LINX_PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
-    if (! is_sourced && [[ $auto_approve -ne 0 ]] && confirm "Third-party themes installation" "${msg}"); then
+    if ($fresh_install || ! is_sourced && [[ $auto_approve -ne 0 ]] && confirm "Third-party themes installation" "${msg}"); then
         return 0
     fi
     if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || \
@@ -915,13 +916,16 @@ install_linx() {
         case $1 in
             -y|--yes)
                 auto_approve=0
-                shift
+                ;;
+            --fresh)
+                fresh_install=true
                 ;;
             *)
                 echo "Usage: ./install.sh [-y]"
                 return 1
                 ;;
         esac
+        shift
     done
     require_sudo "install ${LINX_PROJECT} on your system."
 

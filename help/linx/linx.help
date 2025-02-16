@@ -5,6 +5,7 @@ Manages linx local and remote configuration.
 Arguments:
   b, backup               Create a timestamped backup of linx local configuration
   c, cron                 List the native Linx cron jobs
+  r, reinstall            Reinstall linx
   s, sync                 Synchronize the local setup with the remote
   config                  Open the linx configuration file in vim
 
