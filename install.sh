@@ -73,7 +73,7 @@ export NC='\033[0m'
 # Parameters
 ##############################################################
 
-auto_approve=1
+auto_approve=false
 fresh_install=false
 
 ##############################################################
@@ -665,7 +665,7 @@ install_dependency() {
     local software="${1}"
     local reason="${2}"
     if ! installed "${software}" --quiet; then
-        if [[ $auto_approve -ne 0 ]] && confirm "${LINX_PROJECT}: ${software} installation" "${LINX_PROJECT}: Do you wish to install ${software} ${reason}?"; then
+        if ! $auto_approve && confirm "${LINX_PROJECT}: ${software} installation" "${LINX_PROJECT}: Do you wish to install ${software} ${reason}?"; then
             sudo apt install "${software}"
         fi
     fi
@@ -709,12 +709,12 @@ third_party_themes_installed() {
 
 should_install_third_party_themes() {
     local msg="${LINX_PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
-    if ($fresh_install || ! is_sourced && [[ $auto_approve -ne 0 ]] && confirm "Third-party themes installation" "${msg}"); then
+    if ($fresh_install || ! is_sourced && ! $auto_approve && confirm "Third-party themes installation" "${msg}"); then
         return 0
     fi
     if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || \
        ([[ $linx_already_installed -ne 0 ]] && \
-       ([[ $auto_approve -eq 0 ]] || confirm "Third-party themes installation" "${msg}")); then
+       ( $auto_approve || confirm "Third-party themes installation" "${msg}")); then
         return 0
     else
         return 1
@@ -915,7 +915,7 @@ install_linx() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -y|--yes)
-                auto_approve=0
+                auto_approve=true
                 ;;
             --fresh)
                 fresh_install=true
