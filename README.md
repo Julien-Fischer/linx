@@ -101,7 +101,7 @@ linx config
 pls
 ```
 
-## Installation instructions
+## Getting Started
 
 Install linx using **curl**:
 
@@ -116,7 +116,7 @@ git clone https://github.com/Julien-Fischer/linx && linx/install.sh
 ```
 
 Note: You may need to restart your terminal for some changes to be applied, especially for Terminator 
-configurations.
+settings.
 
 ## Configuration
 
