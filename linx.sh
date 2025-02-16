@@ -756,6 +756,19 @@ gdump() {
     echo -e "created: $(color "$(basename "${filepath}")" "${GREEN_BOLD}") in: $(color "${directory_path}" "${YELLOW_BOLD}")"
 }
 
+# @description  List unpushed commits in the current branch. If the current branch is not set to track any
+#               remote branch, do nothing
+git_unpushed() {
+    local current_branch symbolic_reference remote_branch
+    current_branch=$(git_get_branch_name)
+    symbolic_reference=$(git symbolic-ref -q HEAD)
+    remote_branch=$(git for-each-ref --format='%(upstream:short)' "${symbolic_reference}")
+
+    if [[ -n "${remote_branch}" ]]; then
+        git log --oneline "@{push}.."
+    fi
+}
+
 # Changes visualization
 
 gdiff() {
