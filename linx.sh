@@ -825,7 +825,7 @@ gap() {
 grs() {
   local n=${1:-1}
   local current_branch
-  current_branch=$(git branch --show-current)
+  current_branch=$(git_get_branch_name)
   if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
       echo "Error: Please provide a positive integer for the number of commits to reset."
       return 1
@@ -1000,7 +1000,7 @@ count_commits_since() {
 
 backup_current_branch() {
     local current_branch backup_branch
-    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    current_branch=$(git_get_branch_name)
     backup_branch="${current_branch}-backup-$(date +%Y%m%d%H%M%S)"
 
     if git branch "${backup_branch}"; then
