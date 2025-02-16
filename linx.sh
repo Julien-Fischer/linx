@@ -441,6 +441,7 @@ function install() {
 
 # Execute the last command with sudo
 please() {
+    # shellcheck disable=SC2046
     sudo $(history -p !!)
 }
 
