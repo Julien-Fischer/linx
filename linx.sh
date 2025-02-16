@@ -456,7 +456,8 @@ pls() {
 #   is_installed firefox
 # @example
 is_installed() {
-    return $(installed "$@")
+    installed "$@"
+    return $?
 }
 
 # @description Upgrades the specified software to the latest version
