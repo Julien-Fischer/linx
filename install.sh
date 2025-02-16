@@ -886,7 +886,7 @@ is_git_repo() {
     fi
 }
 
-git_get_branch_name() {
+git_current_branch() {
     git rev-parse --abbrev-ref HEAD
 }
 

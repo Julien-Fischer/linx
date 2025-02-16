@@ -756,16 +756,16 @@ gdump() {
     echo -e "created: $(color "$(basename "${filepath}")" "${GREEN_BOLD}") in: $(color "${directory_path}" "${YELLOW_BOLD}")"
 }
 
-# @description  List unpushed commits in the current branch. If the current branch is not set to track any
-#               remote branch, do nothing
+# @description  List all unpushed commits in the current branch
 git_unpushed() {
-    local current_branch symbolic_reference remote_branch
-    current_branch=$(git_get_branch_name)
+    local symbolic_reference remote_branch
     symbolic_reference=$(git symbolic-ref -q HEAD)
     remote_branch=$(git for-each-ref --format='%(upstream:short)' "${symbolic_reference}")
 
     if [[ -n "${remote_branch}" ]]; then
         git log --oneline "@{push}.."
+    else
+        git log --oneline
     fi
 }
 
@@ -838,7 +838,7 @@ gap() {
 grs() {
     local n=${1:-1}
     local current_branch
-    current_branch=$(git_get_branch_name)
+    current_branch=$(git_current_branch)
     if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
         echo "Error: Please provide a positive integer for the number of commits to reset."
         return 1
@@ -1013,7 +1013,7 @@ count_commits_since() {
 
 backup_current_branch() {
     local current_branch backup_branch
-    current_branch=$(git_get_branch_name)
+    current_branch=$(git_current_branch)
     backup_branch="${current_branch}-backup-$(date +%Y%m%d%H%M%S)"
 
     if git branch "${backup_branch}"; then
