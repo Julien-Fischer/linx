@@ -311,7 +311,7 @@ set_layout() {
 
     backup "${TERMINATOR_CONFIG_FILE}" -q
     sudo mv "$temp_file" "${TERMINATOR_CONFIG_FILE}"
-    echo "${layout_name}" > "${CURRENT_LAYOUT_FILE}"
+    echo "${layout_name}" > "${TERMINATOR_CURRENT_LAYOUT_FILE}"
 }
 
 print_layout() {
@@ -413,8 +413,8 @@ list_layouts() {
     if ! $raw; then
         echo "${#layouts[@]} available layouts:"
     fi
-    if [[ -f "${CURRENT_LAYOUT_FILE}" ]]; then
-        current_layout=$(cat "${CURRENT_LAYOUT_FILE}")
+    if [[ -f "${TERMINATOR_CURRENT_LAYOUT_FILE}" ]]; then
+        current_layout=$(cat "${TERMINATOR_CURRENT_LAYOUT_FILE}")
     fi
     for layout in "${layouts[@]}"; do
         if $raw; then
