@@ -40,7 +40,7 @@ TERMINATOR_THEMES_PROJECT="terminator_themes"
 TERMINATOR_THEMES_REPOSITORY="${LINX_GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git"
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
-THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
+TERMINATOR_THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 TERMINATOR_BACKUPS_CAPACITY=30
 # shellcheck disable=SC2034
 LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
@@ -678,7 +678,7 @@ is_linx_installed() {
 
 third_party_themes_installed() {
     local file="${TERMINATOR_THEME_POLICY_FILE}"
-    if [[ -f "${file}" ]] && grep -q "${THIRD_PARTY_ENABLED_KEY}=true" "${file}"; then
+    if [[ -f "${file}" ]] && grep -q "${TERMINATOR_THIRD_PARTY_ENABLED_KEY}=true" "${file}"; then
         return 0
     fi
     return 1
@@ -743,7 +743,7 @@ install_terminator_config() {
     if $third_party_themes_enabled; then
         echo "Installing third-party themes..."
         cat "${TERMINATOR_THEMES_PROJECT}/terminator.conf" >> "${TERMINATOR_CONFIG_FILE}"
-        echo "${THIRD_PARTY_ENABLED_KEY}=true" > "${TERMINATOR_THEME_POLICY_FILE}"
+        echo "${TERMINATOR_THIRD_PARTY_ENABLED_KEY}=true" > "${TERMINATOR_THEME_POLICY_FILE}"
     fi
     add_fragment "layouts"
     add_fragment "plugins"
