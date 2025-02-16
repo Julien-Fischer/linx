@@ -452,6 +452,7 @@ expand_path() {
 }
 
 get_property() {
+    local usage="Usage: get_property [file] [key] [[--quiet] [--default]]"
     local file="${1}"
     local key="${2}"
     local quiet=false
@@ -468,7 +469,7 @@ get_property() {
                 shift
                 ;;
             *)
-                echo "Usage: ./install.sh [-y]"
+                echo "${usage}"
                 return 1
                 ;;
         esac
