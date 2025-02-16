@@ -40,18 +40,18 @@ backup_local_config() {
     local absolute_path="${LINX_BACKUPS_DIR}/${filename}"
     local command_dir_backup="${temp_dir}/commands"
 
-    echo "${VERSION}" > "${temp_dir}/VERSION"
+    echo "${LINX_VERSION}" > "${temp_dir}/VERSION"
     cp -r "${LINX_DIR}" "${temp_dir}/" > /dev/null
     cp -r "${TERMINATOR_DIR}" "${temp_dir}/" > /dev/null
     mkdir -p "${command_dir_backup}" > /dev/null
 
     while IFS= read -r cmd; do
         if [[ -n "${cmd}" ]]; then
-            local command_file="${COMMANDS_DIR}/${cmd}"
+            local command_file="${LINX_COMMANDS_DIR}/${cmd}"
             if [[ -f "${command_file}" ]]; then
                 cp "${command_file}" "${command_dir_backup}/" > /dev/null
             else
-                echo "Warning: ${cmd} not found in ${COMMANDS_DIR}"
+                echo "Warning: ${cmd} not found in ${LINX_COMMANDS_DIR}"
             fi
         fi
     done < <(read_commands)
@@ -269,7 +269,7 @@ linx() {
             print_info
             ;;
         -v|--version)
-            echo "${VERSION}"
+            echo "${LINX_VERSION}"
             ;;
         *)
             err "Invalid parameter ${1}"

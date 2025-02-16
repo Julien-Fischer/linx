@@ -8,7 +8,7 @@
 # Constants
 ##############################################################
 
-export VERSION="1.0.0-alpha10"
+export LINX_VERSION="1.0.0-alpha10"
 export PROJECT="linx"
 export LINX_DIR="${HOME}/${PROJECT}"
 export HELP_DIR="${LINX_DIR}/help"
@@ -16,7 +16,7 @@ export CRON_DIR="${LINX_DIR}/cron"
 export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
 export CRON_LOG_FILE="${CRON_DIR}/jobs.log"
 export LINX_BACKUPS_DIR="/var/backups"
-COMMANDS_DIR="/usr/local/bin"
+LINX_COMMANDS_DIR="/usr/local/bin"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 MKF_DIR="${LINX_DIR}/mkf"
 CONFIG_FILE="${LINX_DIR}/config.properties"
@@ -341,7 +341,7 @@ installed() {
     if [[ "${2}" == "-q" || "${2}" == "--quiet" ]]; then
         quiet=true
     fi
-    if dpkg -s "${software}" &> /dev/null || compgen -G "${COMMANDS_DIR}/*${software}*" > /dev/null; then
+    if dpkg -s "${software}" &> /dev/null || compgen -G "${LINX_COMMANDS_DIR}/*${software}*" > /dev/null; then
         local location
         location=$(which "${software}")
         if ! $quiet; then
@@ -655,7 +655,7 @@ install_command() {
     command_name=$(basename "${filename}" .sh)
     filepath="commands/executables/${command_name}.sh"
     chmod +x "${filepath}"
-    sudo cp "${filepath}" "${COMMANDS_DIR}"/"${command_name}"
+    sudo cp "${filepath}" "${LINX_COMMANDS_DIR}"/"${command_name}"
     echo "${command_name}" >> "${LINX_INSTALLED_COMMANDS}"
     cp -rf "help/${command_name}"/* "${HELP_DIR}"/
 }
@@ -784,14 +784,14 @@ is_git_repo() {
 ##############################################################
 
 install_commands() {
-    sudo mkdir -p "${COMMANDS_DIR}"
+    sudo mkdir -p "${LINX_COMMANDS_DIR}"
     printf '' > "${LINX_INSTALLED_COMMANDS}"
     mapfile -t COMMANDS < <(find ./commands/executables -maxdepth 1 -type f -printf "%f\n")
     for command in "${COMMANDS[@]}"; do
         install_command "${command}"
     done
     cp "commands/.autocomplete.sh" "${LINX_DIR}"
-    sudo cp -rf "commands/executables/ask.server" "${COMMANDS_DIR}"
+    sudo cp -rf "commands/executables/ask.server" "${LINX_COMMANDS_DIR}"
 }
 
 update_mkf_config() {

@@ -34,7 +34,7 @@ try_removing() {
 uninstall_command() {
     local command="${1}"
     if installed "${command}" -q; then
-        del "${COMMANDS_DIR}/${command}" -q
+        del "${LINX_COMMANDS_DIR}/${command}" -q
     fi
 }
 

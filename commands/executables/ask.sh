@@ -13,7 +13,7 @@ source "${HOME}"/.bashrc
 # Constants
 ##############################################################
 
-SERVER_DIR="${COMMANDS_DIR}/ask.server"
+SERVER_DIR="${LINX_COMMANDS_DIR}/ask.server"
 SERVER_ENTRYPOINT="server.js"
 SERVER_PORT="3000"
 REST_ENDPOINT="http://localhost:${SERVER_PORT}/ask"
