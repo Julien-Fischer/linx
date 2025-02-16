@@ -9,6 +9,35 @@ if [[ -f "${HOME}"/linx/.linx_lib.sh ]]; then
 fi
 source "${HOME}"/.bashrc
 
+##############################################################
+# Constants
+##############################################################
+
+LOCAL_COMMIT_SYMBOL="X"
+PUSHED_COMMIT_SYMBOL="-"
+
+##############################################################
+# Helper
+##############################################################
+
+get_status_color() {
+    case $1 in
+        "${PUSHED_COMMIT_SYMBOL}")
+            echo "${GREEN}";
+            ;;
+        "${LOCAL_COMMIT_SYMBOL}")
+            echo "${RED_BOLD}";
+            ;;
+        *)
+            err "Unknown status ${1}: must be one of (${PUSHED_COMMIT_SYMBOL}, ${LOCAL_COMMIT_SYMBOL})"
+            ;;
+    esac
+}
+
+##############################################################
+# Process
+##############################################################
+
 glot() {
     if ! is_git_repo; then
         return 1
@@ -64,18 +93,33 @@ glot() {
     temp_file=$(mktemp)
 
     local params=(
-        --pretty=format:"%h|%ad|%an|%ae|%s"
+        --pretty=format:"%H|%h|%ad|%an|%ae|%s"
         --date=format:"%Y-%m-%d %H:%M:%S"
     )
     if $today_only; then
         params+=(--since "00:00:00")
     fi
 
+    branch_name=$(git_current_branch)
+    remote_tracking_branch="$(git_current_branch --remote)"
+
+    if [[ -z "${remote_tracking_branch}" ]]; then
+        all_local=true
+    else
+        all_local=false
+        local_commits=$(git rev-list "${remote_tracking_branch}".."${branch_name}")
+    fi
+
     git log "${branch_name}" "${params[@]}" |
     sed '$a\' |
-    while IFS='|' read -r hash date name email message; do
+    while IFS='|' read -r full_hash hash date name email message; do
         if [[ "${name,,}" == "${substring,,}"* ]] || [[ "${email,,}" == "${substring,,}"* ]]; then
-            echo "${hash}|${date}|${name}|${email}|${message}" >> "${temp_file}"
+            if $all_local || [[ $local_commits == *"$full_hash"* ]]; then
+                status="${LOCAL_COMMIT_SYMBOL}"
+            else
+                status="${PUSHED_COMMIT_SYMBOL}"
+            fi
+            echo "${status}|${hash}|${date}|${name}|${email}|${message}" >> "${temp_file}"
         fi
     done
 
@@ -91,10 +135,10 @@ glot() {
         echo ""
     fi
 
-    sort -t'|' -k2 $sort_option "${temp_file}" |
-    while IFS='|' read -r hash date name email message; do
-        printf "${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
-               "${hash}" "${date}" "${name}" "${message}"
+    sort -t'|' -k3 $sort_option "${temp_file}" |
+    while IFS='|' read -r status hash date name email message; do
+        printf "$(get_status_color "${status}")%-1s${NC} | ${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
+               "${status}" "${hash}" "${date}" "${name}" "${message}"
     done
 
     rm "${temp_file}"
