@@ -27,7 +27,7 @@ DOCKER_CONFIG_DIR="${HOME}/docker_config"
 KEEP_CONTAINERS_FILE="${DOCKER_CONFIG_DIR}/keep_containers"
 KEEP_IMAGES_FILE="${DOCKER_CONFIG_DIR}/keep_images"
 LINX_FUNC_FILE_NAME="${LINX_PROJECT}.sh"
-LIB_FILE_NAME=".${LINX_PROJECT}_lib.sh"
+LINX_LIB_FILE_NAME=".${LINX_PROJECT}_lib.sh"
 TERMINATOR_DIR="${HOME}/.config/terminator"
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
@@ -811,7 +811,7 @@ install_core() {
     if git clone "${REPOSITORY}" --branch "${branch_name}" --single-branch -q; then
         linx_spinner_stop
         cd "${LINX_PROJECT}" || return 1
-        cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
+        cp ./install.sh "${LINX_DIR}/${LINX_LIB_FILE_NAME}"
         cp "${LINX_FUNC_FILE_NAME}" "${LINX_DIR}"
         if [[ ! -f "${LINX_ANONYMIZE_FILE}" ]]; then
             cp ./config/anonymize.properties "${LINX_ANONYMIZE_FILE}"
