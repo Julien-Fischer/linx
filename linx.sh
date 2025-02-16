@@ -129,7 +129,7 @@ clp() {
 # @option -h, --help  print help and exit
 anonymize() {
     local USAGE="Usage: anonymize [[c,config] [[-s,--case-sensitive] [-m|--message] [-f|--file]] [[--help]]]"
-    local case_sensitive=false
+    local case_sensitive=''
     local text=
 
     if [[ "$#" -gt 0 ]]; then
@@ -148,6 +148,9 @@ anonymize() {
                 echo "${USAGE}"
                 return
                 ;;
+            -s|--case-sensitive)
+                case_sensitive=--case-sensitive
+                ;;
             *)
                 err "Invalid parameter: ${1}"
                 echo "${USAGE}"
@@ -161,7 +164,7 @@ anonymize() {
     fi
 
     local anonymized
-    anonymized=$(anonymize_plain_text "${text}")
+    anonymized=$(anonymize_plain_text "${text}" "${case_sensitive}")
     echo -e "${anonymized}" | xclip -selection clipboard
     echo "Text anonymized."
 }
