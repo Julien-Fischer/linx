@@ -1266,7 +1266,7 @@ Options:
 
 Description:
   Stops and removes all Docker containers except those specified with the --keep option
-  and those listed in \$KEEP_CONTAINERS_FILE (usually located at ${KEEP_CONTAINERS_FILE}).
+  and those listed in \$DOCKER_KEEP_CONTAINERS_FILE (usually located at ${DOCKER_KEEP_CONTAINERS_FILE}).
 EOF
 )
     while [[ "$#" -gt 0 ]]; do
@@ -1279,8 +1279,8 @@ EOF
     done
     # Read container IDs from ~/docker_config/keep_containers file
     local file_keep=""
-    if [[ -f "${KEEP_CONTAINERS_FILE}" ]]; then
-        file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${KEEP_CONTAINERS_FILE}")
+    if [[ -f "${DOCKER_KEEP_CONTAINERS_FILE}" ]]; then
+        file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${DOCKER_KEEP_CONTAINERS_FILE}")
     fi
     # Combine file_keep and keep
     local all_keep="$file_keep $keep"
@@ -1299,7 +1299,7 @@ EOF
     if [[ $remove_count -gt 0 ]]; then
         docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
     fi
-    local keep_count=$(grep -c '[^[:space:]]' "${KEEP_CONTAINERS_FILE}")
+    local keep_count=$(grep -c '[^[:space:]]' "${DOCKER_KEEP_CONTAINERS_FILE}")
     echo -e "Stopped: $(color "${stop_count}" "${GREEN}"), Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
