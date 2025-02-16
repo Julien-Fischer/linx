@@ -34,7 +34,7 @@ CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
 CURRENT_LAYOUT_FILE="${TERMINATOR_DIR}/current.layout"
 THEME_POLICY_FILE="${TERMINATOR_DIR}/theme_policy"
 LINX_GITHUB_ACCOUNT="https://github.com/Julien-Fischer"
-REPOSITORY="${LINX_GITHUB_ACCOUNT}/${LINX_PROJECT}.git"
+LINX_REPOSITORY="${LINX_GITHUB_ACCOUNT}/${LINX_PROJECT}.git"
 TERMINATOR_LOCAL_CONFIG_DIR="config/terminator"
 TERMINATOR_THEMES_PROJECT="terminator_themes"
 TERMINATOR_THEMES_REPOSITORY="${LINX_GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git"
@@ -808,7 +808,7 @@ install_core() {
     cd "${install_dir}" || rm -rf "${install_dir}"
     echo "${LINX_PROJECT}: Cloning remote... [${branch_name}]"
     linx_spinner_start
-    if git clone "${REPOSITORY}" --branch "${branch_name}" --single-branch -q; then
+    if git clone "${LINX_REPOSITORY}" --branch "${branch_name}" --single-branch -q; then
         linx_spinner_stop
         cd "${LINX_PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LINX_LIB_FILE_NAME}"
@@ -839,7 +839,7 @@ install_core() {
         echo "${LINX_PROJECT}: Remote cloned"
         return 0
     else
-        echo "E: Could not clone repository ${REPOSITORY}"
+        echo "E: Could not clone repository ${LINX_REPOSITORY}"
         return 1
     fi
 }

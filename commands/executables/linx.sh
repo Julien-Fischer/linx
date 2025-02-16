@@ -26,7 +26,7 @@ require_source ".bashrc"
 print_info() {
     echo "linx $(linx --version)"
     echo "Author: Julien Fischer <julien.fischer@agiledeveloper.net>"
-    echo "Repository: ${REPOSITORY}"
+    echo "Repository: ${LINX_REPOSITORY}"
     echo "For help, use linx --help or linx -h"
 }
 
