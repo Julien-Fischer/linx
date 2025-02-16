@@ -135,7 +135,7 @@ anonymize() {
     if [[ "$#" -gt 0 ]]; then
         case $1 in
             c|config)
-                vim "${ANONYMIZE_FILE}"
+                vim "${LINX_ANONYMIZE_FILE}"
                 return
                 ;;
             -m|--message)

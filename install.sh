@@ -20,7 +20,7 @@ LINX_COMMANDS_DIR="/usr/local/bin"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 LINX_MKF_DIR="${LINX_DIR}/mkf"
 LINX_CONFIG_FILE="${LINX_DIR}/config.properties"
-ANONYMIZE_FILE="${LINX_DIR}/anonymize.properties"
+LINX_ANONYMIZE_FILE="${LINX_DIR}/anonymize.properties"
 MKF_CONFIG_FILE="${LINX_MKF_DIR}/config"
 MKF_TEMPLATE_DIR="${LINX_MKF_DIR}/templates"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -557,7 +557,7 @@ anonymize_plain_text() {
         case_sensitive=true
     fi
 
-    local properties_file="${ANONYMIZE_FILE}"
+    local properties_file="${LINX_ANONYMIZE_FILE}"
     [[ ! -f "${properties_file}" ]] && err "Properties file missing at ${properties_file}" && return 1
 
     while IFS='=' read -r key value; do
@@ -813,8 +813,8 @@ install_core() {
         cd "${LINX_PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
         cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
-        if [[ ! -f "${ANONYMIZE_FILE}" ]]; then
-            cp ./config/anonymize.properties "${ANONYMIZE_FILE}"
+        if [[ ! -f "${LINX_ANONYMIZE_FILE}" ]]; then
+            cp ./config/anonymize.properties "${LINX_ANONYMIZE_FILE}"
         fi
         if [[ ! -f "${LINX_CONFIG_FILE}" ]]; then
             cp ./config/config.properties "${LINX_CONFIG_FILE}"
