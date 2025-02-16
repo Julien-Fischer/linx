@@ -877,10 +877,8 @@ replay_commits() {
 
     local DEFAULT_MAX_WAIT_SECONDS=6
     local max_wait_seconds
-    max_wait_seconds="$(get_linx_property "git.replay.max-wait" -q)"
-    if [[ -z "${max_wait_seconds}" ]]; then
-        max_wait_seconds="${DEFAULT_MAX_WAIT_SECONDS}"
-    fi
+    # shellcheck disable=SC2034
+    max_wait_seconds="$(get_linx_property "git.replay.max-wait" -q --default "${DEFAULT_MAX_WAIT_SECONDS}")"
 
     local instant=false
     local push=false

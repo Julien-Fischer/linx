@@ -455,9 +455,25 @@ get_property() {
     local file="${1}"
     local key="${2}"
     local quiet=false
-    if [[ "${3}" == -q ]]; then
-        quiet=true
-    fi
+    local default_value
+    shift 2
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -q|--quiet)
+                quiet=true
+                ;;
+            -d|--default)
+                default_value="${2}"
+                shift
+                ;;
+            *)
+                echo "Usage: ./install.sh [-y]"
+                return 1
+                ;;
+        esac
+        shift
+    done
 
     if [[ -z "${file}" ]]; then
         ! $quiet && err "Could not find file ${file}"
@@ -476,6 +492,11 @@ get_property() {
             return 0
         fi
     done < "${file}"
+
+    if [[ -n "${default_value}" ]]; then
+        echo "${default_value}"
+        return 0
+    fi
 
     ! $quiet && err "Could not find key ${key} in file ${file}"
     return 1
