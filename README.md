@@ -1,9 +1,10 @@
 # Linx (Link for Linux)
 
-Linx provides an opinionated set of commands and configurations designed for power users who prioritize speed
-and efficiency over graphical user interfaces.
-Among other things, linx aims to make navigation easier, automate grunt tasks such as managing git repositories,
-backups, files and directories, docker processes, text anonymization, and much more.
+An opinionated set of commands and configurations designed for power users who prioritize speed and efficiency over
+graphical user interfaces.
+
+linx aims to make navigation faster, automate grunt tasks such as managing git repositories, backups, files and
+directories, docker processes, text anonymization, and much more.
 
 It also enhances Terminator with additional features, integrates AI tools like GPT-4 for in-terminal prompts, and
 provides commands to configure and sync your local Linx setup with a remote environment.
