@@ -903,7 +903,7 @@ install_core() {
     local branch_name install_dir
     branch_name="${1:-main}"
     install_dir=$(mktemp -d)
-    cd "${install_dir}" || rm -rf "${install_dir}"
+    cd "${install_dir}" || { rm -rf "${install_dir}"; err "Could not cd into temp install directory"; exit 1; }
     echo "${LINX_PROJECT}: Cloning remote... [${branch_name}]"
     linx_spinner_start
     if git clone "${LINX_REPOSITORY}" --branch "${branch_name}" --single-branch -q; then
