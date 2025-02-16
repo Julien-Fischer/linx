@@ -293,9 +293,9 @@ pp() {
 
 alias reload='source ~/.bashrc && clear'
 alias br='vim ~/.bashrc'
-alias ba='vim ${LINX_DIR}/${FUNC_FILE_NAME}'
+alias ba='vim ${LINX_DIR}/${LINX_FUNC_FILE_NAME}'
 alias obr='open ~/.bashrc & disown'
-alias oba='open ${LINX_DIR}/${FUNC_FILE_NAME} & disown'
+alias oba='open ${LINX_DIR}/${LINX_FUNC_FILE_NAME} & disown'
 alias linxn='cs ${LINX_DIR}'
 
 ##############################################################
