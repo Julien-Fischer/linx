@@ -164,7 +164,7 @@ handle_crons() {
 
 delete_job() {
     echo 'Type the index of the job you wish to delete:'
-    mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
+    mapfile -t linx_jobs < "${LINX_CRON_JOBS_FILE}"
     print_array linx_jobs
     local index
     index=$(prompt "Which job do you wish to delete?")
@@ -178,7 +178,7 @@ delete_all_jobs() {
     fi
     echo "This will clear all cron jobs scheduled via linx."
     ! $auto_approve && confirm "Deletion" "Proceed?" --abort
-    mapfile -t linx_jobs < "${CRON_JOBS_FILE}"
+    mapfile -t linx_jobs < "${LINX_CRON_JOBS_FILE}"
     for ((i=0; i<${#linx_jobs[@]}; i++)); do
         remove_job $i
     done
@@ -188,7 +188,7 @@ remove_job() {
     local index="${1}"
     local job_to_remove="${linx_jobs[index]}"
     remove_cron_entry "${job_to_remove}" --quiet
-    remove_first_line_containing "${CRON_JOBS_FILE}" "${job_to_remove}"
+    remove_first_line_containing "${LINX_CRON_JOBS_FILE}" "${job_to_remove}"
     echo "${job_to_remove} has been removed."
 }
 
@@ -208,10 +208,10 @@ remove_cron_entry() {
 }
 
 read_crons() {
-    if [[ ! -f "${CRON_JOBS_FILE}" || ! -s "${CRON_JOBS_FILE}" ]]; then
+    if [[ ! -f "${LINX_CRON_JOBS_FILE}" || ! -s "${LINX_CRON_JOBS_FILE}" ]]; then
         return 1
     fi
-    cat "${CRON_JOBS_FILE}"
+    cat "${LINX_CRON_JOBS_FILE}"
 }
 
 pull_setup() {

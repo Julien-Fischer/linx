@@ -13,7 +13,7 @@ export LINX_PROJECT="linx"
 export LINX_DIR="${HOME}/${LINX_PROJECT}"
 export LINX_HELP_DIR="${LINX_DIR}/help"
 export LINX_CRON_DIR="${LINX_DIR}/cron"
-export CRON_JOBS_FILE="${LINX_CRON_DIR}/installed.log"
+export LINX_CRON_JOBS_FILE="${LINX_CRON_DIR}/installed.log"
 export CRON_LOG_FILE="${LINX_CRON_DIR}/jobs.log"
 export LINX_BACKUPS_DIR="/var/backups"
 LINX_COMMANDS_DIR="/usr/local/bin"
@@ -153,8 +153,8 @@ add_cron() {
         return 1
     fi
 
-    touch "${CRON_JOBS_FILE}"
-    echo "${cron_job}" >> "${CRON_JOBS_FILE}"
+    touch "${LINX_CRON_JOBS_FILE}"
+    echo "${cron_job}" >> "${LINX_CRON_JOBS_FILE}"
 
     stdout_target="/dev/null"
     stderr_target="${CRON_LOG_FILE}"
