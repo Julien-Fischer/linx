@@ -4,3 +4,4 @@ Reinstall linx
 
 Options:
   -h, --help            Show this message and exit
+  -y, --yes             Auto-approve prompts (do not use unless you know exactly what you're doing)

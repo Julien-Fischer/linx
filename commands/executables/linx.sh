@@ -96,6 +96,7 @@ handle_sync() {
 }
 
 handle_reinstall() {
+    local opts=(--fresh)
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h|--help)
@@ -103,13 +104,12 @@ handle_reinstall() {
                 return 0
                 ;;
             *)
-                err "Invalid parameter ${1}"
-                get_help "linx-reinstall"
-                return 1
+                opts+=("${1}")
                 ;;
         esac
+        shift
     done
-    install_linx --fresh "$@"
+    install_linx "${opts[@]}"
 }
 
 handle_commands() {
