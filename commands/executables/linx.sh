@@ -208,7 +208,7 @@ remove_cron_entry() {
 }
 
 read_crons() {
-    if [[ ! -f "${LINX_CRON_JOBS_FILE}" || ! -s "${LINX_CRON_JOBS_FILE}" ]]; then
+    if [[ ! -f "${LINX_CRON_JOBS_FILE}" ]]; then
         err "Could not read linx cron file at ${LINX_CRON_JOBS_FILE}"
         return 1
     fi
