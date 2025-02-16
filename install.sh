@@ -469,11 +469,11 @@ add_missing_lines() {
     local source_file="${2}"
 
     if [[ ! -f "${target_file}" ]]; then
-        echo "Could not find file A at ${target_file}"
+        echo "Could not find target file at ${target_file}"
         return 1
     fi
-    if [[ ! -f "${target_file}" ]]; then
-        echo "Could not find file B at ${source_file}"
+    if [[ ! -f "${source_file}" ]]; then
+        echo "Could not find source file at ${source_file}"
         return 1
     fi
 
