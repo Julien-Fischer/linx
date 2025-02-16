@@ -487,6 +487,16 @@ add_missing_lines() {
 add_missing_properties() {
     local target_file="${1}"
     local source_file="${2}"
+
+    if [[ ! -f "${target_file}" ]]; then
+        echo "Could not find target file at ${target_file}"
+        return 1
+    fi
+    if [[ ! -f "${source_file}" ]]; then
+        echo "Could not find source file at ${source_file}"
+        return 1
+    fi
+
     local tmp_target_keys tmp_new_properties tmp_new_file
     tmp_new_properties=$(mktemp)
     tmp_new_file=$(mktemp)
