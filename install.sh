@@ -484,6 +484,37 @@ add_missing_lines() {
     rm -f "${temp_file}"
 }
 
+add_missing_properties() {
+    local target_file="${1}"
+    local source_file="${2}"
+    local tmp_target_keys tmp_new_properties tmp_new_file
+    tmp_new_properties=$(mktemp)
+    tmp_new_file=$(mktemp)
+    tmp_target_keys=$(mktemp)
+
+    awk -F= '{print $1}' "${target_file}" | while IFS= read -r key; do
+      normalize_key "$key"
+    done > "${tmp_target_keys}"
+
+    while IFS= read -r line; do
+      key=$(echo "${line}" | awk -F= '{print $1}')
+      normalized_key=$(normalize_key "$key")
+      if ! grep -q "^$normalized_key$" "${tmp_target_keys}"; then
+        echo "${line}" >> "${tmp_new_properties}"
+      fi
+    done < "$source_file"
+
+    cat "${target_file}" > "${tmp_new_file}"
+    cat "${tmp_new_properties}" >> "${tmp_new_file}"
+    cat "${tmp_new_file}" > "${target_file}"
+    rm -f "${tmp_target_keys}" "${tmp_new_properties}" "$tmp_new_file"
+}
+
+normalize_key() {
+  local key="${1}"
+  echo "${key}" | awk '{gsub(/^[[:space:]]*#+[[:space:]]*|^[[:space:]]*/, ""); print}'
+}
+
 expand_path() {
     local input="${1}"
     input=${input//\"/}
@@ -883,9 +914,7 @@ install_core() {
         if [[ ! -f "${LINX_ANONYMIZE_FILE}" ]]; then
             cp ./config/anonymize.properties "${LINX_ANONYMIZE_FILE}"
         fi
-        if [[ ! -f "${LINX_CONFIG_FILE}" ]]; then
-            cp ./config/config.properties "${LINX_CONFIG_FILE}"
-        fi
+        add_missing_properties "${LINX_CONFIG_FILE}" ./config/config.properties
         source "${HOME}/.bashrc"
         update_mkf_config
         install_commands
