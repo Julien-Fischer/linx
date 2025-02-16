@@ -11,7 +11,7 @@
 export LINX_VERSION="1.0.0-alpha10"
 export LINX_PROJECT="linx"
 export LINX_DIR="${HOME}/${LINX_PROJECT}"
-export HELP_DIR="${LINX_DIR}/help"
+export LINX_HELP_DIR="${LINX_DIR}/help"
 export CRON_DIR="${LINX_DIR}/cron"
 export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
 export CRON_LOG_FILE="${CRON_DIR}/jobs.log"
@@ -548,7 +548,7 @@ put_linx_property() {
 }
 
 get_help() {
-    cat "${HELP_DIR}/${1}.help"
+    cat "${LINX_HELP_DIR}/${1}.help"
 }
 
 anonymize_plain_text() {
@@ -657,7 +657,7 @@ install_command() {
     chmod +x "${filepath}"
     sudo cp "${filepath}" "${LINX_COMMANDS_DIR}"/"${command_name}"
     echo "${command_name}" >> "${LINX_INSTALLED_COMMANDS}"
-    cp -rf "help/${command_name}"/* "${HELP_DIR}"/
+    cp -rf "help/${command_name}"/* "${LINX_HELP_DIR}"/
 }
 
 get_goal() {
@@ -905,7 +905,7 @@ install_linx() {
     require_sudo "install ${LINX_PROJECT} on your system."
 
     mkdir -p "${LINX_DIR}"
-    mkdir -p "${HELP_DIR}"
+    mkdir -p "${LINX_HELP_DIR}"
     mkdir -p "${MKF_TEMPLATE_DIR}"
     mkdir -p "${CRON_DIR}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
