@@ -812,7 +812,7 @@ alias gc='git commit -m' # <message>
 alias gp='git push'
 alias gac='git add . && git commit -m' # <message>
 gap() {
-  gac "${1}" && gp
+    gac "${1}" && gp
 }
 
 # @description (Git Reset Soft) Reset the local branch to the state before the last commit, or reset n commits starting
@@ -823,26 +823,26 @@ gap() {
 #   grs 3  # reset the latest 3 commits
 # shellcheck disable=SC2120
 grs() {
-  local n=${1:-1}
-  local current_branch
-  current_branch=$(git_get_branch_name)
-  if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
-      echo "Error: Please provide a positive integer for the number of commits to reset."
-      return 1
-  fi
-  local total_commits
-  total_commits=$(git rev-list --count HEAD)
-  if [[ "$total_commits" -eq 1 ]]; then
-      echo "Error: Cannot reset to the previous commit since there is only one commit in ${current_branch}"
-      return 1
-  fi
-  if [[ "$n" -ge "$total_commits" ]]; then
-      echo "Error: Cannot reset $n commits since there are only $total_commits commits in ${current_branch}"
-      return 1
-  fi
-  git reset --soft HEAD~$n
-  echo "Successfully reset $n commits in ${current_branch}"
-  git diff --cached --stat
+    local n=${1:-1}
+    local current_branch
+    current_branch=$(git_get_branch_name)
+    if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
+        echo "Error: Please provide a positive integer for the number of commits to reset."
+        return 1
+    fi
+    local total_commits
+    total_commits=$(git rev-list --count HEAD)
+    if [[ "$total_commits" -eq 1 ]]; then
+        echo "Error: Cannot reset to the previous commit since there is only one commit in ${current_branch}"
+        return 1
+    fi
+    if [[ "$n" -ge "$total_commits" ]]; then
+        echo "Error: Cannot reset $n commits since there are only $total_commits commits in ${current_branch}"
+        return 1
+    fi
+    git reset --soft HEAD~$n
+    echo "Successfully reset $n commits in ${current_branch}"
+    git diff --cached --stat
 }
 
 alias gpf='git push --force origin' # <branch_name>  Replace the latest pushed commit with this one
