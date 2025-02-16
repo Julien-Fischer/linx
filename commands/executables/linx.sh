@@ -67,7 +67,7 @@ backup_local_config() {
 }
 
 handle_sync() {
-    require_sudo "synchronize your local ${PROJECT} installation with the remote."
+    require_sudo "synchronize your local ${LINX_PROJECT} installation with the remote."
     local branch_name
     if [[ -n "${1}" && "${1}" != -* ]]; then
         branch_name="${1}"
@@ -217,9 +217,9 @@ read_crons() {
 pull_setup() {
     local branch_name="${1}"
     if install_core "${branch_name}"; then
-        echo -e "$(color "${PROJECT}: successfully synced [$(linx -v)]" "${GREEN_BOLD}")"
+        echo -e "$(color "${LINX_PROJECT}: successfully synced [$(linx -v)]" "${GREEN_BOLD}")"
     else
-        echo -e "$(color "${PROJECT}: failed to sync" "${RED_BOLD}")"
+        echo -e "$(color "${LINX_PROJECT}: failed to sync" "${RED_BOLD}")"
         return 1
     fi
 }

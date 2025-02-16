@@ -9,8 +9,8 @@
 ##############################################################
 
 export LINX_VERSION="1.0.0-alpha10"
-export PROJECT="linx"
-export LINX_DIR="${HOME}/${PROJECT}"
+export LINX_PROJECT="linx"
+export LINX_DIR="${HOME}/${LINX_PROJECT}"
 export HELP_DIR="${LINX_DIR}/help"
 export CRON_DIR="${LINX_DIR}/cron"
 export CRON_JOBS_FILE="${CRON_DIR}/installed.log"
@@ -26,15 +26,15 @@ MKF_TEMPLATE_DIR="${MKF_DIR}/templates"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
 KEEP_CONTAINERS_FILE="${DOCKER_CONFIG_DIR}/keep_containers"
 KEEP_IMAGES_FILE="${DOCKER_CONFIG_DIR}/keep_images"
-FUNC_FILE_NAME="${PROJECT}.sh"
-LIB_FILE_NAME=".${PROJECT}_lib.sh"
+FUNC_FILE_NAME="${LINX_PROJECT}.sh"
+LIB_FILE_NAME=".${LINX_PROJECT}_lib.sh"
 TERMINATOR_DIR="${HOME}/.config/terminator"
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
 CURRENT_LAYOUT_FILE="${TERMINATOR_DIR}/current.layout"
 THEME_POLICY_FILE="${TERMINATOR_DIR}/theme_policy"
 GITHUB_ACCOUNT="https://github.com/Julien-Fischer"
-REPOSITORY="${GITHUB_ACCOUNT}/${PROJECT}.git"
+REPOSITORY="${GITHUB_ACCOUNT}/${LINX_PROJECT}.git"
 TERMINATOR_LOCAL_CONFIG_DIR="config/terminator"
 TERMINATOR_THEMES_PROJECT="terminator_themes"
 TERMINATOR_THEMES_REPOSITORY="${GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT}.git"
@@ -643,7 +643,7 @@ install_dependency() {
     local software="${1}"
     local reason="${2}"
     if ! installed "${software}" --quiet; then
-        if [[ $auto_approve -ne 0 ]] && confirm "${PROJECT}: ${software} installation" "${PROJECT}: Do you wish to install ${software} ${reason}?"; then
+        if [[ $auto_approve -ne 0 ]] && confirm "${LINX_PROJECT}: ${software} installation" "${LINX_PROJECT}: Do you wish to install ${software} ${reason}?"; then
             sudo apt install "${software}"
         fi
     fi
@@ -686,7 +686,7 @@ third_party_themes_installed() {
 }
 
 should_install_third_party_themes() {
-    local msg="${PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
+    local msg="${LINX_PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
     if (! is_sourced && [[ $auto_approve -ne 0 ]] && confirm "Third-party themes installation" "${msg}"); then
         return 0
     fi
@@ -807,11 +807,11 @@ install_core() {
     branch_name="${1:-main}"
     install_dir=$(mktemp -d)
     cd "${install_dir}" || rm -rf "${install_dir}"
-    echo "${PROJECT}: Cloning remote... [${branch_name}]"
+    echo "${LINX_PROJECT}: Cloning remote... [${branch_name}]"
     linx_spinner_start
     if git clone "${REPOSITORY}" --branch "${branch_name}" --single-branch -q; then
         linx_spinner_stop
-        cd "${PROJECT}" || return 1
+        cd "${LINX_PROJECT}" || return 1
         cp ./install.sh "${LINX_DIR}/${LIB_FILE_NAME}"
         cp "${FUNC_FILE_NAME}" "${LINX_DIR}"
         if [[ ! -f "${ANONYMIZE_FILE}" ]]; then
@@ -833,11 +833,11 @@ install_core() {
         fi
         # Clean up temp files & refresh shell session
         cd ../..
-        echo "${PROJECT}: Removing temporary files..."
+        echo "${LINX_PROJECT}: Removing temporary files..."
         if ! rm -rf "${install_dir}"; then
             err "Could not remove ${install_dir} directory"
         fi
-        echo "${PROJECT}: Remote cloned"
+        echo "${LINX_PROJECT}: Remote cloned"
         return 0
     else
         echo "E: Could not clone repository ${REPOSITORY}"
@@ -902,7 +902,7 @@ install_linx() {
                 ;;
         esac
     done
-    require_sudo "install ${PROJECT} on your system."
+    require_sudo "install ${LINX_PROJECT} on your system."
 
     mkdir -p "${LINX_DIR}"
     mkdir -p "${HELP_DIR}"
@@ -918,7 +918,7 @@ install_linx() {
         return 1
     fi
     if install_dependencies "$@" && [[ $linx_already_installed -eq 0 ]]; then
-        echo "${PROJECT}: Restart your terminal for all changes to be applied."
+        echo "${LINX_PROJECT}: Restart your terminal for all changes to be applied."
     fi
     if ! setup_vim; then
         return 1
@@ -927,10 +927,10 @@ install_linx() {
     success=$(is_linx_installed)
     goal=$(get_goal $linx_already_installed)
     if [[ $success -eq 0 ]]; then
-        echo "${PROJECT} was ${goal} successfully."
+        echo "${LINX_PROJECT} was ${goal} successfully."
         echo -e "Current version: $(color "$(linx -v)" "${GREEN_BOLD}")"
     else
-        echo "Failed to install ${PROJECT}"
+        echo "Failed to install ${LINX_PROJECT}"
         return 1
     fi
 }
