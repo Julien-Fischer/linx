@@ -108,7 +108,7 @@ set_profile() {
 
     cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_CONFIG_FILE}.bak"
     sudo mv "${temp_file}" "${TERMINATOR_CONFIG_FILE}"
-    echo "${profile_name}" > "${CURRENT_THEME_FILE}"
+    echo "${profile_name}" > "${TERMINATOR_CURRENT_THEME_FILE}"
 }
 
 print_profile() {
@@ -197,8 +197,8 @@ list_profiles() {
     if ! $raw; then
         echo "${#profiles[@]} available profiles:"
     fi
-    if [[ -f "${CURRENT_THEME_FILE}" ]]; then
-        current_profile=$(cat "${CURRENT_THEME_FILE}")
+    if [[ -f "${TERMINATOR_CURRENT_THEME_FILE}" ]]; then
+        current_profile=$(cat "${TERMINATOR_CURRENT_THEME_FILE}")
     fi
     for profile in "${profiles[@]}"; do
         if $raw; then

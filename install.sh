@@ -30,7 +30,7 @@ LINX_FUNC_FILE_NAME="${LINX_PROJECT}.sh"
 LINX_LIB_FILE_NAME=".${LINX_PROJECT}_lib.sh"
 TERMINATOR_DIR="${HOME}/.config/terminator"
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
-CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
+TERMINATOR_CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
 CURRENT_LAYOUT_FILE="${TERMINATOR_DIR}/current.layout"
 THEME_POLICY_FILE="${TERMINATOR_DIR}/theme_policy"
 LINX_GITHUB_ACCOUNT="https://github.com/Julien-Fischer"
@@ -723,13 +723,13 @@ install_terminator_config() {
         default_theme="${TERMINATOR_DEFAULT_THEME_NATIVE}"
     fi
 
-    if [[ ! -f "${CURRENT_THEME_FILE}" ]]; then
-        echo "${default_theme}" > "${CURRENT_THEME_FILE}"
+    if [[ ! -f "${TERMINATOR_CURRENT_THEME_FILE}" ]]; then
+        echo "${default_theme}" > "${TERMINATOR_CURRENT_THEME_FILE}"
     fi
     if [[ ! -f "${CURRENT_LAYOUT_FILE}" ]]; then
         echo "${default_layout}" > "${CURRENT_LAYOUT_FILE}"
     fi
-    user_theme=$(cat "${CURRENT_THEME_FILE}")
+    user_theme=$(cat "${TERMINATOR_CURRENT_THEME_FILE}")
     user_layout=$(cat "${CURRENT_LAYOUT_FILE}")
 
     # generate the new configuration file

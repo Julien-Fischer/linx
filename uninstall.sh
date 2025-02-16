@@ -71,8 +71,8 @@ uninstall_terminator_config() {
     else
         echo "Configuration files preserved"
     fi
-    if [[ -f "${CURRENT_THEME_FILE}" ]]; then
-        rm "${CURRENT_THEME_FILE}"
+    if [[ -f "${TERMINATOR_CURRENT_THEME_FILE}" ]]; then
+        rm "${TERMINATOR_CURRENT_THEME_FILE}"
     fi
 }
 
