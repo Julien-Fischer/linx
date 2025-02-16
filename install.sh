@@ -153,7 +153,6 @@ add_cron() {
         return 1
     fi
 
-    touch "${LINX_CRON_JOBS_FILE}"
     echo "${cron_job}" >> "${LINX_CRON_JOBS_FILE}"
 
     stdout_target="/dev/null"
@@ -909,6 +908,7 @@ install_linx() {
     mkdir -p "${MKF_TEMPLATE_DIR}"
     mkdir -p "${LINX_CRON_DIR}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
+    touch "${LINX_CRON_JOBS_FILE}"
     touch "${KEEP_CONTAINERS_FILE}"
     touch "${KEEP_IMAGES_FILE}"
 
