@@ -1323,7 +1323,7 @@ Options:
 
 Description:
   Removes all Docker images except those specified with the --keep option
-  and those listed in \$KEEP_IMAGES_FILE (usually located at ${KEEP_IMAGES_FILE}).
+  and those listed in \$DOCKER_KEEP_IMAGES_FILE (usually located at ${DOCKER_KEEP_IMAGES_FILE}).
 EOF
 )
     while [[ "$#" -gt 0 ]]; do
@@ -1336,8 +1336,8 @@ EOF
     done
     # Read image IDs from ~/docker_config/keep_images file
     local file_keep=""
-    if [[ -f "${KEEP_IMAGES_FILE}" ]]; then
-        file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${KEEP_IMAGES_FILE}")
+    if [[ -f "${DOCKER_KEEP_IMAGES_FILE}" ]]; then
+        file_keep=$(awk '{printf "%s%s", (NR>1?" ":""), $0}' "${DOCKER_KEEP_IMAGES_FILE}")
     fi
     # Combine file_keep and keep
     local all_keep="$file_keep $keep"
@@ -1347,7 +1347,7 @@ EOF
     if [[ $remove_count -gt 0 ]]; then
         docker rmi ${force:+-f} "${images_to_remove[@]}" >/dev/null 2>&1
     fi
-    local keep_count=$(grep -c '[^[:space:]]' "${KEEP_IMAGES_FILE}")
+    local keep_count=$(grep -c '[^[:space:]]' "${DOCKER_KEEP_IMAGES_FILE}")
     echo -e "Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
