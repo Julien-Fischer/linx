@@ -440,6 +440,50 @@ err() {
     echo -e "$(color "E:") ${message}" >&2
 }
 
+# @description Append unique lines from source file that are missing in target file
+# @param $1  The target file
+# @param $2  The source file
+# @example
+#   Given
+#   `file_a`
+#   A
+#   B
+#   `file_b`
+#   A
+#   C
+#   D
+#   E
+#
+#   When
+#   add_missing_lines file_a file_b
+#
+#   Then
+#   `file_a`
+#   A
+#   B
+#   C
+#   D
+#   E
+add_missing_lines() {
+    local target_file="${1}"
+    local source_file="${2}"
+
+    if [[ ! -f "${target_file}" ]]; then
+        echo "Could not find file A at ${target_file}"
+        return 1
+    fi
+    if [[ ! -f "${target_file}" ]]; then
+        echo "Could not find file B at ${source_file}"
+        return 1
+    fi
+
+    local temp_file
+    temp_file=$(mktemp)
+    grep -Fxvf "${target_file}" "${source_file}" >> "${temp_file}"
+    cat "${temp_file}" >> "${target_file}"
+    rm -f "${temp_file}"
+}
+
 expand_path() {
     local input="${1}"
     input=${input//\"/}
