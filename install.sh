@@ -14,7 +14,7 @@ export LINX_DIR="${HOME}/${LINX_PROJECT}"
 export LINX_HELP_DIR="${LINX_DIR}/help"
 export LINX_CRON_DIR="${LINX_DIR}/cron"
 export LINX_CRON_JOBS_FILE="${LINX_CRON_DIR}/installed.log"
-export CRON_LOG_FILE="${LINX_CRON_DIR}/jobs.log"
+export LINX_CRON_LOG_FILE="${LINX_CRON_DIR}/jobs.log"
 export LINX_BACKUPS_DIR="/var/backups"
 LINX_COMMANDS_DIR="/usr/local/bin"
 LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
@@ -156,9 +156,9 @@ add_cron() {
     echo "${cron_job}" >> "${LINX_CRON_JOBS_FILE}"
 
     stdout_target="/dev/null"
-    stderr_target="${CRON_LOG_FILE}"
+    stderr_target="${LINX_CRON_LOG_FILE}"
     if $verbose; then
-        stdout_target="${CRON_LOG_FILE}"
+        stdout_target="${LINX_CRON_LOG_FILE}"
     fi
     output_redirection=">> ${stdout_target} 2>> ${stderr_target}"
     (crontab -l 2>/dev/null; echo "${cron_job} ${output_redirection}") | crontab -
