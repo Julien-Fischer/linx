@@ -629,19 +629,23 @@ put_property() {
 }
 
 get_linx_property() {
-    local args=("$@")
+    local args=()
     local raw=false
-    while [[ ${#args[@]} -gt 0 ]]; do
-        case "${args[0]}" in
+    while [[ $# -gt 0 ]]; do
+        case $1 in
             -r|--raw)
                 raw=true
                 ;;
+            *)
+                args+=("${1}")
+                ;;
         esac
-        args=("${args[@]:1}")
+        shift
     done
+    echo "[debug] params: '${args[*]}'" >&2
 
     local value
-    value="$(get_property "${LINX_CONFIG_FILE}" "$@")"
+    value="$(get_property "${LINX_CONFIG_FILE}" "${args[@]}")"
     if ! $raw && [[ -n "${value}" ]]; then
         expand_path "${value}"
     else
@@ -691,13 +695,33 @@ anonymize_plain_text() {
 backup_and_rotate() {
     local target="${1}"
     local quiet=''
-    local max_backups=$TERMINATOR_BACKUPS_CAPACITY
+    local max_backups=10
     local backup_suffix=".bak"
     local timestamp dir_path file_name
     timestamp=$(date +"%Y%m%d%H%M%S")
-    if [[ "${2}" == --quiet || "${2}" == -q ]]; then
-        quiet="-q"
-    fi
+    shift
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -c|--capacity)
+                max_backups="${2}"
+                shift
+                ;;
+            -q|--quiet)
+                quiet="-q"
+                ;;
+            -h|--help)
+                get_help "linx-sync"
+                return 0
+                ;;
+            *)
+                err "Invalid parameter ${1}"
+                echo "Usage: backup_and_rotate [path/to/target] [[-c,--capacity] [-q,--quiet]]"
+                return 1
+                ;;
+        esac
+        shift
+    done
 
     dir_path=$(dirname "${target}")
     file_name=$(basename "${target}")
@@ -711,9 +735,19 @@ backup_and_rotate() {
         done
     fi
 
-    local terminator_config_backup="${dir_path}/${backup_prefix}${timestamp}${backup_suffix}"
-    if cpv "${target}" "${terminator_config_backup}" > /dev/null; then
-        echo "Backed up Terminator config at ${terminator_config_backup}"
+    local backup_path="${dir_path}/${backup_prefix}${timestamp}${backup_suffix}"
+    if ! cpv "${target}" "${backup_path}" > /dev/null; then
+        err "Failed to backup up file at ${backup_path}"
+    else
+        echo "Backed up ${target} at ${backup_path}"
+    fi
+}
+
+backup_terminator_config() {
+    if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
+        backup_and_rotate "${TERMINATOR_CONFIG_FILE}" --capacity $TERMINATOR_BACKUPS_CAPACITY --quiet
+    else
+        echo "No Terminator config file to backup"
     fi
 }
 
@@ -821,9 +855,6 @@ install_terminator_config() {
     local default_layout="grid"
 
     mkdir -p "${TERMINATOR_DIR}"
-    if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        backup_and_rotate "${TERMINATOR_CONFIG_FILE}" -q
-    fi
 
     if should_install_third_party_themes; then
         echo "Downloading third-party themes..."

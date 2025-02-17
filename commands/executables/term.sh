@@ -89,6 +89,7 @@ set_profile() {
 
             local command
             command="$(read_command)"
+            echo "[debug] terminator command: '${command}'" >&2
             if [[ -n "${command}" ]]; then
                 {
                   echo '    exit_action = hold'
@@ -106,7 +107,7 @@ set_profile() {
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
 
-    cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_CONFIG_FILE}.bak"
+    backup_terminator_config
     sudo mv "${temp_file}" "${TERMINATOR_CONFIG_FILE}"
     echo "${profile_name}" > "${TERMINATOR_CURRENT_THEME_FILE}"
 }
@@ -309,7 +310,7 @@ set_layout() {
         fi
     done < "${TERMINATOR_CONFIG_FILE}"
 
-    backup "${TERMINATOR_CONFIG_FILE}" -q
+    backup_terminator_config
     sudo mv "$temp_file" "${TERMINATOR_CONFIG_FILE}"
     echo "${layout_name}" > "${TERMINATOR_CURRENT_LAYOUT_FILE}"
 }
