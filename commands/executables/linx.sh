@@ -288,6 +288,9 @@ handle_config() {
 # @description Synchronize the local linx installation with the latest version from the remote
 # @return 0 if the configuration was synchronized successfully; 1 otherwise
 linx() {
+    IFS=$'\x1E' read -ra new_args < <(decluster "$@")
+    set -- "${new_args[@]}"
+
     case $1 in
         config)
             handle_config

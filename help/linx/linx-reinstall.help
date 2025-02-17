@@ -9,6 +9,6 @@ Options:
 
 Examples:
   linx reinstall --scratch --yes
-  linx r -s -y
-  linx r -h
+  linx r -sy
   linx r --help
+  linx r -h
