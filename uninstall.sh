@@ -27,7 +27,7 @@ try_removing() {
     if del "${path}"; then
         echo "Removed ${path}"
     else
-        echo "${path} is not installed. Skipped."
+        echo "${path} is not installed. Skipped." >&2
     fi
 }
 
