@@ -89,7 +89,6 @@ set_profile() {
 
             local command
             command="$(read_command)"
-            echo "[debug] terminator command: '${command}'" >&2
             if [[ -n "${command}" ]]; then
                 {
                   echo '    exit_action = hold'

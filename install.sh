@@ -642,7 +642,6 @@ get_linx_property() {
         esac
         shift
     done
-    echo "[debug] params: '${args[*]}'" >&2
 
     local value
     value="$(get_property "${LINX_CONFIG_FILE}" "${args[@]}")"
