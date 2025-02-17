@@ -19,7 +19,7 @@ Version `1.0.0-alpha` of Linx offers the following features:
 - For Terminator users, Linx offers preconfigured shortcuts, themes, and layouts (no python required)
 - GPT 4 integration so you can prompt it directly from your terminal
 
-![Live Demo](./demo.gif)
+![Live Demo](assets/demo.gif)
 
 
 ## Examples

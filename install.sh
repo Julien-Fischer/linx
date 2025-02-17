@@ -8,9 +8,10 @@
 # Constants
 ##############################################################
 
-export LINX_VERSION="1.0.0-alpha10"
+export LINX_VERSION="1.0.0-alpha11"
 export LINX_PROJECT="linx"
 export LINX_DIR="${HOME}/${LINX_PROJECT}"
+export LINX_LOGO_FILE="${LINX_DIR}/logo"
 export LINX_HELP_DIR="${LINX_DIR}/help"
 export LINX_CRON_DIR="${LINX_DIR}/cron"
 export LINX_CRON_JOBS_FILE="${LINX_CRON_DIR}/installed.log"
@@ -654,6 +655,11 @@ put_linx_property() {
     put_property "${LINX_CONFIG_FILE}" "${key}" "${value}"
 }
 
+print_logo() {
+    cat "${LINX_LOGO_FILE}"
+    echo -e "       $(color "$(linx --version)" "${GREEN_BOLD}")"
+}
+
 get_help() {
     cat "${LINX_HELP_DIR}/${1}.help"
 }
@@ -705,7 +711,10 @@ backup_and_rotate() {
         done
     fi
 
-    cpv "${target}" "${dir_path}/${backup_prefix}${timestamp}${backup_suffix}"
+    local terminator_config_backup="${dir_path}/${backup_prefix}${timestamp}${backup_suffix}"
+    if cpv "${target}" "${terminator_config_backup}" > /dev/null; then
+        echo "Backed up Terminator config at ${terminator_config_backup}"
+    fi
 }
 
 linx_spinner() {
@@ -939,6 +948,7 @@ install_core() {
         source "${HOME}/.bashrc"
         update_mkf_config
         install_commands
+        cp ./assets/logo "${LINX_LOGO_FILE}"
         # update linx
         if ! cp 'uninstall.sh' "${LINX_DIR}"; then
             err "Could not copy uninstall.sh to ${LINX_DIR}"
@@ -1048,7 +1058,7 @@ install_linx() {
     goal=$(get_goal $linx_already_installed)
     if [[ $success -eq 0 ]]; then
         echo "${LINX_PROJECT} was ${goal} successfully."
-        echo -e "Current version: $(color "$(linx -v)" "${GREEN_BOLD}")"
+        print_logo
     else
         echo "Failed to install ${LINX_PROJECT}"
         return 1

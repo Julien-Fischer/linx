@@ -24,7 +24,8 @@ require_source ".bashrc"
 ##############################################################
 
 print_info() {
-    echo "linx $(linx --version)"
+    print_logo
+    echo
     echo "Author: Julien Fischer <julien.fischer@agiledeveloper.net>"
     echo "Repository: ${LINX_REPOSITORY}"
     echo "For help, use linx --help or linx -h"
@@ -235,9 +236,9 @@ read_crons() {
 pull_setup() {
     local branch_name="${1}"
     if install_core "${branch_name}"; then
-        echo -e "$(color "${LINX_PROJECT}: successfully synced [$(linx -v)]" "${GREEN_BOLD}")"
+        echo -e "${LINX_PROJECT}: $(color "successfully synced [$(linx -v)]" "${GREEN_BOLD}")"
     else
-        echo -e "$(color "${LINX_PROJECT}: failed to sync" "${RED_BOLD}")"
+        echo -e "${LINX_PROJECT}: $(color "failed to sync" "${RED_BOLD}")"
         return 1
     fi
 }
