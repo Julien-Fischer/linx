@@ -42,7 +42,7 @@ TERMINATOR_THEMES_REPOSITORY="${LINX_GITHUB_ACCOUNT}/${TERMINATOR_THEMES_PROJECT
 TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 TERMINATOR_THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
-TERMINATOR_BACKUPS_CAPACITY=30
+TERMINATOR_DEFAULT_BACKUPS_CAPACITY=30
 # shellcheck disable=SC2034
 LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
 LINX_SPINNER_PID=""
@@ -744,7 +744,9 @@ backup_and_rotate() {
 
 backup_terminator_config() {
     if [[ -f "${TERMINATOR_CONFIG_FILE}" ]]; then
-        backup_and_rotate "${TERMINATOR_CONFIG_FILE}" --capacity $TERMINATOR_BACKUPS_CAPACITY --quiet
+        local backup_capacity
+        backup_capacity="$(get_linx_property "terminator.backups.capacity" -q --default "${TERMINATOR_DEFAULT_BACKUPS_CAPACITY}")"
+        backup_and_rotate "${TERMINATOR_CONFIG_FILE}" --capacity "${backup_capacity}" --quiet
     else
         echo "No Terminator config file to backup"
     fi
