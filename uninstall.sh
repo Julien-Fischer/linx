@@ -43,12 +43,14 @@ uninstall_commands() {
         return 0
     fi
     mapfile -t COMMANDS < "${LINX_INSTALLED_COMMANDS}"
+    echo "Uninstalling linx commands..."
     for command in "${COMMANDS[@]}"; do
         command=$(echo "$command" | xargs)
         if [[ -n "${command}" ]] && uninstall_command "${command}"; then
-            echo "Uninstalled ${command} command"
+            echo "  ${command}"
         fi
     done
+    echo "linx commands uninstalled."
     rm "${LINX_INSTALLED_COMMANDS}"
 }
 
