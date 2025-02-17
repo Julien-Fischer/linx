@@ -47,6 +47,7 @@ TERMINATOR_DEFAULT_BACKUPS_CAPACITY=30
 # shellcheck disable=SC2034
 LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
 LINX_SPINNER_PID=""
+linx_already_installed=false
 
 trap 'linx_spinner_stop' EXIT
 
@@ -815,7 +816,7 @@ install_command() {
 
 get_goal() {
     local installed="${1}"
-    if [[ $installed -eq 0 ]]; then
+    if [[ $installed == "true" ]]; then
         echo "synchronized";
     else
         echo "installed";
@@ -843,8 +844,8 @@ should_install_third_party_themes() {
     if ($fresh_install || ! is_sourced && ! $auto_approve && confirm "Third-party themes installation" "${msg}"); then
         return 0
     fi
-    if ([[ $linx_already_installed -eq 0 ]] && third_party_themes_installed) || \
-       ([[ $linx_already_installed -ne 0 ]] && \
+    if ( $linx_already_installed && third_party_themes_installed) || \
+       ( ! $linx_already_installed && \
        ( $auto_approve || confirm "Third-party themes installation" "${msg}")); then
         return 0
     else
@@ -1026,7 +1027,7 @@ update_rc_file() {
 }
 
 install_dependencies() {
-    if [[ $linx_already_installed -ne 0 ]]; then
+    if ! $linx_already_installed; then
         install_dependency git 'for version management'
         install_dependency terminator 'as a terminal emulator'
         install_dependency neofetch 'as a system information tool'
@@ -1083,7 +1084,7 @@ install_linx() {
     if ! install_core "$@"; then
         return 1
     fi
-    if install_dependencies "$@" && [[ $linx_already_installed -eq 0 ]]; then
+    if install_dependencies "$@" && $linx_already_installed; then
         echo "${LINX_PROJECT}: Restart your terminal for all changes to be applied."
     fi
     if ! setup_vim; then
@@ -1091,7 +1092,7 @@ install_linx() {
     fi
     local success goal
     success=$(is_linx_installed)
-    goal=$(get_goal $linx_already_installed)
+    goal=$(get_goal "$linx_already_installed")
     if [[ $success -eq 0 ]]; then
         echo "${LINX_PROJECT} was ${goal} successfully."
         print_logo
@@ -1105,8 +1106,9 @@ install_linx() {
 # Global variables
 ##############################################################
 
-is_linx_installed
-linx_already_installed=$?
+if is_linx_installed; then
+    linx_already_installed=true
+fi
 
 ##############################################################
 # Bootstrap
