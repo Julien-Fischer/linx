@@ -167,14 +167,14 @@ list_templates() {
 delete_template() {
     local name="${1}"
     local option="${2}"
-    local force=1
+    local force=false
     if [[ "${option}" =~ ^(-y|--yes)$ ]]; then
-        force=0
+        force=true
     fi
     local template="${MKF_TEMPLATE_DIR}/${name}"
     if [[ -e "${template}" ]]; then
         echo "This will delete the '${name}' template."
-        [[ $force -ne 1 ]] && confirm "Deletion" "Are you sure you want to proceed?" --abort
+        $force && confirm "Deletion" "Are you sure you want to proceed?" --abort
         sudo rm "${template}"
         echo "Deleted ${name} template."
     else
