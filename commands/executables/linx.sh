@@ -113,6 +113,23 @@ handle_reinstall() {
     install_linx "${opts[@]}"
 }
 
+handle_uninstall() {
+    local opts=()
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -h|--help)
+                get_help "linx-uninstall"
+                return 0
+                ;;
+            *)
+                opts+=("${1}")
+                ;;
+        esac
+        shift
+    done
+    bash -c "${LINX_DIR}/uninstall.sh" "${opts[@]}"
+}
+
 handle_commands() {
     read_commands
 }
@@ -277,6 +294,10 @@ linx() {
         r|reinstall)
             shift
             handle_reinstall "$@"
+            ;;
+        u|uninstall)
+            shift
+            handle_uninstall "$@"
             ;;
         -c|--commands)
             shift

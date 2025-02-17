@@ -1,0 +1,6 @@
+Usage: linx uninstall [OPTIONS]
+
+Uninstall linx
+
+Options:
+  -h, --help            Show this message and exit

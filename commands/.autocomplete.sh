@@ -128,7 +128,7 @@ _linx_autocomplete() {
     esac
 
     if [[ $cword -eq 1 ]]; then
-        local verbs="config cron backup sync --help"
+        local verbs="config cron backup sync reinstall uninstall"
         local opts="--commands --dir --info --version --help"
         COMPREPLY=($(compgen -W "${verbs} ${opts}" -- "${cur}"))
     fi
