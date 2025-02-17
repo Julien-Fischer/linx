@@ -53,6 +53,9 @@ uninstall_commands() {
 }
 
 uninstall_cron_jobs() {
+    if [[ ! -f "${LINX_CRON_FILE}" ]]; then
+        return 0
+    fi
     local linx_cron_jobs job_count
     linx_cron_jobs=$(linx cron)
     job_count=$(echo "$linx_cron_jobs" | grep -c .)
