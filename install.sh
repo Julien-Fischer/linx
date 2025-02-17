@@ -774,7 +774,7 @@ linx_spinner_stop() {
 
 require_sudo() {
     local action="${1}"
-    echo "This will ${action}"
+    sudo -n false > /dev/null && echo "This will ${action}"
     if ! sudo -v; then
         err "This action requires sudo privileges. Please provide valid credentials."
         exit 1
