@@ -72,8 +72,8 @@ uninstall_cron_jobs() {
 uninstall_terminator_config() {
     if ($auto_approve || \
        confirm "Removal" "Remove Terminator configuration files?") && \
-       [[ -n $(ls -A ~/.config/terminator) ]]; then
-        sudo rm ~/.config/terminator/*
+       [[ -n $(ls -A "${HOME}/.config/terminator") ]]; then
+        sudo rm "${HOME}"/.config/terminator/*
     else
         echo "Configuration files preserved"
     fi

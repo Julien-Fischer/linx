@@ -1008,7 +1008,7 @@ install_core() {
 
 update_rc_file() {
     local rc_file="${1}"
-    local target=~/"${rc_file}"
+    local target="${HOME}/${rc_file}"
     local WATERMARK="Created by \`linx\`"
     local SEPARATOR="##############################################################"
     DATETIME="$(date "+%Y-%m-%d %H:%M:%S")"
