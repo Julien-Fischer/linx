@@ -103,6 +103,10 @@ translate() {
     curl -s "https://api.mymemory.translated.net/get?q=${query}&langpair=${src}|${dest}" | jq '.responseData.translatedText'
 }
 
+now() {
+    timestamp
+}
+
 # @description Copy to clipboard
 # @note: Only works on x11. Install xclip using: sudo apt-get install xclip
 # @example
