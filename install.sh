@@ -727,18 +727,19 @@ backup_and_rotate() {
     local backup_prefix="${file_name}_"
     mapfile -t backups < <(find "${dir_path}" -maxdepth 1 -name "${backup_prefix}*${backup_suffix}" -printf '%T@ %p\n' | sort -n | cut -d' ' -f2-)
 
-    if (( ${#backups[@]} >= max_backups )); then
-        local to_delete=$(( ${#backups[@]} - max_backups + 1 ))
-        for ((i=0; i<to_delete; i++)); do
-            rm -f "${backups[$i]}"
-        done
-    fi
-
     local backup_path="${dir_path}/${backup_prefix}${timestamp}${backup_suffix}"
+
     if ! cpv "${target}" "${backup_path}" > /dev/null; then
         err "Failed to backup up file at ${backup_path}"
     else
         echo "Backed up ${target} at ${backup_path}"
+    fi
+
+    if (( ${#backups[@]} > max_backups )); then
+        local to_delete=$(( ${#backups[@]} - max_backups ))
+        for ((i=0; i<to_delete; i++)); do
+            rm -f "${backups[$i]}"
+        done
     fi
 }
 
