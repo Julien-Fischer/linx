@@ -4,4 +4,11 @@ Reinstall linx
 
 Options:
   -h, --help            Show this message and exit
+  -s, --scratch         Uninstall linx before reinstalling it from scratch
   -y, --yes             Auto-approve prompts (do not use unless you know exactly what you're doing)
+
+Examples:
+  linx reinstall --scratch --yes
+  linx r -s -y
+  linx r -h
+  linx r --help

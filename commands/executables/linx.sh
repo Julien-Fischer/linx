@@ -31,6 +31,10 @@ print_info() {
     echo "For help, use linx --help or linx -h"
 }
 
+uninstall() {
+    bash -c "${LINX_UNINSTALL_FILE}" "${opts[@]}"
+}
+
 backup_local_config() {
     set -e  # Exit immediately if a command exits with a non-zero status
     trap 'err "Backup failed."; return 1' ERR
@@ -98,8 +102,13 @@ handle_sync() {
 
 handle_reinstall() {
     local opts=(--fresh)
+    local scratch=false
+
     while [[ $# -gt 0 ]]; do
         case $1 in
+            -s|--scratch)
+                scratch=true
+                ;;
             -h|--help)
                 get_help "linx-reinstall"
                 return 0
@@ -110,6 +119,10 @@ handle_reinstall() {
         esac
         shift
     done
+
+    if $scratch; then
+        uninstall
+    fi
     install_linx "${opts[@]}"
 }
 
@@ -127,7 +140,7 @@ handle_uninstall() {
         esac
         shift
     done
-    bash -c "${LINX_DIR}/uninstall.sh" "${opts[@]}"
+    uninstall
 }
 
 handle_commands() {

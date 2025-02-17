@@ -26,6 +26,7 @@ LINX_INSTALLED_COMMANDS="${LINX_DIR}/installed_commands"
 LINX_MKF_DIR="${LINX_DIR}/mkf"
 LINX_CONFIG_FILE="${LINX_DIR}/config.properties"
 LINX_ANONYMIZE_FILE="${LINX_DIR}/anonymize.properties"
+LINX_UNINSTALL_FILE="${LINX_DIR}/uninstall.sh"
 MKF_CONFIG_FILE="${LINX_MKF_DIR}/config"
 MKF_TEMPLATE_DIR="${LINX_MKF_DIR}/templates"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
@@ -983,7 +984,7 @@ install_core() {
         install_commands
         cp ./assets/logo "${LINX_LOGO_FILE}"
         # update linx
-        if ! cp 'uninstall.sh' "${LINX_DIR}"; then
+        if ! cp 'uninstall.sh' "${LINX_UNINSTALL_FILE}"; then
             err "Could not copy uninstall.sh to ${LINX_DIR}"
         fi
         if ! install_terminator_config; then
