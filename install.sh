@@ -1071,6 +1071,7 @@ install_linx() {
     mkdir -p "${MKF_TEMPLATE_DIR}"
     mkdir -p "${LINX_CRON_DIR}"
     mkdir -p "${DOCKER_CONFIG_DIR}"
+    touch "${LINX_CONFIG_FILE}"
     touch "${LINX_CRON_JOBS_FILE}"
     touch "${LINX_CRON_LOG_FILE}"
     touch "${DOCKER_KEEP_CONTAINERS_FILE}"
