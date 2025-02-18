@@ -135,11 +135,13 @@ glot() {
         echo ""
     fi
 
-    sort -t'|' -k3 $sort_option "${temp_file}" |
-    while IFS='|' read -r status hash date name email message; do
-        printf "$(get_status_color "${status}")%-1s${NC} | ${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
-               "${status}" "${hash}" "${date}" "${name}" "${message}"
-    done
+    {
+        sort -t'|' -k3 $sort_option "${temp_file}" |
+        while IFS='|' read -r status hash date name email message; do
+            printf "$(get_status_color "${status}")%-1s${NC} | ${YELLOW}%-7s${NC} | ${RED}%-19s${NC} | ${CYAN_BOLD}%-20s${NC} | ${LIGHT_GRAY}%s${NC}\n" \
+                   "${status}" "${hash}" "${date}" "${name}" "${message}"
+        done
+    } | less -FRX
 
     rm "${temp_file}"
 }
