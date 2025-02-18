@@ -1147,22 +1147,28 @@ grevert() {
 
 # the opposite operation of grevert
 # apply the latest stash and commit it using the same message
+# @param $1 (Optional) the number of commits to restore
 # Note: we're using sed here to remove the On <branch_name>: prefix from the stash message
+# shellcheck disable=SC2120
 grestore() {
-  local msg
-  has_uncommitted_changes && err "Can not restore latest commit now: you have uncommitted changes" && return 1
-  msg="$(get_latest_stash_message)"
-  if git stash pop --quiet >/dev/null 2>&1; then
-      echo "Popped latest stash"
-  else
-      err "git stash pop failed"
-  fi
-  git add . >/dev/null 2>&1
-  if git commit -m "${msg}" --quiet >/dev/null 2>&1; then
-      echo "Commit restored on branch $(git branch --show-current) with message: $(glast -m)"
-  else
-      err "git commit failed"
-  fi
+    local count="${1:-1}"
+    local msg
+    has_uncommitted_changes && err "Can not restore latest commit now: you have uncommitted changes" && return 1
+
+    for ((i = 0; i < count; i++)); do
+        msg="$(get_latest_stash_message)"
+        if git stash pop --quiet >/dev/null 2>&1; then
+            echo "Popped latest stash"
+        else
+            err "git stash pop failed"
+        fi
+        git add . >/dev/null 2>&1
+        if git commit -m "${msg}" --quiet >/dev/null 2>&1; then
+            echo "Commit restored on branch $(git branch --show-current) with message: $(glast -m)"
+        else
+            err "git commit failed"
+        fi
+    done
 }
 
 # Branch management
