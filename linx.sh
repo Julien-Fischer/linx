@@ -1141,7 +1141,7 @@ grevert() {
     for ((i = 0; i < count; i++)); do
         msg="$(git log -1 --pretty=format:%s)"
         echo "Reverting $(glast -is) ${msg}"
-        grs && gas "${msg}"
+        grs > /dev/null && gas "${msg}" > /dev/null
     done
 }
 
