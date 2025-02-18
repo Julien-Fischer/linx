@@ -1134,10 +1134,10 @@ gsave() {
 # @param $1 (Optional) the number of commits to revert
 # shellcheck disable=SC2120
 grevert() {
-    local count="${1:-1}"
-    local msg
     has_uncommitted_changes && err "Can not revert latest commit now: you have uncommitted changes" && return 1
 
+    local count="${1:-1}"
+    local msg
     for ((i = 0; i < count; i++)); do
         msg="$(git log -1 --pretty=format:%s)"
         echo "Reverting $(glast -is) ${msg}"
@@ -1151,10 +1151,10 @@ grevert() {
 # Note: we're using sed here to remove the On <branch_name>: prefix from the stash message
 # shellcheck disable=SC2120
 grestore() {
-    local count="${1:-1}"
-    local msg
     has_uncommitted_changes && err "Can not restore latest commit now: you have uncommitted changes" && return 1
 
+    local count="${1:-1}"
+    local msg
     for ((i = 0; i < count; i++)); do
         msg="$(get_latest_stash_message)"
         if git stash pop --quiet >/dev/null 2>&1; then
