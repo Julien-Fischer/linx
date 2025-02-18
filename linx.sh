@@ -1131,11 +1131,18 @@ gsave() {
 
 # git reset --soft a commit and stash it with the same commit message
 # This is the opposite operation of grestore
+# @param $1 (Optional) the number of commits to revert
+# shellcheck disable=SC2120
 grevert() {
-  local msg
-  has_uncommitted_changes && err "Can not revert latest commit now: you have uncommitted changes" && return 1
-  msg="$(git log -1 --pretty=format:%s)"
-  grs && gas "${msg}"
+    local count="${1:-1}"
+    local msg
+    has_uncommitted_changes && err "Can not revert latest commit now: you have uncommitted changes" && return 1
+
+    for ((i = 0; i < count; i++)); do
+        msg="$(git log -1 --pretty=format:%s)"
+        echo "Reverting $(glast -is) ${msg}"
+        grs && gas "${msg}"
+    done
 }
 
 # the opposite operation of grevert
