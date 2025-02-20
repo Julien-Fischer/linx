@@ -173,6 +173,22 @@ anonymize() {
     echo "Text anonymized."
 }
 
+# @description  Execute a command passed as parameter and outputs the result to both stdout and a file located at "${LINX_SPY_FILE}"
+# @option -r, --read  Read the content of "${LINX_SPY_FILE}"
+# @params $@  The command to execute
+# @example
+#   spy git commit -m "hello, world!"
+#   spy glot -t --asc
+#   spy --read
+#   spy -r
+spy() {
+    if [[ "${1}" == -r || "${1}" == --read ]]; then
+        cat "${LINX_SPY_FILE}"
+        return 0
+    fi
+    "$@" | tee "${LINX_SPY_FILE}"
+}
+
 function rec() {
     if ! installed simplescreenrecorder -q; then
         err "simplescreenrecorder is not installed."
@@ -1427,6 +1443,7 @@ for cmd in gcp gck gckb gbd gb gba; do
 done
 
 complete -F _autocomplete_anonymize anonymize
+complete -F _command spy
 
 ##############################################################
 # Custom ENV variables
