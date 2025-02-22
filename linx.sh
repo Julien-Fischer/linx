@@ -825,6 +825,15 @@ gwt() {
             -o|--open)
                 open_worktree=true
                 ;;
+            o|open)
+                open_worktree=true
+                local branch_name="${2}"
+                local project
+                project="$(basename "$(pwd)")"
+                directory_path="$(get_linx_property "git.worktrees.directory")/${project}/${branch_name}"
+                params=("add" "${directory_path}" "${branch_name}")
+                break
+               ;;
             add)
                 directory_path="${2}"
                 params+=("add")
