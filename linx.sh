@@ -1482,6 +1482,24 @@ _autocomplete_git_branches_local() {
     COMPREPLY=($(compgen -W "$(git branch --format='%(refname:short)')" -- "$cur"))
 }
 
+_autocomplete_gwt() {
+    local cur prev words cword
+    _get_comp_words_by_ref -n =: cur prev words cword
+
+    if [[ "$cword" -eq 2 ]] && [[ "${words[1]}" == "open" ]]; then
+        _autocomplete_git_branches_all
+    elif [[ "$cword" -eq 1 ]] || [[ "$cword" -eq 2 && -z "$cur" ]]; then
+        local subcommands="add list lock move prune remove unlock open"
+        COMPREPLY=($(compgen -W "$subcommands" -- "$cur"))
+        if [[ ${#COMPREPLY[@]} -eq 1 ]]; then
+            COMPREPLY[0]="${COMPREPLY[0]} "
+        fi
+    else
+        _git_worktree
+    fi
+}
+
+
 for cmd in gcp gck gckb gbd gb gba; do
     complete -F _autocomplete_git_branches_all "${cmd}"
 done
@@ -1492,7 +1510,7 @@ complete -F _autocomplete_anonymize anonymize
 
 if [[ -f "/usr/share/bash-completion/completions/git" ]]; then
     source "/usr/share/bash-completion/completions/git"
-    __git_complete gwt _git_worktree
+    __git_complete gwt _autocomplete_gwt
 fi
 
 ##############################################################
