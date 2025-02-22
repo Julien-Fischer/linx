@@ -814,6 +814,12 @@ gstat() {
 alias gs='git status'
 alias gd='git diff' # <filename>
 
+# worktree management
+
+gwt() {
+    git worktree "$@"
+}
+
 # History modifications
 
 # @description (Git Reset) Unstage all files, or a specific file (if specified)
