@@ -816,6 +816,16 @@ alias gd='git diff' # <filename>
 
 # worktree management
 
+# @description  Add a worktree for the specified branch name (or tag name, or commit hash) and
+#               open it in JetBrains IDE. See git.worktrees.directory in linx config
+# @examples
+#   linx-specific features:
+#     gwt open branch-1
+#     gwt open f1bc283
+#     gwt open 1.0.0
+#   Native git worktree examples:
+#     gwt list
+#     etc...
 gwt() {
     local open_worktree=false
     local directory_path
