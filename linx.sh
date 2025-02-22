@@ -816,13 +816,19 @@ alias gd='git diff' # <filename>
 
 # worktree management
 
-# @description  Add a worktree for the specified branch name (or tag name, or commit hash) and
+# @description  Manage git worktrees
+# @option add   Add worktree for the specified branch name (or tag name, or commit hash) and
 #               open it in JetBrains IDE. See git.worktrees.directory in linx config
+# @option rm    Remove worktree  for the specified branch name, or tag name, or commit hash, or
+#               directory path
 # @examples
 #   linx-specific features:
 #     gwt open branch-1
 #     gwt open f1bc283
 #     gwt open 1.0.0
+#     gwt rm branch-1
+#     gwt rm 1.0.0
+#     gwt rm ../path/to/dir
 #   Native git worktree examples:
 #     gwt list
 #     etc...
@@ -834,6 +840,18 @@ gwt() {
         case $1 in
             -o|--open)
                 open_worktree=true
+                ;;
+            rm)
+                if [[ -z "${2}" ]]; then
+                    err "Usage: gwt rm [branch_name] | [tag_name] | [commit_hash] | [worktree_path]"
+                    return 1
+                fi
+                local branch_name="${2}"
+                local project
+                project="$(basename "$(pwd)")"
+                directory_path="$(get_linx_property "git.worktrees.directory")/${project}/${branch_name}"
+                params=("remove" "${2}")
+                break
                 ;;
             o|open)
                 open_worktree=true
