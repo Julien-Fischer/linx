@@ -827,6 +827,10 @@ gwt() {
                 ;;
             o|open)
                 open_worktree=true
+                if [[ -z "${2}" ]]; then
+                    err "Usage: gwt open [branch_name] | [tag_name] | [commit_hash]"
+                    return 1
+                fi
                 local branch_name="${2}"
                 local project
                 project="$(basename "$(pwd)")"
