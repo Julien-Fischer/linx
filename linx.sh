@@ -817,7 +817,32 @@ alias gd='git diff' # <filename>
 # worktree management
 
 gwt() {
-    git worktree "$@"
+    local open_worktree=false
+    local directory_path
+    local params=()
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -o|--open)
+                open_worktree=true
+                ;;
+            add)
+                directory_path="${2}"
+                params+=("add")
+                ;;
+            *)
+                params+=("${1}")
+                ;;
+        esac
+        shift
+    done
+
+    if ! git worktree "${params[@]}"; then
+        open_worktree=false
+    fi
+
+    if [[ -n "${directory_path}" ]] && $open_worktree; then
+        idea "${directory_path}"
+    fi
 }
 
 # History modifications
@@ -1448,8 +1473,14 @@ for cmd in gcp gck gckb gbd gb gba; do
     complete -F _autocomplete_git_branches_all "${cmd}"
 done
 
-complete -F _autocomplete_anonymize anonymize
 complete -F _command spy
+
+complete -F _autocomplete_anonymize anonymize
+
+if [[ -f "/usr/share/bash-completion/completions/git" ]]; then
+    source "/usr/share/bash-completion/completions/git"
+    __git_complete gwt _git_worktree
+fi
 
 ##############################################################
 # Custom ENV variables
