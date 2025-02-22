@@ -1514,7 +1514,11 @@ _autocomplete_gwt() {
     local cur prev words cword
     _get_comp_words_by_ref -n =: cur prev words cword
 
-    if [[ "$cword" -eq 2 ]] && [[ "${words[1]}" == "open" ]]; then
+    if [[ "$cword" -eq 2 ]] && [[ "${words[1]}" == "rm" ]]; then
+#        git worktree list --porcelain | sed -n 's/^worktree //p'
+     local worktrees=$(git worktree list --porcelain | sed -n 's/^worktree //p')
+        COMPREPLY=($(compgen -W "$worktrees" -- "$cur"))
+    elif [[ "$cword" -eq 2 ]] && [[ "${words[1]}" == "open" ]]; then
         _autocomplete_git_branches_all
     elif [[ "$cword" -eq 1 ]] || [[ "$cword" -eq 2 && -z "$cur" ]]; then
         local subcommands="add list lock move prune remove unlock open"
