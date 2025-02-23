@@ -920,10 +920,10 @@ gap() {
 #   grs 3  # reset the latest 3 commits
 # shellcheck disable=SC2120
 grs() {
-    local n=${1:-1}
+    local n=$(( ${1:-1} ))
     local current_branch
     current_branch=$(git_current_branch)
-    if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -le 0 ]]; then
+    if ! [[ $n =~ ^[0-9]+$ ]] || [[ $n -le 0 ]]; then
         echo "Error: Please provide a positive integer for the number of commits to reset."
         return 1
     fi
@@ -933,7 +933,7 @@ grs() {
         echo "Error: Cannot reset to the previous commit since there is only one commit in ${current_branch}"
         return 1
     fi
-    if [[ "$n" -ge "$total_commits" ]]; then
+    if [[ $n -ge "$total_commits" ]]; then
         echo "Error: Cannot reset $n commits since there are only $total_commits commits in ${current_branch}"
         return 1
     fi
