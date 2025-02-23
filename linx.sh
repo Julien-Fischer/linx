@@ -1418,7 +1418,8 @@ EOF
     if [[ $remove_count -gt 0 ]]; then
         docker rm "${containers_to_remove[@]}" >/dev/null 2>&1
     fi
-    local keep_count=$(grep -c '[^[:space:]]' "${DOCKER_KEEP_CONTAINERS_FILE}")
+    local keep_count
+    keep_count=$(grep -c '[^[:space:]]' "${DOCKER_KEEP_CONTAINERS_FILE}")
     echo -e "Stopped: $(color "${stop_count}" "${GREEN}"), Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
@@ -1466,7 +1467,8 @@ EOF
     if [[ $remove_count -gt 0 ]]; then
         docker rmi ${force:+-f} "${images_to_remove[@]}" >/dev/null 2>&1
     fi
-    local keep_count=$(grep -c '[^[:space:]]' "${DOCKER_KEEP_IMAGES_FILE}")
+    local keep_count
+    keep_count=$(grep -c '[^[:space:]]' "${DOCKER_KEEP_IMAGES_FILE}")
     echo -e "Removed: $(color "${remove_count}" "${GREEN}"), Kept: $(color "${keep_count}" "${GREEN}")"
 }
 
@@ -1497,7 +1499,8 @@ _autocomplete_anonymize() {
 
 _autocomplete_git_branches_all() {
     local cur=${COMP_WORDS[COMP_CWORD]}
-    local branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
+    local branches
+    branches=$(git for-each-ref --format='%(refname:short)' refs/heads/ refs/remotes/ refs/tags/)
     COMPREPLY=($(compgen -W "$branches" -- "$cur"))
 }
 
@@ -1507,12 +1510,11 @@ _autocomplete_git_branches_local() {
 }
 
 _autocomplete_gwt() {
-    local cur prev words cword
+    local cur prev words cword worktrees
     _get_comp_words_by_ref -n =: cur prev words cword
 
     if [[ "$cword" -eq 2 ]] && [[ "${words[1]}" == "rm" ]]; then
-#        git worktree list --porcelain | sed -n 's/^worktree //p'
-     local worktrees=$(git worktree list --porcelain | sed -n 's/^worktree //p')
+        worktrees=$(git worktree list --porcelain | sed -n 's/^worktree //p')
         COMPREPLY=($(compgen -W "$worktrees" -- "$cur"))
     elif [[ "$cword" -eq 2 ]] && [[ "${words[1]}" == "open" ]]; then
         _autocomplete_git_branches_all
