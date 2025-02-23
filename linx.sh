@@ -1171,7 +1171,7 @@ gsd() {
     done
 
     for ((i=0; i<count; i++)); do
-        if ! git stash drop stash@\{$index\} 2>/dev/null; then
+        if ! git stash drop stash@\{"$index"\} 2>/dev/null; then
             echo "No more stash entries to drop."
             break
         fi
