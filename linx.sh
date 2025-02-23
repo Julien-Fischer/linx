@@ -846,10 +846,6 @@ gwt() {
                     err "Usage: gwt rm [branch_name] | [tag_name] | [commit_hash] | [worktree_path]"
                     return 1
                 fi
-                local branch_name="${2}"
-                local project
-                project="$(basename "$(pwd)")"
-                directory_path="$(get_linx_property "git.worktrees.directory")/${project}/${branch_name}"
                 params=("remove" "${2}")
                 break
                 ;;
