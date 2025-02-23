@@ -689,7 +689,7 @@ gfirst() {
         esac
         shift
     done
-    glot -m | tail -$n
+    glot -m | tail -$((n))
 }
 
 # @description Find the latest n local commits in the current branch
@@ -738,7 +738,7 @@ glast() {
         esac
         shift
     done
-    glot -m | head -$n
+    glot -m | head -$((n))
 }
 
 # @description Dump the git log of the current local branch in a file in the current directory. If
