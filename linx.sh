@@ -855,11 +855,11 @@ gwt() {
                     err "Usage: gwt open [branch_name] | [tag_name] | [commit_hash]"
                     return 1
                 fi
-                local branch_name="${2}"
+                local target_name="${2}"
                 local project
                 project="$(basename "$(pwd)")"
-                directory_path="$(get_linx_property "git.worktrees.directory")/${project}/${branch_name}"
-                params=("add" "${directory_path}" "${branch_name}")
+                directory_path="$(get_linx_property "git.worktrees.directory")/${project}/${target_name}"
+                params=("add" "${directory_path}" "${target_name}")
                 break
                ;;
             add)
