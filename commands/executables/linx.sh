@@ -274,14 +274,16 @@ pull_setup() {
 }
 
 handle_config() {
-  if [[ -f "${LINX_CONFIG_FILE}" ]]; then
-      vim "${LINX_CONFIG_FILE}"
-  else
-      err "Could not find linx config file at ${LINX_CONFIG_FILE}"
-      echo "Generating a new one..."
-      echo '# linx configuration file' > "${LINX_CONFIG_FILE}"
-      vim "${LINX_CONFIG_FILE}"
-  fi
+    local user_editor
+    user_editor="$(get_user_preferred_editor)"
+    if [[ -f "${LINX_CONFIG_FILE}" ]]; then
+        $user_editor "${LINX_CONFIG_FILE}"
+    else
+        err "Could not find linx config file at ${LINX_CONFIG_FILE}"
+        echo "Generating a new one..."
+        echo '# linx configuration file' > "${LINX_CONFIG_FILE}"
+        $user_editor "${LINX_CONFIG_FILE}"
+    fi
 }
 
 
