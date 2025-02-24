@@ -320,7 +320,7 @@ br() {
 ba() {
     "$(get_user_preferred_editor)" "${LINX_DIR}/${LINX_FUNC_FILE_NAME}"
 }
-alias obr='open ~/.bashrc & disown'
+alias obr='open ${HOME}/.bashrc & disown'
 alias oba='open ${LINX_DIR}/${LINX_FUNC_FILE_NAME} & disown'
 alias reload='source ${HOME}/.bashrc && clear'
 alias linxn='cs ${LINX_DIR}'
