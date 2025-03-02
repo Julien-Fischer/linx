@@ -189,7 +189,7 @@ spy() {
     "$@" | tee "${LINX_SPY_FILE}"
 }
 
-function rec() {
+rec() {
     if ! installed simplescreenrecorder -q; then
         err "simplescreenrecorder is not installed."
         echo "You can install it with"
