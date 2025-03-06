@@ -1025,7 +1025,9 @@ replay_commits() {
 
     local undone_commits=()
 
-    for (( i = 0; i < count; i++ )); do
+    echo ""
+    echo "Undone commits:"
+    for (( undo_index = 0; undo_index < count; undo_index++ )); do
         local current_hash current_message
         current_hash="$(glast -is)"
         current_message="$(glast -m)"
@@ -1035,12 +1037,8 @@ replay_commits() {
             err "Could not undo commit ${current_hash}"
             return 1
         fi
-    done
 
-    echo ""
-    echo "Undone commits:"
-    for commit in "${undone_commits[@]}"; do
-        echo "  $commit"
+        echo " ${current_hash}"
     done
 
     echo ""
@@ -1049,7 +1047,7 @@ replay_commits() {
 
     local redone_commits=()
 
-    for (( i = 0; i < count; i++ )); do
+    for (( redo_index = 0; redo_index < count; redo_index++ )); do
         local duration=0
         if ! $instant; then
             duration=$(rand 1 max_wait_seconds)
