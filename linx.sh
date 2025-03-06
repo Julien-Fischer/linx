@@ -1021,13 +1021,12 @@ replay_commits() {
         return 1
     fi
 
-    echo -e "Undoing $(color "${count}" "${YELLOW_BOLD}") commits"
+    echo ""
+    echo -e "Undoing $(color "${count}" "${YELLOW_BOLD}") commits:"
 
     local undone_commits=()
 
-    echo ""
-    echo "Undone commits:"
-    for (( undo_index = 0; undo_index < count; undo_index++ )); do
+    for (( undo_index = 1; undo_index <= count; undo_index++ )); do
         local current_hash current_message
         current_hash="$(glast -is)"
         current_message="$(glast -m)"
@@ -1038,16 +1037,16 @@ replay_commits() {
             return 1
         fi
 
-        echo " ${current_hash}"
+        echo "  ($undo_index/$count): ${current_hash} ${current_message}"
     done
 
     echo ""
     linx_spinner_start
-    echo -e "Restoring $(color "${#undone_commits[@]}" "${YELLOW_BOLD}") commits"
+    echo -e "Restoring $(color "${#undone_commits[@]}" "${YELLOW_BOLD}") commits:"
 
     local redone_commits=()
 
-    for (( redo_index = 0; redo_index < count; redo_index++ )); do
+    for (( redo_index = 1; redo_index <= count; redo_index++ )); do
         local duration=0
         if ! $instant; then
             duration=$(rand 1 max_wait_seconds)
@@ -1062,7 +1061,7 @@ replay_commits() {
 
         new_hash="$(glast -is)"
         new_message="$(glast -m)"
-        echo -e "\r   \r  Replaying: ${new_hash} ${new_message}"
+        echo -e "\r   \r  ($redo_index/$count): ${new_hash} ${new_message}"
 
         if [[ $i -lt $((count - 1)) ]]; then
             sleep "$duration"
@@ -1072,12 +1071,6 @@ replay_commits() {
     done
 
     linx_spinner_stop
-
-    echo ""
-    echo "Restored commits:"
-    for commit in "${redone_commits[@]}"; do
-        echo "  $commit"
-    done
 
     echo ""
     echo -e "$(color "${#redone_commits[@]}" "${YELLOW_BOLD}") Commits replayed"
