@@ -1055,10 +1055,11 @@ install_dependencies() {
     if ! $linx_already_installed; then
         install_dependency git 'for version management'
         install_dependency terminator 'as a terminal emulator'
+        install_dependency xclip 'for a clipboard management utility'
+        install_dependency rsync 'for copying / transferring files'
         install_dependency neofetch 'as a system information tool'
         install_dependency zip 'as a file compression utility'
         install_dependency simplescreenrecorder 'as a screen recorder'
-        install_dependency rsync 'for copying / transferring files'
         install_dependency nodejs 'for using ChatGPT in your terminal'
         install_dependency npm 'for using ChatGPT in your terminal'
     fi
