@@ -312,6 +312,24 @@ pp() {
     tree -L "${depth}"
 }
 
+count() {
+    case "$1" in
+        -f|files)
+            find . -maxdepth 1 -type f | wc -l
+            ;;
+        -d|directories)
+            find . -maxdepth 1 -type d ! -path . | wc -l
+            ;;
+        "")
+            find . -maxdepth 1 ! -path . | wc -l
+            ;;
+        *)
+            echo "Usage: count [-f|files] | [-d|dirs|directories]"
+            ;;
+    esac
+}
+
+
 ##############################################################
 # Config
 ##############################################################
