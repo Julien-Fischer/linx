@@ -278,6 +278,10 @@ dl() {
     cs "$(xdg-user-dir DOWNLOAD)"
 }
 
+img() {
+    cs "$(xdg-user-dir PICTURES)"
+}
+
 dev() {
     request_dir "${DEV}" "DEV"
 }
