@@ -274,6 +274,10 @@ desk() {
     cs "$(xdg-user-dir DESKTOP)"
 }
 
+dl() {
+    cs "$(xdg-user-dir DOWNLOAD)"
+}
+
 dev() {
     request_dir "${DEV}" "DEV"
 }
