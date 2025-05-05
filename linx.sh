@@ -286,6 +286,10 @@ vids() {
     cs "$(xdg-user-dir VIDEOS)"
 }
 
+pics() {
+    img
+}
+
 dev() {
     request_dir "${DEV}" "DEV"
 }
