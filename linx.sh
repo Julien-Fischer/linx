@@ -278,6 +278,10 @@ dl() {
     cs "$(xdg-user-dir DOWNLOAD)"
 }
 
+docs() {
+    cs "$(xdg-user-dir DOCUMENTS)"
+}
+
 img() {
     cs "$(xdg-user-dir PICTURES)"
 }
