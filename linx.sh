@@ -403,6 +403,21 @@ findd() {
     sudo find "${directory}" -type d -name "*${name}*" 2>/dev/null | grep "${name}"
 }
 
+forget() {
+  case $1 in
+      -f|--force)
+          echo '' > "${HOME}/.bash_history"
+          ;;
+      '')
+          ;;
+      *)
+          err 'Usage: forget [[-f]]'
+          return 1
+          ;;
+  esac
+  history -c && clear
+}
+
 ##############################################################
 # Accounts
 ##############################################################
