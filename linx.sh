@@ -104,7 +104,7 @@ translate() {
 }
 
 now() {
-    timestamp
+    timestamp "$@"
 }
 
 # @description Copy to clipboard

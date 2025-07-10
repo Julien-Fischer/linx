@@ -14,6 +14,7 @@ timestamp() {
     local date_sep="-"
     local time_sep=":"
     local datetime_sep=" "
+    local offset=0
 
     while [[ "$#" -gt 0 ]]; do
         case $1 in
@@ -26,6 +27,10 @@ timestamp() {
                 ;;
             -i|--iso)
                 format="%Y-%m-%dT%H:%M:%S"
+                ;;
+            -o|--offset)
+                offset="${2}"
+                shift
                 ;;
             -r|--readable)
                 datetime_sep="_"
@@ -51,7 +56,7 @@ timestamp() {
         shift
     done
 
-    date +"$format"
+    date -d "now ${offset} hour" +"$format"
 }
 
 timestamp "$@"

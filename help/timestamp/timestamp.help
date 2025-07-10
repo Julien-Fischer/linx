@@ -6,6 +6,7 @@ Default format: YYYY-MM-DD hh:mm:s
 Options:
   -i, --iso          Output in ISO 8601 format (YYYY-MM-DDThh:mm:ss)
   -b, --basic        Output in Basic ISO 8601 Format format without separators (YYYYMMDDhhmmss)
+  -o, --offset       Apply an offset of H hours to the current local time before formatting the output
   -r, --readable     Output in a more readable format (YYYY-MM-DD_hh:mm:ss)
   -s, --separators   Specify custom separators for date/time components
                      Up to 3 separators can be provided:
