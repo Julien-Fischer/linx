@@ -107,6 +107,10 @@ now() {
     timestamp
 }
 
+perp() {
+    curl https://raw.githubusercontent.com/craft-coach/perplexity/refs/heads/main/perplexity.js | clc
+}
+
 # @description Copy to clipboard
 # @note: Only works on x11. Install xclip using: sudo apt-get install xclip
 # @example
