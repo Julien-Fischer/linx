@@ -178,12 +178,12 @@ anonymize() {
     fi
 
     if [[ -z "${text}" ]]; then
-        text="$(xclip -selection clipboard -o)"
+        text="$(clp)"
     fi
 
     local anonymized
     anonymized=$(anonymize_plain_text "${text}" "${case_sensitive}")
-    echo -e "${anonymized}" | xclip -selection clipboard
+    echo -e "${anonymized}" | clc
     echo "Text anonymized."
 }
 
