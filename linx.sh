@@ -125,6 +125,16 @@ clp() {
     xclip -selection clipboard -o
 }
 
+copy() {
+  local file="${1}"
+  if [[ -e "${file}" ]]; then
+    cat "${file}" | clc
+    return 0
+  fi
+  err "${file} can not be copied. $(typeof file)"
+  return 1
+}
+
 # @description anonymize the content of the clipboard by replacing substrings that match keys defined in $LINX_DIR/anonymize
 # @option -e, --edit  open anonymize.properties in vim
 # @option -s, --case-sensitive  use case-sensitive matching
