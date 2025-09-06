@@ -104,7 +104,7 @@ translate() {
 }
 
 now() {
-    timestamp "$@"
+    timestamp
 }
 
 # @description Copy to clipboard
@@ -1349,6 +1349,17 @@ alias gpurge='git reflog expire --expire=now --all && git gc --prune=now'
 # Discard ALL staged and unstaged changes
 # /!\ Be cautious when using this command, as it permanently removes uncommitted changes.
 alias gclear='git add . && git reset --hard HEAD'
+
+# An opinionated shortcut to generate an SSH key pair
+genssh() {
+    local email="${1}"
+    if [[ -z "${email}" ]]; then
+        err "An e-mail address is required."
+        echo "  genssh myemail@example.com"
+        return 1
+    fi
+    ssh-keygen -t ed25519 -C "${email}"
+}
 
 ##############################################################
 # Maven
