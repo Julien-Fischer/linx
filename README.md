@@ -145,7 +145,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 - Tree
 - curl (for browsing the web from the terminal)
 - jq (for JSON parsing)
-- Neofetch
+- Fastfetch, or Neofetch (Debian 13<)
 - simplescreenrecorder
 - rsync
 - Node.js (when / if using the `ask` command)

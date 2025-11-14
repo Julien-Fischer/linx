@@ -47,6 +47,7 @@ TERMINATOR_DEFAULT_THEME_NATIVE="contrast"
 TERMINATOR_DEFAULT_THEME_THIRD_PARTY="night_owl"
 TERMINATOR_THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 TERMINATOR_DEFAULT_BACKUPS_CAPACITY=30
+INFORMATION_RETRIEVAL_TOOL="neofetch" # or fastfetch starting from Debian 13
 # shellcheck disable=SC2034
 LINX_OUTPUT_SEPARATOR="________________________________________________________________________________"
 LINX_SPINNER_PID=""
@@ -1057,12 +1058,37 @@ install_dependencies() {
         install_dependency terminator 'as a terminal emulator'
         install_dependency xclip 'for a clipboard management utility'
         install_dependency rsync 'for copying / transferring files'
-        install_dependency neofetch 'as a system information tool'
+        install_fetch_tool
         install_dependency zip 'as a file compression utility'
         install_dependency simplescreenrecorder 'as a screen recorder'
         install_dependency nodejs 'for using ChatGPT in your terminal'
         install_dependency npm 'for using ChatGPT in your terminal'
     fi
+}
+
+install_fetch_tool() {
+    if is_debian_13_or_later; then
+        install_dependency fastfetch 'as a system information tool'
+        INFORMATION_RETRIEVAL_TOOL="fastfetch"
+    else
+        install_dependency neofetch 'as a system information tool'
+        INFORMATION_RETRIEVAL_TOOL="neofetch"
+    fi
+    put_linx_property "information.retrieval.tool" "${INFORMATION_RETRIEVAL_TOOL}"
+}
+
+is_debian_13_or_later() {
+  local os_id
+  os_id=$(grep '^ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"')
+
+  local major_version
+  major_version=$(grep '^VERSION_ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"' | cut -d '.' -f 1)
+
+  if [[ "$os_id" == "debian" && "$major_version" =~ ^[0-9]+$ && "$major_version" -ge 13 ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 setup_vim() {
