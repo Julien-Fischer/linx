@@ -285,7 +285,17 @@ mkp() {
 }
 
 desk() {
-    cs "$(xdg-user-dir DESKTOP)"
+    local directory
+    directory="$(get_linx_property "directory.desktop")"
+    if [[ -n "${directory}" ]]; then
+        if [[ -d "${directory}" ]]; then
+            cs "${directory}"
+        else
+            err "${directory} is not an existing directory"
+        fi
+    else
+        cs "$(xdg-user-dir DESKTOP)"
+    fi
 }
 
 dl() {
@@ -309,11 +319,11 @@ pics() {
 }
 
 dev() {
-    request_dir "${DEV}" "DEV"
+    request_dir "dev"
 }
 
 foss() {
-    request_dir "${FOSS}" "FOSS"
+    request_dir "foss"
 }
 
 alias ,="cs /"
@@ -491,7 +501,7 @@ alias byebye='systemctl poweroff'
 alias reboot='systemctl reboot'
 alias mem='free -m -l -t'
 alias du='du -h --max-depth=1'
-alias sys="\$(get_linx_property \"information.retrieval.tool\" -q)"
+alias sys="$(get_linx_property information.retrieval.tool -q)"
 
 drives() {
     mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | grep -E ^/dev/ | sort

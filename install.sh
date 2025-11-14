@@ -809,12 +809,14 @@ require_sudo() {
 }
 
 request_dir() {
-    local var="${1}"
-    local var_name="${2}"
-    if [[ -n "${var}" ]]; then
-        cs "${var}"
+    local var_name="${1}"
+    local key="directory.${var_name}"
+    local directory
+    directory="$(get_linx_property "${key}" -q)"
+    if [[ -n "${directory}" ]]; then
+        cs "${directory}"
     else
-        echo "\$${var_name} environment variable is not defined. You can set it in ~/.bashrc"
+        echo "${key} is not defined in linx configuration. You can set it via \n  linx config"
         return 1
     fi
 }

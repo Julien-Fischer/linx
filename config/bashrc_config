@@ -1,10 +1,3 @@
-# Override the default desktop location:
-# DESK="${HOME}/Desktop"
-# Define the directory containing your programming projects:
-#DEV="${HOME}/dev"
-# Define the directory containing your FOSS projects:
-#FOSS="${HOME}/foss"
-
 # Source linx
 if [[ -f "${HOME}"/linx/linx.sh ]]; then
     source "${HOME}"/linx/linx.sh
