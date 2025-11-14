@@ -1042,7 +1042,7 @@ update_rc_file() {
         lines="\n${SEPARATOR}\n"
         lines+="# ${WATERMARK} on ${DATETIME}"
         lines+="\n${SEPARATOR}\n\n"
-        lines+=$(cat config/bashrc_config)
+        lines+=$(cat ./config/bashrc_config)
         lines+="\n"
         lines+="\n${SEPARATOR}\n"
         lines+="# End of linx configuration"
