@@ -1061,10 +1061,22 @@ install_dependencies() {
         install_dependency xclip 'for a clipboard management utility'
         install_dependency rsync 'for copying / transferring files'
         install_fetch_tool
+        install_nodup
         install_dependency zip 'as a file compression utility'
         install_dependency simplescreenrecorder 'as a screen recorder'
         install_dependency nodejs 'for using ChatGPT in your terminal'
         install_dependency npm 'for using ChatGPT in your terminal'
+    fi
+}
+
+install_nodup() {
+    local software="nodup"
+    local reason="as an image deduplicator"
+    local repository="https://github.com/Julien-Fischer/nodup"
+    if ! installed "${software}" --quiet; then
+        if ! $auto_approve && confirm "${LINX_PROJECT}: ${software} installation" "${LINX_PROJECT}: Do you wish to install ${software} ${reason}?"; then
+            git clone "${repository}" && cd "${software}" && ./src/main/resources/install.sh && source "${HOME}/.bashrc" && cd .. && rm -rf "${software}"
+        fi
     fi
 }
 

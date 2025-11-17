@@ -82,12 +82,23 @@ uninstall_terminator_config() {
     fi
 }
 
+uninstall_nodup() {
+    local software="nodup"
+    local repository="https://github.com/Julien-Fischer/nodup"
+    if installed "${software}" --quiet; then
+        if ! $auto_approve && confirm "${LINX_PROJECT}: ${software} installation" "${LINX_PROJECT}: Do you wish to install ${software}?"; then
+            git clone "${repository}" && cd "${software}" && ./src/main/resources/uninstall.sh && source "${HOME}/.bashrc" && cd .. && rm -rf "${software}"
+        fi
+    fi
+}
+
 uninstall_linx() {
     echo "this will uninstall linx."
     ! $auto_approve && confirm "Uninstallation" "Proceed?" --abort
     uninstall_terminator_config
     uninstall_cron_jobs
     uninstall_commands
+    uninstall_nodup
     if [[ -d "${LINX_DIR}" ]]; then
         del "${LINX_DIR}"
     fi
