@@ -141,7 +141,8 @@ Note that you may need to restart your terminal for all changes to be applied.
 - Git (for executing upgrade and synchronization commands)
 
 #### Optional (but recommended)
-- Terminator
+- vim and/or neovim
+- Terminator and/or Kitty
 - Tree
 - curl (for browsing the web from the terminal)
 - jq (for JSON parsing)
