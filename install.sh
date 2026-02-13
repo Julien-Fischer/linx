@@ -1147,6 +1147,8 @@ update_rc_file() {
 install_dependencies() {
     if ! $linx_already_installed; then
         install_dependency git 'for version management'
+        install_dependency vim 'as a text editor'
+        install_dependency neovim 'as a text editor'
         install_dependency terminator 'as a terminal emulator'
         install_dependency kitty 'as a terminal emulator'
         install_dependency xclip 'for a clipboard management utility'
