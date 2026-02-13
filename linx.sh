@@ -389,6 +389,9 @@ alias oba='open ${LINX_DIR}/${LINX_FUNC_FILE_NAME} & disown'
 alias reload='source ${HOME}/.bashrc && clear'
 alias linxn='cs ${LINX_DIR}'
 alias vimrc='vim "${HOME}"/.vimrc'
+alias kitty_start='kitty --start-as=maximized --session ~/.config/kitty/kitty-triple.session'
+alias kitty_config='vim ~/.config/kitty/kitty.conf'
+alias kitty_theme='kitty +kitten themes'
 
 ##############################################################
 # Bash
