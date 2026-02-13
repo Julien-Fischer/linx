@@ -1633,6 +1633,18 @@ if [[ -f "/usr/share/bash-completion/completions/git" ]]; then
 fi
 
 ##############################################################
+# Terminal-specific configuration
+##############################################################
+
+if [[ "$TERM" == "xterm-kitty" ]]; then
+    alias icat="kitty +kitten icat"
+    hr() {
+      printf "\e[30m%*s\e[m\n" ${COLUMNS} "" | tr " " _
+    }
+    PROMPT_COMMAND='hr'
+fi
+
+##############################################################
 # Custom ENV variables
 ##############################################################
 
