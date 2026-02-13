@@ -1,0 +1,4 @@
+launch --location=first bash -c "neofetch 2>/dev/null || fastfetch; exec bash"
+launch --location=vsplit bash -c "ls --color=auto -AF --group-directories-first; exec bash"
+launch --location=hsplit bash -c "ls --color=auto -AF --group-directories-first; exec bash"
+

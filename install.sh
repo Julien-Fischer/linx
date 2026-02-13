@@ -35,6 +35,19 @@ MKF_TEMPLATE_DIR="${LINX_MKF_DIR}/templates"
 DOCKER_CONFIG_DIR="${HOME}/docker_config"
 DOCKER_KEEP_CONTAINERS_FILE="${DOCKER_CONFIG_DIR}/keep_containers"
 DOCKER_KEEP_IMAGES_FILE="${DOCKER_CONFIG_DIR}/keep_images"
+KITTY_CONFIG_DIR="${HOME}/.config/kitty"
+KITTY_THEMES_DIR="${KITTY_CONFIG_DIR}/themes"
+KITTY_CONFIG_FILE="${KITTY_CONFIG_DIR}/kitty.conf"
+KITTY_SESSION_FILE_NAME="kitty-triple.session"
+KITTY_LAYOUT_FILE="${KITTY_CONFIG_DIR}/${KITTY_SESSION_FILE_NAME}"
+KITTY_THEME_POLICY_FILE="${KITTY_CONFIG_DIR}/theme_policy"
+KITTY_LOCAL_CONFIG_DIR="config/kitty"
+KITTY_DESKTOP_DIRECTORY="${HOME}/.local/share/applications"
+KITTY_THEMES_PROJECT="kitty_themes"
+KITTY_THEMES_REPOSITORY="${LINX_GITHUB_ACCOUNT}/${KITTY_THEMES_PROJECT}.git"
+KITTY_DEFAULT_THEME_NATIVE="contrast"
+KITTY_DEFAULT_THEME_THIRD_PARTY="intellij"
+KITTY_THIRD_PARTY_ENABLED_KEY="third_party_themes_enabled"
 TERMINATOR_DIR="${HOME}/.config/terminator"
 TERMINATOR_CONFIG_FILE="${TERMINATOR_DIR}/config"
 TERMINATOR_CURRENT_THEME_FILE="${TERMINATOR_DIR}/current.profile"
@@ -859,7 +872,7 @@ is_linx_installed() {
     fi
 }
 
-third_party_themes_installed() {
+terminator_third_party_themes_installed() {
     local file="${TERMINATOR_THEME_POLICY_FILE}"
     if [[ -f "${file}" ]] && grep -q "${TERMINATOR_THIRD_PARTY_ENABLED_KEY}=true" "${file}"; then
         return 0
@@ -867,17 +880,90 @@ third_party_themes_installed() {
     return 1
 }
 
-should_install_third_party_themes() {
+kitty_third_party_themes_installed() {
+    local file="${KITTY_THEME_POLICY_FILE}"
+    if [[ -f "${file}" ]] && grep -q "${KITTY_THIRD_PARTY_ENABLED_KEY}=true" "${file}"; then
+        return 0
+    fi
+    return 1
+}
+
+is_kitty_installed() {
+    if [[ -d "${KITTY_CONFIG_DIR}" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+should_install_terminator_third_party_themes() {
     local msg="${LINX_PROJECT}: Do you wish to install pre-approved, third-party terminator themes?"
     if ($fresh_install || ! is_sourced && ! $auto_approve && confirm "Third-party themes installation" "${msg}"); then
         return 0
     fi
-    if ( $linx_already_installed && third_party_themes_installed) || \
+    if ( $linx_already_installed && terminator_third_party_themes_installed) || \
        ( ! $linx_already_installed && \
        ( $auto_approve || confirm "Third-party themes installation" "${msg}")); then
         return 0
     else
         return 1
+    fi
+}
+
+should_install_kitty_third_party_themes() {
+    local msg="${LINX_PROJECT}: Do you wish to install pre-approved, third-party Kitty themes?"
+    if ($fresh_install || ! is_sourced && ! $auto_approve && confirm "Third-party themes installation" "${msg}"); then
+        return 0
+    fi
+    if ( $linx_already_installed && kitty_third_party_themes_installed) || \
+       ( ! $linx_already_installed && \
+       ( $auto_approve || confirm "Third-party themes installation" "${msg}")); then
+        return 0
+    else
+        return 1
+    fi
+}
+
+install_kitty_config() {
+    local third_party_themes_enabled=false
+
+    mkdir -p "${KITTY_CONFIG_DIR}"
+    mkdir -p "${KITTY_DESKTOP_DIRECTORY}"
+
+    if should_install_kitty_third_party_themes; then
+        echo "Downloading third-party themes..."
+        linx_spinner_start
+        if git clone "${KITTY_THEMES_REPOSITORY}" --single-branch -q; then
+            linx_spinner_stop
+            default_theme="${KITTY_DEFAULT_THEME_THIRD_PARTY}"
+            third_party_themes_enabled=true
+        else
+            err "Could not clone repository ${KITTY_THEMES_REPOSITORY}"
+            return 1
+        fi
+    else
+        default_theme="${KITTY_DEFAULT_THEME_NATIVE}"
+    fi
+
+    if $third_party_themes_enabled; then
+        echo "Installing third-party themes..."
+        cp -r "${KITTY_THEMES_PROJECT}/themes" "${KITTY_CONFIG_DIR}"
+        echo "${KITTY_THIRD_PARTY_ENABLED_KEY}=true" > "${KITTY_THEME_POLICY_FILE}"
+    fi
+
+    local local_config_file="${KITTY_LOCAL_CONFIG_DIR}/kitty.conf"
+    if ! cp "${local_config_file}" "${KITTY_CONFIG_FILE}"; then
+        err "Could not copy ${local_config_file} to ${KITTY_CONFIG_FILE}"
+    fi
+
+    local local_layout_file="${KITTY_LOCAL_CONFIG_DIR}/${KITTY_SESSION_FILE_NAME}"
+    if ! cp "${local_layout_file}" "${KITTY_LAYOUT_FILE}"; then
+        err "Could not copy ${local_layout_file} to ${KITTY_LAYOUT_FILE}"
+    fi
+
+    local local_desktop_file="${KITTY_LOCAL_CONFIG_DIR}/kitty-triple.desktop"
+    if ! cp "${local_desktop_file}" "${KITTY_DESKTOP_DIRECTORY}/kitty-triple.desktop"; then
+        err "Could not copy ${local_desktop_file} to ${KITTY_DESKTOP_DIRECTORY}/kitty-triple.desktop"
     fi
 }
 
@@ -888,7 +974,7 @@ install_terminator_config() {
 
     mkdir -p "${TERMINATOR_DIR}"
 
-    if should_install_third_party_themes; then
+    if should_install_terminator_third_party_themes; then
         echo "Downloading third-party themes..."
         linx_spinner_start
         if git clone "${TERMINATOR_THEMES_REPOSITORY}" --single-branch -q; then
@@ -1020,6 +1106,10 @@ install_core() {
             err "Could not update terminator configuration"
             return 1
         fi
+        if ! install_kitty_config; then
+            err "Could not update kitty configuration"
+            return 1
+        fi
         # Clean up temp files & refresh shell session
         cd ../..
         echo "${LINX_PROJECT}: Removing temporary files..."
@@ -1058,6 +1148,7 @@ install_dependencies() {
     if ! $linx_already_installed; then
         install_dependency git 'for version management'
         install_dependency terminator 'as a terminal emulator'
+        install_dependency kitty 'as a terminal emulator'
         install_dependency xclip 'for a clipboard management utility'
         install_dependency rsync 'for copying / transferring files'
         install_fetch_tool
@@ -1157,6 +1248,11 @@ install_linx() {
     if ! setup_vim; then
         return 1
     fi
+
+    if is_kitty_installed; then
+        kitty +kitten themes --reload-in=all "${KITTY_DEFAULT_THEME_THIRD_PARTY}"
+    fi
+
     local success goal
     success=$(is_linx_installed)
     goal=$(get_goal "$linx_already_installed")

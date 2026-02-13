@@ -16,7 +16,7 @@ Version `1.0.0-alpha` of Linx offers the following features:
 - A comprehensive set of functions and aliases that minimize the time and effort required for directory navigation, file management, and common task execution
 - Shortcuts for frequently accessed directories such as home, desktop, and dev, allowing users to quickly jump to desired locations
 - Functions that streamline version control tasks and enhance log viewing capabilities
-- For Terminator users, Linx offers preconfigured shortcuts, themes, and layouts (no python required)
+- For Kitty and Terminator users, Linx offers preconfigured shortcuts, themes, and layouts (no python required)
 - GPT 4 integration so you can prompt it directly from your terminal
 
 ![Live Demo](assets/demo.gif)
@@ -116,7 +116,7 @@ Or **git**:
 git clone https://github.com/Julien-Fischer/linx && linx/install.sh
 ```
 
-Note: You may need to restart your terminal for some changes to be applied, especially for Terminator 
+Note: You may need to restart your terminal for some changes to be applied, especially for Terminator and Kitty
 settings.
 
 ## Configuration

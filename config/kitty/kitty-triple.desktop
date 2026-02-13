@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Kitty Triple Split
+Comment=3-terminal Kitty layout
+Exec=kitty --start-as=maximized --session ~/.config/kitty/kitty-triple.session
+Icon=kitty
+Terminal=false
+Categories=Utility;TerminalEmulator;
+StartupWMClass=kitty
