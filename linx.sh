@@ -203,6 +203,75 @@ spy() {
     "$@" | tee "${LINX_SPY_FILE}"
 }
 
+# @description Add a new background to GNOME as a native system image.
+#              Supports both single and adaptive (light/dark) backgrounds.
+# @param $1 the path to the background image (light version if adaptive)
+# @param $2 (optional) the path to the dark version for adaptive backgrounds
+# @example
+#   add_background "/path/to/light.png" "/path/to/dark.png"
+#   add_background "/path/to/single.png"
+gnome_add_background() {
+    local img="${1}"
+    local imgDark="${2:-}"
+
+    if [[ -z "${img}" ]]; then
+        err "Usage: add_background <img_path> [img_dark_path]"
+        return 1
+    fi
+
+    if [[ ! -f "${img}" ]]; then
+        err "File not found: ${img}"
+        return 1
+    fi
+
+    local bg_dir="/usr/share/backgrounds/gnome"
+    local xml_dir="${HOME}/.local/share/gnome-background-properties"
+
+    # 1. Copy background(s) to /usr/share/backgrounds/gnome
+    sudo mkdir -p "${bg_dir}"
+    local img_name=$(basename "${img}")
+    local target_img="${bg_dir}/${img_name}"
+    sudo cp "${img}" "${target_img}"
+
+    local target_img_dark=""
+    if [[ -n "${imgDark}" ]]; then
+        if [[ ! -f "${imgDark}" ]]; then
+            err "File not found: ${imgDark}"
+            return 1
+        fi
+        local img_dark_name=$(basename "${imgDark}")
+        target_img_dark="${bg_dir}/${img_dark_name}"
+        sudo cp "${imgDark}" "${target_img_dark}"
+    fi
+
+    # 2. Generate an .xml file in ${HOME}/.local/share/gnome-background-properties
+    sudo mkdir -p "${xml_dir}"
+    local xml_file="${xml_dir}/${img_name%.*}.xml"
+
+    local dark_tag=""
+    if [[ -n "${target_img_dark}" ]]; then
+        dark_tag="<filename-dark>${target_img_dark}</filename-dark>"
+    fi
+
+    cat <<EOF | sudo tee "${xml_file}" > /dev/null
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+    <wallpaper deleted="false">
+        <name>${img_name%.*}</name>
+        <filename>${target_img}</filename>
+        ${dark_tag}
+        <options>zoom</options>
+        <pcolor>#000000</pcolor>
+        <scolor>#000000</scolor>
+    </wallpaper>
+</wallpapers>
+EOF
+
+    killall gnome-control-center 2>/dev/null || true
+    echo "Background added: ${img_name%.*}"
+}
+
 rec() {
     if ! installed simplescreenrecorder -q; then
         err "simplescreenrecorder is not installed."
