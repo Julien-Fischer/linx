@@ -572,8 +572,19 @@ bye() {
 alias byebye='systemctl poweroff'
 alias reboot='systemctl reboot'
 alias mem='free -m -l -t'
-alias du='du -ah --max-depth=1'
 alias sys="$(get_linx_property information.retrieval.tool -q)"
+
+du() {
+    local sort=false
+    if [[ "${1}" == "--sort" || "${1}" == "-s" ]]; then
+        sort=true
+    fi
+    if $sort; then
+        command du -ah --max-depth=1 . | sort -hr
+    else
+        command du -ah --max-depth=1 .
+    fi
+}
 
 drives() {
     mount | awk -F' ' '{printf \"%s\t%s\n\",\$1,\$3; }' | column -t | grep -E ^/dev/ | sort
