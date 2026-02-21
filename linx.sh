@@ -572,7 +572,7 @@ bye() {
 alias byebye='systemctl poweroff'
 alias reboot='systemctl reboot'
 alias mem='free -m -l -t'
-alias du='du -h --max-depth=1'
+alias du='du -ah --max-depth=1'
 alias sys="$(get_linx_property information.retrieval.tool -q)"
 
 drives() {
