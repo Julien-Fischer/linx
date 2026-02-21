@@ -155,7 +155,7 @@ Note that you may need to restart your terminal for all changes to be applied.
 
 This project is designed to run on Debian-based distributions, including (but not limited to) Debian, Ubuntu,
 and Kubuntu.
-Primary testing has been conducted on Kubuntu 24 and Debian 12.
+Primary testing has been conducted on Debian (12, 13), Ubuntu 24, and Kubuntu 24.
 
 If you encounter any issues or have suggestions for improving Linx, feel free to open an issue or
 submit a pull request.
