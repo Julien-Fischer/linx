@@ -130,7 +130,7 @@ declare -a TESTS_TO_RUN=(
 
 To contribute your code:
 
-1. Fork the project from the `master` branch
+1. Fork the project from the `main` branch
 2. Create a new branch named `feature/branch-name` for a new feature, or `bugfix/branch-name` for fixing a bug
 3. Create one or more commits on your branch
-4. Submit your merge request back into `master` with a brief description of your contributions
+4. Submit your merge request back into `main` with a brief description of your contributions
