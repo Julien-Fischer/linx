@@ -103,8 +103,21 @@ translate() {
     curl -s "https://api.mymemory.translated.net/get?q=${query}&langpair=${src}|${dest}" | jq '.responseData.translatedText'
 }
 
+# @description Print the current timestamp
+# @param $1 (optional) "-d" or "--day-of-week" to include the day of week
+# @example
+# command output
+# now 2026-06-03 11:12:00
+# now -d 2026-06-03 11:12:00 (Wednesday)
+# now --day-of-week 2026-06-03 11:12:00 (Wednesday)
 now() {
-    timestamp
+    local value
+    value=$(timestamp)
+    if [[ "${1}" == -d || "${1}" == "--day-of-week" ]]; then
+      echo "${value} ($(date -d "${value}" '+%A'))"
+    else
+      echo "${value}"
+    fi
 }
 
 perp() {
